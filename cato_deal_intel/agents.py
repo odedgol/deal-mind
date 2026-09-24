@@ -1,9 +1,9 @@
-import json
 from dataclasses import dataclass
 
 from .llm import LLMAdapter, evidence_payload
 from .models import AgentOutput, DealSnapshot, EvidenceItem, Opportunity, StrategyOutput
 from .observability import observed
+from .prompts import grounded_system, protected_payload
 from .tools import (
     CONVERSATION_TOOLS,
     DEAL_CONTEXT_TOOLS,
@@ -152,10 +152,8 @@ def run_strategy(
         "specialists": [output.model_dump(mode="json") for output in specialists],
     }
     return llm.complete(
-        system=(
-            "You are the Negotiation Strategy Agent. Return only grounded, typed recommendations."
-        ),
-        user=json.dumps(prompt),
+        system=grounded_system("Negotiation Strategy Agent"),
+        user=protected_payload(prompt),
         output_type=StrategyOutput,
     )
 
@@ -167,8 +165,8 @@ def _run_specialist(name: str, context: AgentContext, llm: LLMAdapter) -> AgentO
         "evidence": evidence_payload(context.evidence),
     }
     return llm.complete(
-        system=f"You are the {name}. Cite only evidence IDs supplied in the input.",
-        user=json.dumps(prompt),
+        system=grounded_system(name),
+        user=protected_payload(prompt),
         output_type=AgentOutput,
     )
 

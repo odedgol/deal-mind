@@ -148,7 +148,7 @@ class FakeLLM:
 
     def complete(self, *, system: str, user: str, output_type: type[T]) -> T:
         del system
-        payload = json.loads(user)
+        payload = json.loads(_unwrap_protected_payload(user))
         evidence_ids = [item["evidence_id"] for item in payload.get("evidence", [])[:3]]
         if output_type.__name__ == "AgentOutput":
             result: dict[str, Any] = {
@@ -324,3 +324,11 @@ def usage_summary(adapter: LLMAdapter) -> CostSummary:
 
 def evidence_payload(evidence: Iterable[Any]) -> list[dict[str, Any]]:
     return [item.model_dump(mode="json") for item in evidence]
+
+
+def _unwrap_protected_payload(user: str) -> str:
+    start = "<untrusted_data>\n"
+    end = "\n</untrusted_data>"
+    if user.startswith(start) and user.endswith(end):
+        return user[len(start) : -len(end)]
+    return user

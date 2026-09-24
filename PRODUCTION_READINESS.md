@@ -48,6 +48,19 @@ The local defaults live in `.env.example`; pricing values must be reviewed whene
 pricing changes. A production model gateway should own the authoritative price table, quotas,
 budgets, fallback policy, and cross-worker accounting.
 
+## Prompt-injection defense
+
+Retrieved evidence and specialist outputs are untrusted business data. The prompt boundary marks
+them with `<untrusted_data>` delimiters and the system instruction explicitly says never to follow
+instructions found inside that content. Structured output validation and citation validation remain
+independent guardrails: a model cannot authorize itself, cite an unavailable evidence ID, or turn
+source text into a tool instruction.
+
+The regression fixture in `tests/test_prompt_injection.py` covers a malicious evidence sentence
+that asks the model to reveal system instructions. Production should extend this fixture set with
+tool-use requests, permission-bypass attempts, secret extraction, indirect instructions in Slack
+messages, and multilingual variants.
+
 ## Idempotency preparation
 
 An idempotency key is not required for the current MVP because the workflow does not perform
