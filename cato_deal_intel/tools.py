@@ -1,3 +1,4 @@
+from collections.abc import Callable
 from dataclasses import dataclass
 
 from .models import (
@@ -8,8 +9,30 @@ from .models import (
     RecommendedAction,
     StrategyOutput,
 )
+from .observability import AgentTraceCollector, trace_operation
 from .services import ApprovalService, EvidenceService
 from .validation import validate_citations
+
+
+def _trace_tool[T](
+    *,
+    collector: AgentTraceCollector | None,
+    run_id: str | None,
+    name: str,
+    operation: Callable[[], T],
+    metadata: dict[str, str] | None = None,
+) -> T:
+    if collector is None or run_id is None:
+        return operation()
+    result, _ = trace_operation(
+        collector=collector,
+        run_id=run_id,
+        event_type="tool",
+        name=name,
+        operation=operation,
+        metadata=metadata,
+    )
+    return result
 
 
 @dataclass(frozen=True)
@@ -30,17 +53,30 @@ class EvidenceSearchRequest:
 class AuthorizedEvidenceSearchTool:
     name = "search_authorized_evidence"
 
-    def __init__(self, service: EvidenceService, decision: AuthorizationDecision) -> None:
+    def __init__(
+        self,
+        service: EvidenceService,
+        decision: AuthorizationDecision,
+        collector: AgentTraceCollector | None = None,
+        run_id: str | None = None,
+    ) -> None:
         self.service = service
         self.decision = decision
+        self.collector = collector
+        self.run_id = run_id
         self.retrieved_evidence: list[EvidenceItem] = []
 
     def run(self, request: EvidenceSearchRequest) -> list[EvidenceItem]:
-        results = self.service.search(
-            opportunity_id=request.opportunity_id,
-            query=request.query,
-            decision=self.decision,
-            limit=request.limit,
+        results = _trace_tool(
+            collector=self.collector,
+            run_id=self.run_id,
+            name="search_authorized_evidence",
+            operation=lambda: self.service.search(
+                opportunity_id=request.opportunity_id,
+                query=request.query,
+                decision=self.decision,
+                limit=request.limit,
+            ),
         )
         known_ids = {item.evidence_id for item in self.retrieved_evidence}
         self.retrieved_evidence.extend(
@@ -52,36 +88,61 @@ class AuthorizedEvidenceSearchTool:
 class DealContextTool:
     name = "get_opportunity_snapshot"
 
-    def __init__(self, opportunity: Opportunity) -> None:
+    def __init__(
+        self,
+        opportunity: Opportunity,
+        collector: AgentTraceCollector | None = None,
+        run_id: str | None = None,
+    ) -> None:
         self.opportunity = opportunity
+        self.collector = collector
+        self.run_id = run_id
 
     def run(self) -> DealSnapshot:
-        return DealSnapshot(
-            opportunity_id=self.opportunity.opportunity_id,
-            account_name=self.opportunity.account_name,
-            stage=self.opportunity.stage,
-            amount_acv=self.opportunity.acv,
-            close_date=self.opportunity.close_date,
-            owner=self.opportunity.owner,
-            risk_level=self.opportunity.risk_level,
-            evidence_ids=[],
+        return _trace_tool(
+            collector=self.collector,
+            run_id=self.run_id,
+            name="get_opportunity_snapshot",
+            operation=lambda: DealSnapshot(
+                opportunity_id=self.opportunity.opportunity_id,
+                account_name=self.opportunity.account_name,
+                stage=self.opportunity.stage,
+                amount_acv=self.opportunity.acv,
+                close_date=self.opportunity.close_date,
+                owner=self.opportunity.owner,
+                risk_level=self.opportunity.risk_level,
+                evidence_ids=[],
+            ),
         )
 
 
 class DealDeskPolicyTool:
     name = "get_deal_desk_policy"
 
-    def __init__(self, service: EvidenceService, decision: AuthorizationDecision) -> None:
+    def __init__(
+        self,
+        service: EvidenceService,
+        decision: AuthorizationDecision,
+        collector: AgentTraceCollector | None = None,
+        run_id: str | None = None,
+    ) -> None:
         self.service = service
         self.decision = decision
+        self.collector = collector
+        self.run_id = run_id
         self.retrieved_evidence: list[EvidenceItem] = []
 
     def run(self, opportunity_id: str) -> EvidenceItem | None:
-        policy = self.service.search(
-            opportunity_id=opportunity_id,
-            query="discount legal terms approval policy",
-            decision=self.decision,
-            limit=4,
+        policy = _trace_tool(
+            collector=self.collector,
+            run_id=self.run_id,
+            name="get_deal_desk_policy",
+            operation=lambda: self.service.search(
+                opportunity_id=opportunity_id,
+                query="discount legal terms approval policy",
+                decision=self.decision,
+                limit=4,
+            ),
         )
         result = next((item for item in policy if item.source_type == "policies"), None)
         if result is not None and result.evidence_id not in {
@@ -94,27 +155,56 @@ class DealDeskPolicyTool:
 class ApprovalRequestTool:
     name = "request_approval"
 
-    def __init__(self, service: ApprovalService) -> None:
+    def __init__(
+        self,
+        service: ApprovalService,
+        collector: AgentTraceCollector | None = None,
+        run_id: str | None = None,
+    ) -> None:
         self.service = service
+        self.collector = collector
+        self.run_id = run_id
 
     def run(
         self,
         opportunity: Opportunity,
         actions: list[RecommendedAction],
     ) -> list[RecommendedAction]:
-        routed, _ = self.service.prepare(opportunity, actions, "pending")
+        routed, _ = _trace_tool(
+            collector=self.collector,
+            run_id=self.run_id,
+            name="request_approval",
+            operation=lambda: self.service.prepare(opportunity, actions, "pending"),
+            metadata={"action_count": str(len(actions))},
+        )
         return routed
 
 
 class RecommendationValidationTool:
     name = "validate_recommendation"
 
+    def __init__(
+        self, collector: AgentTraceCollector | None = None, run_id: str | None = None
+    ) -> None:
+        self.collector = collector
+        self.run_id = run_id
+
     def run(
         self,
         recommendation: StrategyOutput,
         evidence: list[EvidenceItem],
     ) -> StrategyOutput:
-        validate_citations([recommendation], evidence)
+        _trace_tool(
+            collector=self.collector,
+            run_id=self.run_id,
+            name="validate_recommendation",
+            operation=lambda: validate_citations([recommendation], evidence),
+            metadata={
+                "citation_count": str(
+                    sum(len(item.evidence_ids) for item in recommendation.actions)
+                )
+            },
+        )
         return recommendation
 
 

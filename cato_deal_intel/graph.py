@@ -1,5 +1,4 @@
 from collections.abc import Callable
-from datetime import UTC, datetime
 from pathlib import Path
 from typing import Annotated, Any, Literal, TypedDict
 
@@ -29,7 +28,7 @@ from .models import (
     RecommendedAction,
     StrategyOutput,
 )
-from .observability import AgentTraceCollector
+from .observability import AgentTraceCollector, trace_operation
 from .retrieval import EvidenceRetriever
 from .services import ApprovalService, DealService, EvidenceService, build_brief
 from .tools import (
@@ -50,8 +49,8 @@ def _merge_unique_evidence(
 
 
 def _merge_traces(current: list[AgentTrace], incoming: list[AgentTrace]) -> list[AgentTrace]:
-    traces = {(trace.run_id, trace.agent_name): trace for trace in current}
-    traces.update({(trace.run_id, trace.agent_name): trace for trace in incoming})
+    traces = {trace.trace_id: trace for trace in current}
+    traces.update({trace.trace_id: trace for trace in incoming})
     return list(traces.values())
 
 
@@ -137,13 +136,15 @@ def safe_denial_node(state: DealState) -> dict[str, object]:
 def retrieve_node(state: DealState) -> dict[str, object]:
     source = SourceData(state["root"])
     retriever = EvidenceRetriever(path=state["qdrant_path"], require_existing=True)
-    service = EvidenceService(source, retriever)
+    service = EvidenceService(source, retriever, state["trace_collector"], state["run_id"])
     evidence = service.retrieve(state["opportunity_id"], state["authorization"])
     return {"evidence": evidence, "retriever": retriever}
 
 
 def deal_context_node(state: DealState) -> dict[str, object]:
-    agent = DealContextAgent(DealContextTool(state["opportunity"]))
+    agent = DealContextAgent(
+        DealContextTool(state["opportunity"], state["trace_collector"], state["run_id"])
+    )
     snapshot, trace = _run_traced_agent(
         run_id=state["run_id"],
         agent_name=agent.name,
@@ -154,8 +155,15 @@ def deal_context_node(state: DealState) -> dict[str, object]:
 
 
 def conversation_node(state: DealState) -> dict[str, object]:
-    service = EvidenceService(SourceData(state["root"]), state["retriever"])
-    search = AuthorizedEvidenceSearchTool(service, state["authorization"])
+    service = EvidenceService(
+        SourceData(state["root"]),
+        state["retriever"],
+        state["trace_collector"],
+        state["run_id"],
+    )
+    search = AuthorizedEvidenceSearchTool(
+        service, state["authorization"], state["trace_collector"], state["run_id"]
+    )
     agent = ConversationIntelligenceAgent(state["llm"], search)
     output, trace = _run_traced_agent(
         run_id=state["run_id"],
@@ -171,8 +179,15 @@ def conversation_node(state: DealState) -> dict[str, object]:
 
 
 def stakeholders_node(state: DealState) -> dict[str, object]:
-    service = EvidenceService(SourceData(state["root"]), state["retriever"])
-    search = AuthorizedEvidenceSearchTool(service, state["authorization"])
+    service = EvidenceService(
+        SourceData(state["root"]),
+        state["retriever"],
+        state["trace_collector"],
+        state["run_id"],
+    )
+    search = AuthorizedEvidenceSearchTool(
+        service, state["authorization"], state["trace_collector"], state["run_id"]
+    )
     agent = StakeholderMapAgent(state["llm"], search)
     output, trace = _run_traced_agent(
         run_id=state["run_id"],
@@ -188,13 +203,20 @@ def stakeholders_node(state: DealState) -> dict[str, object]:
 
 
 def strategy_node(state: DealState) -> dict[str, object]:
-    service = EvidenceService(SourceData(state["root"]), state["retriever"])
-    policy = DealDeskPolicyTool(service, state["authorization"])
+    service = EvidenceService(
+        SourceData(state["root"]),
+        state["retriever"],
+        state["trace_collector"],
+        state["run_id"],
+    )
+    policy = DealDeskPolicyTool(
+        service, state["authorization"], state["trace_collector"], state["run_id"]
+    )
     strategy_agent = NegotiationStrategyAgent(
         state["llm"],
-        RecommendationValidationTool(),
+        RecommendationValidationTool(state["trace_collector"], state["run_id"]),
         policy,
-        ApprovalRequestTool(ApprovalService()),
+        ApprovalRequestTool(ApprovalService(), state["trace_collector"], state["run_id"]),
     )
     context = AgentContext(state["opportunity"], state["evidence"])
     output, trace = _run_traced_agent(
@@ -206,14 +228,33 @@ def strategy_node(state: DealState) -> dict[str, object]:
         ),
     )
     evidence = _merge_evidence(state["evidence"], policy.retrieved_evidence)
-    return {"strategy": output, "evidence": evidence, "traces": [trace]}
+    _, recommendation_trace = trace_operation(
+        collector=state["trace_collector"],
+        run_id=state["run_id"],
+        event_type="recommendation",
+        name="strategy.recommendations",
+        operation=lambda: None,
+        metadata={"action_count": str(len(output.actions))},
+    )
+    return {
+        "strategy": output,
+        "evidence": evidence,
+        "traces": [trace, recommendation_trace],
+    }
 
 
 def approval_node(state: DealState) -> dict[str, object]:
-    actions, approvals = ApprovalService().prepare(
-        state["opportunity"],
-        state["strategy"].actions,
-        state.get("approval_decision", "pending"),
+    (actions, approvals), _ = trace_operation(
+        collector=state["trace_collector"],
+        run_id=state["run_id"],
+        event_type="approval",
+        name="approval.prepare",
+        operation=lambda: ApprovalService().prepare(
+            state["opportunity"],
+            state["strategy"].actions,
+            state.get("approval_decision", "pending"),
+        ),
+        metadata={"action_count": str(len(state["strategy"].actions))},
     )
     return {"actions": actions, "approvals": approvals}
 
@@ -244,7 +285,7 @@ def persist_node(state: DealState) -> dict[str, object]:
         strategy=state["strategy"],
         approvals=state["approvals"],
         brief=state["brief"],
-        traces=state.get("traces", []),
+        traces=state["trace_collector"].traces,
     )
     return {}
 
@@ -264,28 +305,10 @@ def _run_traced_agent[T](
     collector: AgentTraceCollector,
     operation: Callable[[], T],
 ) -> tuple[T, AgentTrace]:
-    started_at = datetime.now(UTC)
-    try:
-        result = operation()
-    except Exception as error:
-        trace = AgentTrace(
-            run_id=run_id,
-            agent_name=agent_name,
-            prompt_version="v1",
-            status="failed",
-            started_at=started_at,
-            completed_at=datetime.now(UTC),
-            error=type(error).__name__,
-        )
-        collector.record(trace)
-        raise
-    trace = AgentTrace(
+    return trace_operation(
+        collector=collector,
         run_id=run_id,
-        agent_name=agent_name,
-        prompt_version="v1",
-        status="completed",
-        started_at=started_at,
-        completed_at=datetime.now(UTC),
+        event_type="agent",
+        name=agent_name,
+        operation=operation,
     )
-    collector.record(trace)
-    return result, trace

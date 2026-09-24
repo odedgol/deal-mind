@@ -39,11 +39,19 @@ def test_fake_workflow_persists_required_brief_artifacts(tmp_path: Path) -> None
     )
     assert json.loads((run_dir / "brief.json").read_text())["opportunity_id"] == "OPP-1001"
     traces = json.loads((run_dir / "trace.json").read_text())
-    assert {trace["agent_name"] for trace in traces} == {
+    agent_traces = [trace for trace in traces if trace["event_type"] == "agent"]
+    assert {trace["name"] for trace in agent_traces} == {
         "Deal Context Agent",
         "Conversation Intelligence Agent",
         "Stakeholder Map Agent",
         "Negotiation Strategy Agent",
+    }
+    assert {trace["event_type"] for trace in traces} == {
+        "agent",
+        "retrieval",
+        "tool",
+        "approval",
+        "recommendation",
     }
     assert all(trace["status"] == "completed" for trace in traces)
     assert all(trace["run_id"] == brief.run_id for trace in traces)

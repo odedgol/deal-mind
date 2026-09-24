@@ -3,9 +3,11 @@ import logging
 import os
 import time
 from collections.abc import Callable
+from datetime import UTC, datetime
 from functools import wraps
 from threading import Lock
-from typing import Any, TypeVar, cast
+from typing import Any, Literal, TypeVar, cast
+from uuid import uuid4
 
 from .models import AgentTrace
 
@@ -18,16 +20,60 @@ class AgentTraceCollector:
 
     def __init__(self) -> None:
         self._lock = Lock()
-        self._traces: dict[tuple[str, str], AgentTrace] = {}
+        self._traces: dict[str, AgentTrace] = {}
 
     def record(self, trace: AgentTrace) -> None:
         with self._lock:
-            self._traces[(trace.run_id, trace.agent_name)] = trace
+            self._traces[trace.trace_id] = trace
 
     @property
     def traces(self) -> list[AgentTrace]:
         with self._lock:
             return list(self._traces.values())
+
+
+def trace_operation[T](
+    *,
+    collector: AgentTraceCollector,
+    run_id: str,
+    event_type: Literal["agent", "retrieval", "tool", "approval", "recommendation"],
+    name: str,
+    operation: Callable[[], T],
+    metadata: dict[str, str] | None = None,
+) -> tuple[T, AgentTrace]:
+    """Run one observable operation and record its success or failure."""
+    trace_id = uuid4().hex
+    started_at = datetime.now(UTC)
+    try:
+        result = operation()
+    except Exception as error:
+        trace = AgentTrace(
+            trace_id=trace_id,
+            run_id=run_id,
+            event_type=event_type,
+            name=name,
+            prompt_version="v1",
+            status="failed",
+            started_at=started_at,
+            completed_at=datetime.now(UTC),
+            error=type(error).__name__,
+            metadata=metadata or {},
+        )
+        collector.record(trace)
+        raise
+    trace = AgentTrace(
+        trace_id=trace_id,
+        run_id=run_id,
+        event_type=event_type,
+        name=name,
+        prompt_version="v1",
+        status="completed",
+        started_at=started_at,
+        completed_at=datetime.now(UTC),
+        metadata=metadata or {},
+    )
+    collector.record(trace)
+    return result, trace
 
 
 def observability_enabled() -> bool:

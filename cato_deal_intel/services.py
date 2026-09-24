@@ -15,6 +15,7 @@ from .models import (
     RecommendedAction,
     StrategyOutput,
 )
+from .observability import AgentTraceCollector, trace_operation
 from .retrieval import EvidenceRetriever, RetrievalRequest
 
 
@@ -47,9 +48,17 @@ class EvidenceService:
     SEARCH_QUERY = "buyer goals objections urgency stakeholders negotiation risks pricing legal"
     SLACK_QUERY = "synthetic account team dashboard escalation conflict"
 
-    def __init__(self, source: SourceData, retriever: EvidenceRetriever) -> None:
+    def __init__(
+        self,
+        source: SourceData,
+        retriever: EvidenceRetriever,
+        collector: AgentTraceCollector | None = None,
+        run_id: str | None = None,
+    ) -> None:
         self.source = source
         self.retriever = retriever
+        self.collector = collector
+        self.run_id = run_id
 
     def retrieve(self, opportunity_id: str, decision: AuthorizationDecision) -> list[EvidenceItem]:
         results = self.search(
@@ -68,16 +77,26 @@ class EvidenceService:
         decision: AuthorizationDecision,
         limit: int = 8,
     ) -> list[EvidenceItem]:
-        return self.retriever.retrieve(
-            RetrievalRequest(
-                query=query,
-                opportunity_id=opportunity_id,
-                allowed_source_types=decision.allowed_source_types,
-                allowed_access_levels=decision.allowed_access_levels,
-                limit=limit,
-            ),
-            decision,
+        request = RetrievalRequest(
+            query=query,
+            opportunity_id=opportunity_id,
+            allowed_source_types=decision.allowed_source_types,
+            allowed_access_levels=decision.allowed_access_levels,
+            limit=limit,
         )
+        def retrieve() -> list[EvidenceItem]:
+            return self.retriever.retrieve(request, decision)
+        if self.collector is None or self.run_id is None:
+            return retrieve()
+        results, _ = trace_operation(
+            collector=self.collector,
+            run_id=self.run_id,
+            event_type="retrieval",
+            name="qdrant.retrieve",
+            operation=retrieve,
+            metadata={"opportunity_id": opportunity_id, "result_limit": str(limit)},
+        )
+        return results
 
     def _include_slack_context(
         self,

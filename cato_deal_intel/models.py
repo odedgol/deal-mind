@@ -74,13 +74,16 @@ class AuthorizationDecision(StrictModel):
 
 
 class AgentTrace(StrictModel):
+    trace_id: str
     run_id: str
-    agent_name: str
+    event_type: Literal["agent", "retrieval", "tool", "approval", "recommendation"]
+    name: str
     prompt_version: str
     status: Literal["started", "completed", "failed"]
     started_at: datetime
     completed_at: datetime | None = None
     error: str | None = None
+    metadata: dict[str, str] = Field(default_factory=dict)
 
 
 class DealSnapshot(StrictModel):
