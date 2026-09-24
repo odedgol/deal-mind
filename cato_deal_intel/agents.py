@@ -9,6 +9,9 @@ from .tools import (
     DEAL_CONTEXT_TOOLS,
     STAKEHOLDER_TOOLS,
     STRATEGY_TOOLS,
+    AuthorizedEvidenceSearchTool,
+    DealContextTool,
+    EvidenceSearchRequest,
     ToolSpec,
 )
 
@@ -23,7 +26,12 @@ class DealContextAgent:
     name = "Deal Context Agent"
     tools: tuple[ToolSpec, ...] = DEAL_CONTEXT_TOOLS
 
+    def __init__(self, tool: DealContextTool | None = None) -> None:
+        self.tool = tool
+
     def run(self, context: AgentContext) -> DealSnapshot:
+        if self.tool is not None:
+            return self.tool.run()
         return run_deal_context(context)
 
 
@@ -31,10 +39,20 @@ class ConversationIntelligenceAgent:
     name = "Conversation Intelligence Agent"
     tools: tuple[ToolSpec, ...] = CONVERSATION_TOOLS
 
-    def __init__(self, llm: LLMAdapter) -> None:
+    def __init__(
+        self,
+        llm: LLMAdapter,
+        search_tool: AuthorizedEvidenceSearchTool | None = None,
+    ) -> None:
         self.llm = llm
+        self.search_tool = search_tool
 
     def run(self, context: AgentContext) -> AgentOutput:
+        context = _context_with_search_results(
+            context,
+            self.search_tool,
+            "buyer objections urgency competitor action items",
+        )
         return run_conversation_intelligence(context, self.llm)
 
 
@@ -42,10 +60,20 @@ class StakeholderMapAgent:
     name = "Stakeholder Map Agent"
     tools: tuple[ToolSpec, ...] = STAKEHOLDER_TOOLS
 
-    def __init__(self, llm: LLMAdapter) -> None:
+    def __init__(
+        self,
+        llm: LLMAdapter,
+        search_tool: AuthorizedEvidenceSearchTool | None = None,
+    ) -> None:
         self.llm = llm
+        self.search_tool = search_tool
 
     def run(self, context: AgentContext) -> AgentOutput:
+        context = _context_with_search_results(
+            context,
+            self.search_tool,
+            "economic buyer champion procurement legal blocker stakeholder",
+        )
         return run_stakeholder_map(context, self.llm)
 
 
@@ -121,3 +149,19 @@ def _run_specialist(name: str, context: AgentContext, llm: LLMAdapter) -> AgentO
         user=json.dumps(prompt),
         output_type=AgentOutput,
     )
+
+
+def _context_with_search_results(
+    context: AgentContext,
+    search_tool: AuthorizedEvidenceSearchTool | None,
+    query: str,
+) -> AgentContext:
+    if search_tool is None:
+        return context
+    evidence = search_tool.run(
+        EvidenceSearchRequest(
+            opportunity_id=context.opportunity.opportunity_id,
+            query=query,
+        )
+    )
+    return AgentContext(context.opportunity, evidence)

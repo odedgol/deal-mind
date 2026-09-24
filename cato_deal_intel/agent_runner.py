@@ -13,6 +13,7 @@ from .agents import (
 from .llm import LLMAdapter
 from .models import AgentOutput, AgentTrace, DealSnapshot, StrategyOutput
 from .observability import observability_enabled
+from .tools import AuthorizedEvidenceSearchTool, DealContextTool
 
 T = TypeVar("T", AgentOutput, StrategyOutput)
 
@@ -29,10 +30,16 @@ class AgentRun:
 class AgentRunner:
     """Runs the agents and returns their typed outputs as one application result."""
 
-    def __init__(self, llm: LLMAdapter) -> None:
-        self.deal_context = DealContextAgent()
-        self.conversation = ConversationIntelligenceAgent(llm)
-        self.stakeholders = StakeholderMapAgent(llm)
+    def __init__(
+        self,
+        llm: LLMAdapter,
+        *,
+        deal_context_tool: DealContextTool | None = None,
+        search_tool: AuthorizedEvidenceSearchTool | None = None,
+    ) -> None:
+        self.deal_context = DealContextAgent(deal_context_tool)
+        self.conversation = ConversationIntelligenceAgent(llm, search_tool)
+        self.stakeholders = StakeholderMapAgent(llm, search_tool)
         self.strategy = NegotiationStrategyAgent(llm)
 
     def run(self, context: AgentContext, run_id: str) -> AgentRun:

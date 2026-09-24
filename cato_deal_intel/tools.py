@@ -25,14 +25,20 @@ class AuthorizedEvidenceSearchTool:
     def __init__(self, service: EvidenceService, decision: AuthorizationDecision) -> None:
         self.service = service
         self.decision = decision
+        self.retrieved_evidence: list[EvidenceItem] = []
 
     def run(self, request: EvidenceSearchRequest) -> list[EvidenceItem]:
-        return self.service.search(
+        results = self.service.search(
             opportunity_id=request.opportunity_id,
             query=request.query,
             decision=self.decision,
             limit=request.limit,
         )
+        known_ids = {item.evidence_id for item in self.retrieved_evidence}
+        self.retrieved_evidence.extend(
+            item for item in results if item.evidence_id not in known_ids
+        )
+        return results
 
 
 class DealContextTool:
@@ -57,14 +63,15 @@ class DealContextTool:
 class DealDeskPolicyTool:
     name = "get_deal_desk_policy"
 
-    def __init__(self, service: EvidenceService) -> None:
+    def __init__(self, service: EvidenceService, decision: AuthorizationDecision) -> None:
         self.service = service
+        self.decision = decision
 
-    def run(self, opportunity_id: str, decision: AuthorizationDecision) -> EvidenceItem | None:
+    def run(self, opportunity_id: str) -> EvidenceItem | None:
         policy = self.service.search(
             opportunity_id=opportunity_id,
             query="discount legal terms approval policy",
-            decision=decision,
+            decision=self.decision,
             limit=4,
         )
         return next((item for item in policy if item.source_type == "policies"), None)

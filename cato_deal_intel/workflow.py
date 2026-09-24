@@ -7,9 +7,10 @@ from .agents import AgentContext
 from .artifact_store import ArtifactStore
 from .data import SourceData
 from .llm import LLMAdapter
-from .models import Brief
+from .models import Brief, EvidenceItem
 from .retrieval import EvidenceRetriever
 from .services import ApprovalService, DealService, EvidenceService, build_brief
+from .tools import AuthorizedEvidenceSearchTool, DealContextTool
 from .validation import validate_citations
 
 
@@ -25,9 +26,16 @@ def create_brief(
     """Run the application flow from authorization to persisted brief."""
     source = SourceData(root)
     opportunity, decision = DealService(source).authorize(opportunity_id, user_id)
-    evidence = EvidenceService(source, EvidenceRetriever()).retrieve(opportunity_id, decision)
+    evidence_service = EvidenceService(source, EvidenceRetriever())
+    evidence = evidence_service.retrieve(opportunity_id, decision)
     run_id = uuid.uuid4().hex
-    agent_run = AgentRunner(llm).run(AgentContext(opportunity, evidence), run_id)
+    search_tool = AuthorizedEvidenceSearchTool(evidence_service, decision)
+    agent_run = AgentRunner(
+        llm,
+        deal_context_tool=DealContextTool(opportunity),
+        search_tool=search_tool,
+    ).run(AgentContext(opportunity, evidence), run_id)
+    evidence = _merge_evidence(evidence, search_tool.retrieved_evidence)
     validate_citations(
         [agent_run.conversation, agent_run.stakeholders, agent_run.strategy],
         evidence,
@@ -61,3 +69,11 @@ def create_brief(
         traces=agent_run.traces,
     )
     return brief
+
+
+def _merge_evidence(
+    primary: list[EvidenceItem], additional: list[EvidenceItem]
+) -> list[EvidenceItem]:
+    merged = {item.evidence_id: item for item in primary}
+    merged.update({item.evidence_id: item for item in additional})
+    return list(merged.values())
