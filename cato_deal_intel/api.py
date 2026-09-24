@@ -65,7 +65,7 @@ def generate_brief(request: BriefRequest) -> Brief | DeniedResult:
             llm=configured_llm(),
             approval_decision=request.approval_decision,
             qdrant_path=DEFAULT_QDRANT_PATH,
-            qdrant_client=_get_qdrant_client(),
+            qdrant_client_factory=_get_qdrant_client,
             embedding_provider=configured_embedding_provider(),
         )
 

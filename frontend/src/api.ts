@@ -20,7 +20,17 @@ export type BriefResponse = {
   }>;
 };
 
-export const generateBrief = async (request: BriefRequest): Promise<BriefResponse> => {
+export type DeniedResponse = {
+  status: "denied";
+  run_id: string;
+  opportunity_id: string;
+  user_id: string;
+  message: string;
+};
+
+export type BriefResult = BriefResponse | DeniedResponse;
+
+export const generateBrief = async (request: BriefRequest): Promise<BriefResult> => {
   const response = await fetch("http://127.0.0.1:8000/brief", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -31,5 +41,5 @@ export const generateBrief = async (request: BriefRequest): Promise<BriefRespons
     throw new Error(`API request failed with status ${response.status}`);
   }
 
-  return response.json() as Promise<BriefResponse>;
+  return response.json() as Promise<BriefResult>;
 };

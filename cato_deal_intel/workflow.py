@@ -27,6 +27,7 @@ def create_brief(
     | None = None,
     qdrant_path: Path | None = None,
     qdrant_client: QdrantClient | None = None,
+    qdrant_client_factory: Callable[[], QdrantClient] | None = None,
     embedding_provider: EmbeddingProvider | None = None,
 ) -> WorkflowResult:
     """Run the LangGraph flow and return either a brief or a safe denial."""
@@ -46,6 +47,8 @@ def create_brief(
         initial_state["approval_prompt"] = approval_prompt
     if qdrant_client is not None:
         initial_state["qdrant_client"] = qdrant_client
+    if qdrant_client_factory is not None:
+        initial_state["qdrant_client_factory"] = qdrant_client_factory
     try:
         result = build_deal_graph().invoke(initial_state)
     except Exception as error:

@@ -67,6 +67,7 @@ class DealState(TypedDict, total=False):
     run_id: str
     qdrant_path: Path
     qdrant_client: QdrantClient
+    qdrant_client_factory: Callable[[], QdrantClient]
     embedding_provider: EmbeddingProvider
     opportunity: Opportunity
     authorization: AuthorizationDecision
@@ -140,8 +141,12 @@ def safe_denial_node(state: DealState) -> dict[str, object]:
 
 def retrieve_node(state: DealState) -> dict[str, object]:
     source = SourceData(state["root"])
+    client = state.get("qdrant_client")
+    if client is None:
+        factory = state.get("qdrant_client_factory")
+        client = factory() if factory is not None else None
     retriever = EvidenceRetriever(
-        client=state.get("qdrant_client"),
+        client=client,
         path=state["qdrant_path"],
         require_existing=True,
         embedding_provider=state["embedding_provider"],

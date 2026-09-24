@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { AlertTriangle, ArrowUpRight, CheckCircle2, FileSearch, ShieldCheck, Sparkles } from "lucide-react";
-import { BriefResponse, generateBrief } from "./api";
+import { BriefResponse, BriefResult, DeniedResponse, generateBrief } from "./api";
 
 const initialBrief: BriefResponse | null = null;
 
@@ -8,7 +8,7 @@ function App() {
   const [opportunityId, setOpportunityId] = useState("OPP-1001");
   const [userId, setUserId] = useState("USR-5001");
   const [approval, setApproval] = useState<"approved" | "rejected" | "pending">("pending");
-  const [brief, setBrief] = useState<BriefResponse | null>(initialBrief);
+  const [result, setResult] = useState<BriefResult | null>(initialBrief);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -16,7 +16,7 @@ function App() {
     setLoading(true);
     setError(null);
     try {
-      setBrief(await generateBrief({ opportunity_id: opportunityId, user_id: userId, approval_decision: approval }));
+      setResult(await generateBrief({ opportunity_id: opportunityId, user_id: userId, approval_decision: approval }));
     } catch (requestError) {
       setError(requestError instanceof Error ? requestError.message : "The request failed.");
     } finally {
@@ -59,11 +59,23 @@ function App() {
           <button onClick={runBrief} disabled={loading} className="mb-8 inline-flex items-center gap-2 rounded-xl bg-cyan-300 px-5 py-3 font-semibold text-[#07111f] transition hover:bg-cyan-200 disabled:cursor-wait disabled:opacity-50">{loading ? "Generating…" : "Generate brief"}<ArrowUpRight size={17} /></button>
 
           {error && <div className="mb-6 rounded-2xl border border-rose-400/30 bg-rose-400/10 p-4 text-rose-200">{error}</div>}
-          {brief ? <BriefView brief={brief} /> : <div className="rounded-3xl border border-dashed border-white/15 bg-white/[0.02] p-16 text-center text-slate-500"><Sparkles className="mx-auto mb-4 text-cyan-300" /><p>Generate a brief to open the deal room.</p></div>}
+          {result ? <ResultView result={result} /> : <div className="rounded-3xl border border-dashed border-white/15 bg-white/[0.02] p-16 text-center text-slate-500"><Sparkles className="mx-auto mb-4 text-cyan-300" /><p>Generate a brief to open the deal room.</p></div>}
         </section>
       </div>
     </main>
   );
+}
+
+function ResultView({ result }: { result: BriefResult }) {
+  return "status" in result ? <DeniedView result={result} /> : <BriefView brief={result} />;
+}
+
+function DeniedView({ result }: { result: DeniedResponse }) {
+  return <div className="rounded-3xl border border-rose-400/25 bg-rose-400/[0.08] p-8">
+    <div className="mb-4 flex items-center gap-3 text-rose-200"><ShieldCheck size={22} /><h2 className="text-xl font-semibold">Access denied</h2></div>
+    <p className="text-slate-300">{result.message}</p>
+    <p className="mt-4 text-xs text-slate-500">Request {result.run_id.slice(0, 8)} · {result.opportunity_id}</p>
+  </div>;
 }
 
 function BriefView({ brief }: { brief: BriefResponse }) {

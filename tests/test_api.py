@@ -43,3 +43,18 @@ def test_brief_endpoint_reuses_workflow(monkeypatch, tmp_path) -> None:
 
     assert response.status_code == 200
     assert response.json()["opportunity_id"] == "OPP-1001"
+
+
+def test_brief_endpoint_returns_safe_denial() -> None:
+    response = TestClient(api.app).post(
+        "/brief",
+        json={
+            "opportunity_id": "OPP-1003",
+            "user_id": "USR-5007",
+            "approval_decision": "pending",
+        },
+    )
+
+    assert response.status_code == 200
+    assert response.json()["status"] == "denied"
+    assert response.json()["message"] == "Requester is not authorized for this request."
