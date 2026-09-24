@@ -26,6 +26,15 @@ def test_fake_workflow_persists_required_brief_artifacts(tmp_path: Path) -> None
         section in markdown for section in ["Deal Snapshot", "Executive Summary", "Source Evidence"]
     )
     assert json.loads((run_dir / "brief.json").read_text())["opportunity_id"] == "OPP-1001"
+    traces = json.loads((run_dir / "trace.json").read_text())
+    assert {trace["agent_name"] for trace in traces} == {
+        "Deal Context Agent",
+        "Conversation Intelligence Agent",
+        "Stakeholder Map Agent",
+        "Negotiation Strategy Agent",
+    }
+    assert all(trace["status"] == "completed" for trace in traces)
+    assert all(trace["run_id"] == brief.run_id for trace in traces)
 
 
 def test_restricted_workflow_routes_approval(tmp_path: Path) -> None:

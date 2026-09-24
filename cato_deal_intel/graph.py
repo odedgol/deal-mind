@@ -1,3 +1,5 @@
+from collections.abc import Callable
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Annotated, Any, Literal, TypedDict
 
@@ -46,6 +48,12 @@ def _merge_unique_evidence(
     return list(merged.values())
 
 
+def _merge_traces(current: list[AgentTrace], incoming: list[AgentTrace]) -> list[AgentTrace]:
+    traces = {(trace.run_id, trace.agent_name): trace for trace in current}
+    traces.update({(trace.run_id, trace.agent_name): trace for trace in incoming})
+    return list(traces.values())
+
+
 class DealState(TypedDict, total=False):
     root: Path
     artifacts_root: Path
@@ -64,7 +72,7 @@ class DealState(TypedDict, total=False):
     actions: list[RecommendedAction]
     approvals: list[ApprovalRecord]
     brief: Brief
-    traces: list[AgentTrace]
+    traces: Annotated[list[AgentTrace], _merge_traces]
     denial: DeniedResult
 
 
@@ -130,33 +138,44 @@ def retrieve_node(state: DealState) -> dict[str, object]:
 
 
 def deal_context_node(state: DealState) -> dict[str, object]:
-    snapshot = DealContextAgent(DealContextTool(state["opportunity"])).run(
-        AgentContext(state["opportunity"], state["evidence"])
+    agent = DealContextAgent(DealContextTool(state["opportunity"]))
+    snapshot, trace = _run_traced_agent(
+        run_id=state["run_id"],
+        agent_name=agent.name,
+        operation=lambda: agent.run(AgentContext(state["opportunity"], state["evidence"])),
     )
-    return {"deal_snapshot": snapshot, "traces": []}
+    return {"deal_snapshot": snapshot, "traces": [trace]}
 
 
 def conversation_node(state: DealState) -> dict[str, object]:
     service = EvidenceService(SourceData(state["root"]), EvidenceRetriever())
     search = AuthorizedEvidenceSearchTool(service, state["authorization"])
-    output = ConversationIntelligenceAgent(state["llm"], search).run(
-        AgentContext(state["opportunity"], state["evidence"])
+    agent = ConversationIntelligenceAgent(state["llm"], search)
+    output, trace = _run_traced_agent(
+        run_id=state["run_id"],
+        agent_name=agent.name,
+        operation=lambda: agent.run(AgentContext(state["opportunity"], state["evidence"])),
     )
     return {
         "conversation": output,
         "evidence": _merge_evidence(state["evidence"], search.retrieved_evidence),
+        "traces": [trace],
     }
 
 
 def stakeholders_node(state: DealState) -> dict[str, object]:
     service = EvidenceService(SourceData(state["root"]), EvidenceRetriever())
     search = AuthorizedEvidenceSearchTool(service, state["authorization"])
-    output = StakeholderMapAgent(state["llm"], search).run(
-        AgentContext(state["opportunity"], state["evidence"])
+    agent = StakeholderMapAgent(state["llm"], search)
+    output, trace = _run_traced_agent(
+        run_id=state["run_id"],
+        agent_name=agent.name,
+        operation=lambda: agent.run(AgentContext(state["opportunity"], state["evidence"])),
     )
     return {
         "stakeholders": output,
         "evidence": _merge_evidence(state["evidence"], search.retrieved_evidence),
+        "traces": [trace],
     }
 
 
@@ -170,9 +189,15 @@ def strategy_node(state: DealState) -> dict[str, object]:
         ApprovalRequestTool(ApprovalService()),
     )
     context = AgentContext(state["opportunity"], state["evidence"])
-    output = strategy_agent.run(context, [state["conversation"], state["stakeholders"]])
+    output, trace = _run_traced_agent(
+        run_id=state["run_id"],
+        agent_name=strategy_agent.name,
+        operation=lambda: strategy_agent.run(
+            context, [state["conversation"], state["stakeholders"]]
+        ),
+    )
     evidence = _merge_evidence(state["evidence"], policy.retrieved_evidence)
-    return {"strategy": output, "evidence": evidence}
+    return {"strategy": output, "evidence": evidence, "traces": [trace]}
 
 
 def approval_node(state: DealState) -> dict[str, object]:
@@ -221,3 +246,19 @@ def _merge_evidence(
     merged = {item.evidence_id: item for item in primary}
     merged.update({item.evidence_id: item for item in additional})
     return list(merged.values())
+
+
+def _run_traced_agent[T](
+    *, run_id: str, agent_name: str, operation: Callable[[], T]
+) -> tuple[T, AgentTrace]:
+    started_at = datetime.now(UTC)
+    result = operation()
+    trace = AgentTrace(
+        run_id=run_id,
+        agent_name=agent_name,
+        prompt_version="v1",
+        status="completed",
+        started_at=started_at,
+        completed_at=datetime.now(UTC),
+    )
+    return result, trace
