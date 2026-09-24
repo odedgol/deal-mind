@@ -84,8 +84,10 @@ class EvidenceService:
             allowed_access_levels=decision.allowed_access_levels,
             limit=limit,
         )
+
         def retrieve() -> list[EvidenceItem]:
             return self.retriever.retrieve(request, decision)
+
         if self.collector is None or self.run_id is None:
             return retrieve()
         results, _ = trace_operation(
