@@ -26,6 +26,10 @@ This workspace contains a Typer CLI with typed Pydantic contracts, local Qdrant 
 
 The generated synthetic Slack updates are stored at `synthetic_data/slack/account_team_updates.tsv`.
 
+Architecture and deployment diagrams are documented in [ARCHITECTURE.md](ARCHITECTURE.md).
+Production idempotency and deployment notes are documented in
+[PRODUCTION_READINESS.md](PRODUCTION_READINESS.md).
+
 Setup and tests:
 
 ```bash
