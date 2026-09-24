@@ -22,6 +22,7 @@ def test_observability_logs_safe_agent_lifecycle(
     monkeypatch: MonkeyPatch, caplog: LogCaptureFixture
 ) -> None:
     monkeypatch.setenv("CATO_OBSERVABILITY", "true")
+    monkeypatch.setenv("CATO_OBSERVABILITY_IO", "metadata")
 
     @observed(agent_name="test-agent", prompt_version="v1")
     def work() -> str:
