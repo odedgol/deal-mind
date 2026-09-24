@@ -1,0 +1,189 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1800" height="1120" viewBox="0 0 1800 1120" role="img" aria-labelledby="title desc">
+  <title id="title">Deal Intelligence Assistant system map</title>
+  <desc id="desc">A professional architecture diagram showing channels, request context, LangGraph orchestration, RAG, tools, model gateway, state, outputs, and observability.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f8fbff"/>
+      <stop offset="1" stop-color="#eef5fb"/>
+    </linearGradient>
+    <linearGradient id="graph" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0b2942"/>
+      <stop offset="1" stop-color="#123f60"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="5" stdDeviation="7" flood-color="#12324a" flood-opacity=".12"/>
+    </filter>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#4f7188"/>
+    </marker>
+    <marker id="arrowLight" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#73d4df"/>
+    </marker>
+    <style>
+      .title { font: 700 32px Inter, Arial, sans-serif; fill: #0b2942; }
+      .subtitle { font: 400 15px Inter, Arial, sans-serif; fill: #547087; }
+      .layer { font: 700 13px Inter, Arial, sans-serif; letter-spacing: 1.5px; fill: #d9f8fb; }
+      .node { font: 650 15px Inter, Arial, sans-serif; fill: #12324a; }
+      .small { font: 500 12px Inter, Arial, sans-serif; fill: #547087; }
+      .graphNode { font: 650 14px Inter, Arial, sans-serif; fill: #f4fbff; }
+      .graphSmall { font: 500 11px Inter, Arial, sans-serif; fill: #b9d9e7; }
+      .callout { font: 600 14px Inter, Arial, sans-serif; fill: #244961; }
+    </style>
+  </defs>
+
+  <rect width="1800" height="1120" fill="url(#bg)"/>
+  <text x="70" y="60" class="title">Deal Intelligence Assistant · System Map</text>
+  <text x="70" y="88" class="subtitle">Design-first architecture for LangGraph orchestration, grounded RAG, permission-aware agents, approval, and observability</text>
+
+  <!-- Shared layer frame helper: each row is 1100 wide, starting x=70 -->
+  <g filter="url(#shadow)">
+    <rect x="70" y="120" width="1660" height="100" rx="18" fill="#ffffff"/>
+    <rect x="70" y="120" width="235" height="100" rx="18" fill="#087b89"/>
+    <rect x="70" y="120" width="255" height="100" fill="#087b89"/>
+
+    <rect x="70" y="240" width="1660" height="100" rx="18" fill="#ffffff"/>
+    <rect x="70" y="240" width="255" height="100" fill="#087b89"/>
+
+    <rect x="70" y="360" width="1660" height="240" rx="18" fill="url(#graph)"/>
+    <rect x="70" y="360" width="255" height="240" fill="#09263d"/>
+
+    <rect x="70" y="620" width="1660" height="110" rx="18" fill="#ffffff"/>
+    <rect x="70" y="620" width="255" height="110" fill="#087b89"/>
+
+    <rect x="70" y="750" width="1660" height="100" rx="18" fill="#ffffff"/>
+    <rect x="70" y="750" width="255" height="100" fill="#087b89"/>
+
+    <rect x="70" y="870" width="1660" height="100" rx="18" fill="#ffffff"/>
+    <rect x="70" y="870" width="255" height="100" fill="#087b89"/>
+
+    <rect x="70" y="990" width="1660" height="72" rx="18" fill="#ffffff"/>
+    <rect x="70" y="990" width="255" height="72" fill="#087b89"/>
+  </g>
+
+  <text x="100" y="178" class="layer">USER CHANNELS</text>
+  <text x="100" y="298" class="layer">REQUEST CONTEXT</text>
+  <text x="100" y="425" class="layer">LANGGRAPH</text>
+  <text x="100" y="450" class="layer">ORCHESTRATOR</text>
+  <text x="100" y="680" class="layer">RAG / EVIDENCE</text>
+  <text x="100" y="808" class="layer">TOOLS / MCP</text>
+  <text x="100" y="928" class="layer">MODEL GATEWAY</text>
+  <text x="100" y="1033" class="layer">STATE + OBSERVABILITY</text>
+
+  <!-- Channel nodes -->
+  <g filter="url(#shadow)">
+    <rect x="370" y="140" width="270" height="60" rx="12" fill="#f5fbff" stroke="#afd8e4"/>
+    <rect x="670" y="140" width="270" height="60" rx="12" fill="#f5fbff" stroke="#afd8e4"/>
+    <rect x="970" y="140" width="270" height="60" rx="12" fill="#f5fbff" stroke="#afd8e4"/>
+    <rect x="1270" y="140" width="270" height="60" rx="12" fill="#f5fbff" stroke="#afd8e4"/>
+  </g>
+  <text x="505" y="177" text-anchor="middle" class="node">CLI</text>
+  <text x="805" y="177" text-anchor="middle" class="node">API</text>
+  <text x="1105" y="177" text-anchor="middle" class="node">React Web App</text>
+  <text x="1405" y="177" text-anchor="middle" class="node">Slack · future adapter</text>
+
+  <!-- Request context -->
+  <g filter="url(#shadow)">
+    <rect x="430" y="260" width="300" height="60" rx="12" fill="#f5fbff" stroke="#afd8e4"/>
+    <rect x="770" y="260" width="300" height="60" rx="12" fill="#f5fbff" stroke="#afd8e4"/>
+    <rect x="1110" y="260" width="360" height="60" rx="12" fill="#fffaf0" stroke="#f3cc7b"/>
+  </g>
+  <text x="580" y="285" text-anchor="middle" class="node">Identity Mapping</text>
+  <text x="580" y="304" text-anchor="middle" class="small">Slack identity → internal user_id</text>
+  <text x="920" y="285" text-anchor="middle" class="node">Input Validation</text>
+  <text x="920" y="304" text-anchor="middle" class="small">opportunity_id · approval state</text>
+  <text x="1290" y="285" text-anchor="middle" class="node">Missing Context Response</text>
+  <text x="1290" y="304" text-anchor="middle" class="small">ask user before starting the graph</text>
+
+  <!-- Main graph flow -->
+  <g filter="url(#shadow)">
+    <rect x="350" y="405" width="150" height="70" rx="12" fill="#fff1f1" stroke="#ea6b6b" stroke-width="2"/>
+    <rect x="530" y="405" width="150" height="70" rx="12" fill="#f5fbff" stroke="#afd8e4"/>
+    <rect x="710" y="390" width="410" height="150" rx="16" fill="#103b58" stroke="#71d5df" stroke-width="2" stroke-dasharray="7 5"/>
+    <rect x="1150" y="405" width="165" height="70" rx="12" fill="#f5fbff" stroke="#afd8e4"/>
+    <rect x="1345" y="405" width="165" height="70" rx="12" fill="#fff8e7" stroke="#edb646" stroke-width="2"/>
+    <rect x="1540" y="405" width="150" height="70" rx="12" fill="#f5fbff" stroke="#afd8e4"/>
+  </g>
+  <path d="M500 440 H530 M680 440 H710 M1120 440 H1150 M1315 440 H1345 M1510 440 H1540" stroke="#73d4df" stroke-width="3" fill="none" marker-end="url(#arrowLight)"/>
+  <text x="425" y="433" text-anchor="middle" class="node">Authorize</text>
+  <text x="425" y="453" text-anchor="middle" class="small">permission gate</text>
+  <text x="605" y="433" text-anchor="middle" class="node">Retrieve</text>
+  <text x="605" y="453" text-anchor="middle" class="small">authorized evidence</text>
+  <text x="915" y="415" text-anchor="middle" class="graphNode">Parallel Specialist Agents</text>
+  <rect x="730" y="430" width="112" height="82" rx="9" fill="#164d6b" stroke="#4eaebd"/>
+  <rect x="858" y="430" width="124" height="82" rx="9" fill="#164d6b" stroke="#4eaebd"/>
+  <rect x="998" y="430" width="112" height="82" rx="9" fill="#164d6b" stroke="#4eaebd"/>
+  <text x="786" y="461" text-anchor="middle" class="graphNode">Deal</text><text x="786" y="480" text-anchor="middle" class="graphNode">Context</text>
+  <text x="920" y="461" text-anchor="middle" class="graphNode">Conversation</text><text x="920" y="480" text-anchor="middle" class="graphNode">Intelligence</text>
+  <text x="1054" y="461" text-anchor="middle" class="graphNode">Stakeholder</text><text x="1054" y="480" text-anchor="middle" class="graphNode">Map</text>
+  <text x="1232" y="433" text-anchor="middle" class="node">Strategy</text><text x="1232" y="453" text-anchor="middle" class="small">main agent</text>
+  <text x="1428" y="433" text-anchor="middle" class="node">Human Approval</text><text x="1428" y="453" text-anchor="middle" class="small">pause / resume</text>
+  <text x="1615" y="433" text-anchor="middle" class="node">Validate</text><text x="1615" y="453" text-anchor="middle" class="small">citations + policy</text>
+  <text x="900" y="570" text-anchor="middle" class="graphSmall">State flows through every node · failures produce a trace · authorized data only</text>
+
+  <!-- RAG -->
+  <g filter="url(#shadow)">
+    <rect x="365" y="645" width="190" height="60" rx="12" fill="#f5fbff" stroke="#afd8e4"/>
+    <rect x="585" y="645" width="190" height="60" rx="12" fill="#f5fbff" stroke="#afd8e4"/>
+    <rect x="805" y="645" width="190" height="60" rx="12" fill="#f5fbff" stroke="#afd8e4"/>
+    <rect x="1025" y="645" width="240" height="60" rx="12" fill="#f5fbff" stroke="#afd8e4"/>
+    <rect x="1295" y="645" width="220" height="60" rx="12" fill="#f5fbff" stroke="#afd8e4"/>
+    <rect x="1545" y="645" width="150" height="60" rx="12" fill="#f5fbff" stroke="#afd8e4"/>
+  </g>
+  <path d="M555 675 H585 M775 675 H805 M995 675 H1025 M1265 675 H1295 M1515 675 H1545" stroke="#4f7188" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+  <text x="460" y="672" text-anchor="middle" class="node">Source Files</text>
+  <text x="680" y="672" text-anchor="middle" class="node">Ingestion</text>
+  <text x="900" y="672" text-anchor="middle" class="node">Qdrant</text>
+  <text x="1145" y="672" text-anchor="middle" class="node">Metadata Permission Filters</text>
+  <text x="1405" y="672" text-anchor="middle" class="node">Hybrid BM25 + Dense</text>
+  <text x="1620" y="672" text-anchor="middle" class="node">Citations</text>
+  <text x="1620" y="691" text-anchor="middle" class="small">validation</text>
+  <text x="1405" y="704" text-anchor="middle" class="small">RRF · recency · reliability</text>
+
+  <!-- Tools -->
+  <g filter="url(#shadow)">
+    <rect x="400" y="775" width="250" height="50" rx="12" fill="#f5fbff" stroke="#afd8e4"/>
+    <rect x="700" y="775" width="250" height="50" rx="12" fill="#f5fbff" stroke="#afd8e4"/>
+    <rect x="1000" y="775" width="250" height="50" rx="12" fill="#f5fbff" stroke="#afd8e4"/>
+    <rect x="1300" y="775" width="250" height="50" rx="12" fill="#f5fbff" stroke="#afd8e4"/>
+  </g>
+  <text x="525" y="805" text-anchor="middle" class="node">Deal Context Tool</text>
+  <text x="825" y="805" text-anchor="middle" class="node">Evidence Search Tool</text>
+  <text x="1125" y="805" text-anchor="middle" class="node">Policy Tool</text>
+  <text x="1425" y="805" text-anchor="middle" class="node">Approval Tool</text>
+
+  <!-- Model gateway -->
+  <g filter="url(#shadow)">
+    <rect x="400" y="775" width="0" height="0" fill="none"/>
+    <rect x="400" y="895" width="250" height="50" rx="12" fill="#f5fbff" stroke="#afd8e4"/>
+    <rect x="700" y="895" width="250" height="50" rx="12" fill="#f5fbff" stroke="#afd8e4"/>
+    <rect x="1000" y="895" width="250" height="50" rx="12" fill="#f5fbff" stroke="#afd8e4"/>
+    <rect x="1300" y="895" width="250" height="50" rx="12" fill="#f5fbff" stroke="#afd8e4"/>
+  </g>
+  <text x="525" y="925" text-anchor="middle" class="node">Specialist Model</text>
+  <text x="825" y="925" text-anchor="middle" class="node">Strategy Model</text>
+  <text x="1125" y="925" text-anchor="middle" class="node">Token Budget</text>
+  <text x="1425" y="925" text-anchor="middle" class="node">Retry Policy</text>
+
+  <!-- Cross-layer connections -->
+  <path d="M805 200 V240" stroke="#4f7188" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+  <path d="M920 320 V360" stroke="#4f7188" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+  <path d="M605 475 V620" stroke="#73d4df" stroke-width="2" fill="none" marker-end="url(#arrowLight)"/>
+  <path d="M915 540 V620" stroke="#73d4df" stroke-width="2" fill="none" marker-end="url(#arrowLight)"/>
+  <path d="M1232 475 V620" stroke="#73d4df" stroke-width="2" fill="none" marker-end="url(#arrowLight)"/>
+  <path d="M915 540 V775" stroke="#4f7188" stroke-width="2" stroke-dasharray="6 5" fill="none" marker-end="url(#arrow)"/>
+  <path d="M915 540 V895" stroke="#4f7188" stroke-width="2" stroke-dasharray="6 5" fill="none" marker-end="url(#arrow)"/>
+
+  <!-- State and observability -->
+  <text x="365" y="1033" class="node">Graph State</text>
+  <text x="650" y="1033" class="node">Run Artifacts</text>
+  <text x="965" y="1033" class="node">Brief JSON + Markdown</text>
+  <text x="1340" y="1033" class="node">Approval Records</text>
+  <text x="1610" y="1033" text-anchor="end" class="small">run_id everywhere</text>
+  <path d="M420 970 V1010 M720 970 V1010 M1050 970 V1010 M1420 970 V1010" stroke="#4f7188" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+  <rect x="350" y="1040" width="1350" height="1" fill="#c6d9e5"/>
+  <text x="365" y="1058" class="small">Observability: annotated logs · input/output metadata · successful and failed traces · Langfuse (future)</text>
+
+  <!-- Security callout -->
+  <rect x="70" y="1080" width="1660" height="30" rx="10" fill="#e5f7f8" stroke="#9adbe0"/>
+  <text x="900" y="1101" text-anchor="middle" class="callout">Security rule: retrieved content is untrusted data; authorization and guardrails are enforced in code.</text>
+</svg>
