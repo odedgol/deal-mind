@@ -93,9 +93,7 @@ def build_deal_graph() -> CompiledStateGraph[Any, Any, Any, Any]:
 
 def authorize_node(state: DealState) -> dict[str, object]:
     source = SourceData(state["root"])
-    opportunity, decision = DealService(source).authorize(
-        state["opportunity_id"], state["user_id"]
-    )
+    opportunity, decision = DealService(source).authorize(state["opportunity_id"], state["user_id"])
     return {"opportunity": opportunity, "authorization": decision}
 
 
