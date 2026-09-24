@@ -85,6 +85,11 @@ that asks the model to reveal system instructions. Production should extend this
 tool-use requests, permission-bypass attempts, secret extraction, indirect instructions in Slack
 messages, and multilingual variants.
 
+This is a meaningful defense layer, but it is not a complete security boundary. Production must
+also add tool sandboxing, authorization enforced in application code, secret filtering, and
+additional red-team tests. The system prompt must never be treated as a replacement for these
+controls.
+
 ## Idempotency preparation
 
 An idempotency key is not required for the current MVP because the workflow does not perform
