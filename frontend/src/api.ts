@@ -18,6 +18,15 @@ export type BriefResponse = {
     rationale: string;
     requires_approval: boolean;
   }>;
+  cost_summary: {
+    budget_usd: number | null;
+    spent_usd: number;
+    remaining_usd: number | null;
+    prompt_tokens: number;
+    completion_tokens: number;
+    call_count: number;
+    models: string[];
+  };
 };
 
 export type DeniedResponse = {

@@ -116,6 +116,16 @@ class StrategyOutput(StrictModel):
     warnings: list[str] = Field(default_factory=list)
 
 
+class CostSummary(StrictModel):
+    budget_usd: float | None = None
+    spent_usd: float = 0.0
+    remaining_usd: float | None = None
+    prompt_tokens: int = 0
+    completion_tokens: int = 0
+    call_count: int = 0
+    models: list[str] = Field(default_factory=list)
+
+
 class ApprovalRecord(StrictModel):
     recommendation: str
     reason: str
@@ -136,6 +146,7 @@ class Brief(StrictModel):
     missing_information: list[str]
     source_evidence: list[EvidenceItem]
     confidence_and_review_warnings: list[str]
+    cost_summary: CostSummary = Field(default_factory=CostSummary)
 
 
 class DeniedResult(StrictModel):

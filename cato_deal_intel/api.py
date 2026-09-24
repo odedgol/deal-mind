@@ -1,9 +1,11 @@
 """Small HTTP adapter for the reusable deal-intelligence workflow."""
 
+import json
+from pathlib import Path
 from threading import Lock
 from typing import Literal
 
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, ConfigDict
 from qdrant_client import QdrantClient
@@ -11,7 +13,7 @@ from qdrant_client import QdrantClient
 from .cli import ARTIFACT_ROOT, DATA_ROOT
 from .embeddings import configured_embedding_provider
 from .llm import configured_llm
-from .models import Brief, DeniedResult
+from .models import Brief, CostSummary, DeniedResult
 from .retrieval import DEFAULT_QDRANT_PATH
 from .workflow import create_brief
 
@@ -68,6 +70,16 @@ def generate_brief(request: BriefRequest) -> Brief | DeniedResult:
             qdrant_client_factory=_get_qdrant_client,
             embedding_provider=configured_embedding_provider(),
         )
+
+
+@app.get("/runs/{run_id}/usage", response_model=CostSummary)
+def get_run_usage(run_id: str) -> CostSummary:
+    """Return the persisted model usage summary for one completed run."""
+    path = Path(ARTIFACT_ROOT) / run_id / "brief.json"
+    if not path.exists():
+        raise HTTPException(status_code=404, detail="Run was not found.")
+    brief = Brief.model_validate(json.loads(path.read_text(encoding="utf-8")))
+    return brief.cost_summary
 
 
 def main() -> None:

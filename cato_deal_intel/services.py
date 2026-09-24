@@ -8,6 +8,7 @@ from .models import (
     ApprovalRecord,
     AuthorizationDecision,
     Brief,
+    CostSummary,
     DealSnapshot,
     EvidenceItem,
     Opportunity,
@@ -161,6 +162,7 @@ def build_brief(
     strategy: StrategyOutput,
     actions: list[RecommendedAction],
     approvals: list[ApprovalRecord],
+    cost_summary: CostSummary | None = None,
 ) -> Brief:
     warnings = strategy.warnings + [
         f"Approval required: {approval.recommendation}"
@@ -179,4 +181,5 @@ def build_brief(
         missing_information=conversation.missing_information + stakeholders.missing_information,
         source_evidence=evidence,
         confidence_and_review_warnings=warnings,
+        cost_summary=cost_summary or CostSummary(),
     )

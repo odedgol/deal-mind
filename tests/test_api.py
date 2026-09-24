@@ -43,6 +43,10 @@ def test_brief_endpoint_reuses_workflow(monkeypatch, tmp_path) -> None:
 
     assert response.status_code == 200
     assert response.json()["opportunity_id"] == "OPP-1001"
+    run_id = response.json()["run_id"]
+    usage_response = TestClient(api.app).get(f"/runs/{run_id}/usage")
+    assert usage_response.status_code == 200
+    assert usage_response.json()["budget_usd"] is not None
 
 
 def test_brief_endpoint_returns_safe_denial() -> None:

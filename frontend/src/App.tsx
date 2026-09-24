@@ -102,7 +102,19 @@ function BriefView({ brief, approvalComplete }: { brief: BriefResponse; approval
       <article className="rounded-3xl border border-amber-300/20 bg-amber-300/[0.07] p-6"><div className="mb-4 flex items-center gap-2 text-amber-200"><AlertTriangle size={18} /><p className="font-medium">Review warnings</p></div><ul className="space-y-3 text-sm text-amber-100/80">{brief.confidence_and_review_warnings.map((warning) => <li key={warning}>• {warning}</li>)}</ul></article>
     </div>
     <article className="rounded-3xl border border-white/10 bg-white/[0.04] p-6"><p className="mb-5 text-xs uppercase tracking-[0.2em] text-cyan-300">Recommended next actions</p><div className="grid gap-3 md:grid-cols-2">{brief.recommended_next_actions.map((action) => <div key={action.action} className="rounded-2xl border border-white/10 bg-[#0b1829] p-4"><div className="flex justify-between gap-4"><p className="font-medium">{action.action}</p>{action.requires_approval && <span className="text-xs text-amber-300">Approval</span>}</div><p className="mt-2 text-sm text-slate-400">{action.rationale}</p><p className="mt-3 text-xs text-slate-600">Owner · {action.owner}</p></div>)}</div></article>
+    <CostCard brief={brief} />
   </div>;
+}
+
+function CostCard({ brief }: { brief: BriefResponse }) {
+  const cost = brief.cost_summary;
+  const budget = cost.budget_usd === null ? "Unlimited" : `$${cost.budget_usd.toFixed(4)}`;
+  const remaining = cost.remaining_usd === null ? "Unlimited" : `$${cost.remaining_usd.toFixed(4)}`;
+  return <article className="rounded-3xl border border-cyan-300/15 bg-cyan-300/[0.05] p-6"><div className="mb-5 flex items-center justify-between"><p className="text-xs uppercase tracking-[0.2em] text-cyan-300">Model cost & budget</p><span className="text-xs text-slate-500">{cost.call_count} calls</span></div><div className="grid gap-4 sm:grid-cols-4"><Metric label="Spent" value={`$${cost.spent_usd.toFixed(4)}`} /><Metric label="Budget" value={budget} /><Metric label="Remaining" value={remaining} /><Metric label="Tokens" value={(cost.prompt_tokens + cost.completion_tokens).toLocaleString()} /></div><p className="mt-5 text-xs text-slate-500">Models · {cost.models.length ? cost.models.join(", ") : "Fake/offline mode"}</p></article>;
+}
+
+function Metric({ label, value }: { label: string; value: string }) {
+  return <div><p className="text-xs text-slate-500">{label}</p><p className="mt-1 text-lg font-semibold text-slate-200">{value}</p></div>;
 }
 
 export default App;

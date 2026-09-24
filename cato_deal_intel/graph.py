@@ -16,7 +16,7 @@ from .agents import (
 from .artifact_store import ArtifactStore
 from .data import SourceData
 from .embeddings import EmbeddingProvider
-from .llm import LLMAdapter
+from .llm import LLMAdapter, usage_summary
 from .models import (
     AgentOutput,
     AgentTrace,
@@ -291,6 +291,7 @@ def build_brief_node(state: DealState) -> dict[str, object]:
         strategy=state["strategy"],
         actions=state["actions"],
         approvals=state["approvals"],
+        cost_summary=usage_summary(state["llm"]),
     )
     return {"brief": brief}
 

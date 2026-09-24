@@ -10,6 +10,8 @@ from dotenv import load_dotenv
 from openai import APIConnectionError, APITimeoutError, InternalServerError, OpenAI, RateLimitError
 from pydantic import BaseModel
 
+from .models import CostSummary
+
 T = TypeVar("T", bound=BaseModel)
 LOGGER = logging.getLogger("cato_deal_intel")
 RETRYABLE_ERRORS = (APIConnectionError, APITimeoutError, InternalServerError, RateLimitError)
@@ -78,9 +80,26 @@ class CostController:
         if self.budget_usd is not None and self.total_cost_usd >= self.budget_usd:
             raise LLMBudgetExceeded(f"LLM budget exhausted at ${self.total_cost_usd:.4f}")
 
+    def summary(self) -> CostSummary:
+        remaining = (
+            None if self.budget_usd is None else max(0.0, self.budget_usd - self.total_cost_usd)
+        )
+        return CostSummary(
+            budget_usd=self.budget_usd,
+            spent_usd=round(self.total_cost_usd, 6),
+            remaining_usd=None if remaining is None else round(remaining, 6),
+            prompt_tokens=self.total_prompt_tokens,
+            completion_tokens=self.total_completion_tokens,
+            call_count=len(self.snapshots),
+            models=sorted({snapshot.model for snapshot in self.snapshots}),
+        )
+
 
 class FakeLLM:
     """Small deterministic adapter used by tests and offline development."""
+
+    def __init__(self) -> None:
+        self.cost_controller = configured_cost_controller()
 
     def complete(self, *, system: str, user: str, output_type: type[T]) -> T:
         del system
@@ -130,11 +149,7 @@ class OpenAIAdapter:
         self.model: str = model or configured_model or "gpt-4o-mini"
         self.specialist_model = os.getenv("CATO_LLM_SPECIALIST_MODEL", self.model)
         self.strategy_model = os.getenv("CATO_LLM_STRATEGY_MODEL", self.model)
-        self.cost_controller = CostController(
-            budget_usd=_optional_env_float("CATO_LLM_BUDGET_USD"),
-            input_cost_per_million=_env_float("CATO_LLM_INPUT_COST_PER_1M", 0.15),
-            output_cost_per_million=_env_float("CATO_LLM_OUTPUT_COST_PER_1M", 0.60),
-        )
+        self.cost_controller = configured_cost_controller()
 
     def complete(self, *, system: str, user: str, output_type: type[T]) -> T:
         return _retry_call(
@@ -184,6 +199,14 @@ def configured_retry_config() -> RetryConfig:
         max_retries=_env_int("CATO_LLM_MAX_RETRIES", 2),
         timeout_seconds=_env_float("CATO_LLM_TIMEOUT_SECONDS", 30.0),
         backoff_seconds=_env_float("CATO_LLM_BACKOFF_SECONDS", 0.5),
+    )
+
+
+def configured_cost_controller() -> CostController:
+    return CostController(
+        budget_usd=_optional_env_float("CATO_LLM_BUDGET_USD"),
+        input_cost_per_million=_env_float("CATO_LLM_INPUT_COST_PER_1M", 0.15),
+        output_cost_per_million=_env_float("CATO_LLM_OUTPUT_COST_PER_1M", 0.60),
     )
 
 
@@ -242,6 +265,11 @@ def configured_llm() -> LLMAdapter:
     if not os.getenv("OPENAI_API_KEY"):
         raise RuntimeError("Set OPENAI_API_KEY or CATO_FAKE_LLM=1 for deterministic tests.")
     return OpenAIAdapter()
+
+
+def usage_summary(adapter: LLMAdapter) -> CostSummary:
+    controller = getattr(adapter, "cost_controller", None)
+    return controller.summary() if isinstance(controller, CostController) else CostSummary()
 
 
 def evidence_payload(evidence: Iterable[Any]) -> list[dict[str, Any]]:

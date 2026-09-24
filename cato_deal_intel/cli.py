@@ -1,3 +1,4 @@
+import json
 from pathlib import Path
 from typing import Literal
 
@@ -6,7 +7,7 @@ import typer
 from .data import SourceData
 from .embeddings import configured_embedding_provider
 from .llm import configured_llm
-from .models import Brief, RecommendedAction
+from .models import Brief, CostSummary, RecommendedAction
 from .retrieval import DEFAULT_QDRANT_PATH, EvidenceRetriever, RetrievalRequest
 from .workflow import create_brief
 
@@ -79,8 +80,29 @@ def brief(
     )
     if isinstance(result, Brief):
         typer.echo(f"Saved run {result.run_id} to {ARTIFACT_ROOT / result.run_id}")
+        echo_cost_summary(result.cost_summary)
         return
     typer.echo(f"Request denied: {result.message}")
+
+
+@app.command()
+def usage(run_id: str = typer.Option(..., "--run-id")) -> None:
+    """Show token usage and remaining budget for a completed run."""
+    path = ARTIFACT_ROOT / run_id / "brief.json"
+    if not path.exists():
+        raise typer.BadParameter(f"Run was not found: {run_id}")
+    brief = Brief.model_validate(json.loads(path.read_text(encoding="utf-8")))
+    echo_cost_summary(brief.cost_summary)
+
+
+def echo_cost_summary(summary: CostSummary) -> None:
+    budget = "unlimited" if summary.budget_usd is None else f"${summary.budget_usd:.4f}"
+    remaining = "unlimited" if summary.remaining_usd is None else f"${summary.remaining_usd:.4f}"
+    typer.echo(
+        f"LLM usage: spent=${summary.spent_usd:.4f}; budget={budget}; "
+        f"remaining={remaining}; tokens={summary.prompt_tokens + summary.completion_tokens}; "
+        f"calls={summary.call_count}"
+    )
 
 
 def prompt_for_approval(actions: list[RecommendedAction]) -> Literal["approved", "rejected"]:
