@@ -61,7 +61,8 @@ class DealState(TypedDict, total=False):
     opportunity_id: str
     user_id: str
     llm: LLMAdapter
-    approval_decision: Literal["approved", "rejected", "pending"]
+    approval_decision: Literal["ask", "approved", "rejected", "pending"]
+    approval_prompt: Callable[[list[RecommendedAction]], Literal["approved", "rejected"]]
     run_id: str
     qdrant_path: Path
     embedding_provider: EmbeddingProvider
@@ -250,6 +251,12 @@ def strategy_node(state: DealState) -> dict[str, object]:
 
 
 def approval_node(state: DealState) -> dict[str, object]:
+    decision = state.get("approval_decision", "pending")
+    if decision == "ask":
+        prompt = state.get("approval_prompt")
+        if prompt is None:
+            raise ValueError("An approval prompt is required when approval_decision='ask'.")
+        decision = prompt(state["strategy"].actions)
     (actions, approvals), _ = trace_operation(
         collector=state["trace_collector"],
         run_id=state["run_id"],
@@ -258,7 +265,7 @@ def approval_node(state: DealState) -> dict[str, object]:
         operation=lambda: ApprovalService().prepare(
             state["opportunity"],
             state["strategy"].actions,
-            state.get("approval_decision", "pending"),
+            decision,
         ),
         metadata={"action_count": str(len(state["strategy"].actions))},
     )

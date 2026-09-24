@@ -1,11 +1,12 @@
 import json
 from pathlib import Path
+from typing import Literal
 
 import pytest
 
 from cato_deal_intel.data import SourceData
 from cato_deal_intel.llm import FakeLLM
-from cato_deal_intel.models import Brief
+from cato_deal_intel.models import Brief, RecommendedAction
 from cato_deal_intel.retrieval import EvidenceRetriever
 from cato_deal_intel.workflow import create_brief
 
@@ -69,6 +70,31 @@ def test_restricted_workflow_routes_approval(tmp_path: Path) -> None:
     )
 
     assert any("Approval required" in warning for warning in brief.confidence_and_review_warnings)
+
+
+def test_interactive_approval_callback_controls_approval_status(tmp_path: Path) -> None:
+    qdrant_path = _prepare_index(tmp_path)
+    reviewed: list[list[RecommendedAction]] = []
+
+    def approve(actions: list[RecommendedAction]) -> Literal["approved"]:
+        reviewed.append(actions)
+        return "approved"
+
+    brief = create_brief(
+        root=ROOT,
+        artifacts_root=tmp_path,
+        opportunity_id="OPP-1003",
+        user_id="USR-5003",
+        llm=FakeLLM(),
+        approval_decision="ask",
+        approval_prompt=approve,
+        qdrant_path=qdrant_path,
+    )
+
+    assert isinstance(brief, Brief)
+    assert reviewed and reviewed[0]
+    approvals = json.loads((tmp_path / brief.run_id / "approval.json").read_text())
+    assert all(record["decision"] == "approved" for record in approvals)
 
 
 def test_denied_workflow_does_not_create_artifact(tmp_path: Path) -> None:

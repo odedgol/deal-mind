@@ -10,6 +10,8 @@ dependencies = [
     "openai>=1.60,<2",
     "python-dotenv>=1.0,<2",
     "langgraph>=0.2,<1",
+    "fastapi>=0.115,<1",
+    "uvicorn>=0.34,<1",
 ]
 
 [build-system]
@@ -28,6 +30,7 @@ dev = [
 
 [project.scripts]
 deal-intel = "cato_deal_intel.cli:app"
+deal-intel-api = "cato_deal_intel.api:main"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

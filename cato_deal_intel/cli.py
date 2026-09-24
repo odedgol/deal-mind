@@ -6,7 +6,7 @@ import typer
 from .data import SourceData
 from .embeddings import configured_embedding_provider
 from .llm import configured_llm
-from .models import Brief
+from .models import Brief, RecommendedAction
 from .retrieval import DEFAULT_QDRANT_PATH, EvidenceRetriever, RetrievalRequest
 from .workflow import create_brief
 
@@ -62,8 +62,8 @@ def search(
 def brief(
     opportunity: str = typer.Option(..., "--opportunity"),
     user: str = typer.Option(..., "--user"),
-    approve: Literal["approved", "rejected", "pending"] = typer.Option(
-        "pending", "--approval", help="approved, rejected, or pending"
+    approve: Literal["ask", "approved", "rejected", "pending"] = typer.Option(
+        "ask", "--approval", help="ask, approved, rejected, or pending"
     ),
 ) -> None:
     """Run the four-agent workflow and save JSON and Markdown artifacts."""
@@ -74,12 +74,23 @@ def brief(
         user_id=user,
         llm=configured_llm(),
         approval_decision=approve,
+        approval_prompt=prompt_for_approval,
         embedding_provider=configured_embedding_provider(),
     )
     if isinstance(result, Brief):
         typer.echo(f"Saved run {result.run_id} to {ARTIFACT_ROOT / result.run_id}")
         return
     typer.echo(f"Request denied: {result.message}")
+
+
+def prompt_for_approval(actions: list[RecommendedAction]) -> Literal["approved", "rejected"]:
+    """Ask for human approval without coupling the workflow to a terminal."""
+    typer.echo("\nRecommended actions requiring review:")
+    for index, action in enumerate(actions, start=1):
+        typer.echo(f"{index}. {action.action} ({action.owner})")
+        typer.echo(f"   Rationale: {action.rationale}")
+    approved = typer.confirm("Approve these recommendations?")
+    return "approved" if approved else "rejected"
 
 
 @app.command()

@@ -1,5 +1,6 @@
 import os
 import uuid
+from collections.abc import Callable
 from pathlib import Path
 from typing import Literal, cast
 
@@ -7,7 +8,7 @@ from .artifact_store import ArtifactStore
 from .embeddings import EmbeddingProvider, HashEmbeddingProvider
 from .graph import DealState, build_deal_graph
 from .llm import LLMAdapter
-from .models import WorkflowResult
+from .models import RecommendedAction, WorkflowResult
 from .observability import AgentTraceCollector
 from .retrieval import DEFAULT_QDRANT_PATH
 
@@ -19,7 +20,9 @@ def create_brief(
     opportunity_id: str,
     user_id: str,
     llm: LLMAdapter,
-    approval_decision: Literal["approved", "rejected", "pending"] = "pending",
+    approval_decision: Literal["ask", "approved", "rejected", "pending"] = "pending",
+    approval_prompt: Callable[[list[RecommendedAction]], Literal["approved", "rejected"]]
+    | None = None,
     qdrant_path: Path | None = None,
     embedding_provider: EmbeddingProvider | None = None,
 ) -> WorkflowResult:
@@ -36,6 +39,8 @@ def create_brief(
         "qdrant_path": qdrant_path or Path(os.getenv("CATO_QDRANT_PATH", str(DEFAULT_QDRANT_PATH))),
         "embedding_provider": embedding_provider or HashEmbeddingProvider(),
     }
+    if approval_prompt is not None:
+        initial_state["approval_prompt"] = approval_prompt
     try:
         result = build_deal_graph().invoke(initial_state)
     except Exception as error:

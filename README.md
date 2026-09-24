@@ -24,6 +24,26 @@ This branch intentionally excludes the generated Slack-style update dataset. Can
 
 This workspace contains a Typer CLI with typed Pydantic contracts, local Qdrant retrieval, deterministic authorization, three LLM-backed synthesis roles, citation validation, approval records, and inspectable run artifacts.
 
+## Local interfaces
+
+The CLI is the primary runnable prototype. A lightweight HTTP adapter exposes the same workflow without duplicating orchestration logic:
+
+```bash
+uv run deal-intel-api
+```
+
+Then call `GET http://127.0.0.1:8000/health` or send a request to `POST /brief`:
+
+```json
+{
+  "opportunity_id": "OPP-1001",
+  "user_id": "USR-5001",
+  "approval_decision": "pending"
+}
+```
+
+The CLI defaults to an interactive approval question. The API uses an explicit approval value because HTTP requests cannot pause and ask a terminal question. Slack Socket Mode can be added later as another adapter over the same workflow.
+
 The generated synthetic Slack updates are stored at `synthetic_data/slack/account_team_updates.tsv`.
 
 Architecture and deployment diagrams are documented in [ARCHITECTURE.md](ARCHITECTURE.md).
