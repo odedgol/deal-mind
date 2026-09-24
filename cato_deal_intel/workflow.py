@@ -35,19 +35,25 @@ def create_brief(
     evidence_service = EvidenceService(source, EvidenceRetriever())
     evidence = evidence_service.retrieve(opportunity_id, decision)
     run_id = uuid.uuid4().hex
-    search_tool = AuthorizedEvidenceSearchTool(evidence_service, decision)
+    conversation_search_tool = AuthorizedEvidenceSearchTool(evidence_service, decision)
+    stakeholder_search_tool = AuthorizedEvidenceSearchTool(evidence_service, decision)
     policy_tool = DealDeskPolicyTool(evidence_service, decision)
     agent_run = AgentRunner(
         llm,
         deal_context_tool=DealContextTool(opportunity),
-        search_tool=search_tool,
+        conversation_search_tool=conversation_search_tool,
+        stakeholder_search_tool=stakeholder_search_tool,
         recommendation_validator=RecommendationValidationTool(),
         policy_tool=policy_tool,
         approval_tool=ApprovalRequestTool(ApprovalService()),
     ).run(AgentContext(opportunity, evidence), run_id)
     evidence = _merge_evidence(
         evidence,
-        [*search_tool.retrieved_evidence, *policy_tool.retrieved_evidence],
+        [
+            *conversation_search_tool.retrieved_evidence,
+            *stakeholder_search_tool.retrieved_evidence,
+            *policy_tool.retrieved_evidence,
+        ],
     )
     validate_citations(
         [agent_run.conversation, agent_run.stakeholders, agent_run.strategy],

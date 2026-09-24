@@ -1,4 +1,5 @@
 from collections.abc import Callable
+from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from typing import TypeVar
@@ -41,14 +42,15 @@ class AgentRunner:
         llm: LLMAdapter,
         *,
         deal_context_tool: DealContextTool | None = None,
-        search_tool: AuthorizedEvidenceSearchTool | None = None,
+        conversation_search_tool: AuthorizedEvidenceSearchTool | None = None,
+        stakeholder_search_tool: AuthorizedEvidenceSearchTool | None = None,
         recommendation_validator: RecommendationValidationTool | None = None,
         policy_tool: DealDeskPolicyTool | None = None,
         approval_tool: ApprovalRequestTool | None = None,
     ) -> None:
         self.deal_context = DealContextAgent(deal_context_tool)
-        self.conversation = ConversationIntelligenceAgent(llm, search_tool)
-        self.stakeholders = StakeholderMapAgent(llm, search_tool)
+        self.conversation = ConversationIntelligenceAgent(llm, conversation_search_tool)
+        self.stakeholders = StakeholderMapAgent(llm, stakeholder_search_tool)
         self.strategy = NegotiationStrategyAgent(
             llm,
             recommendation_validator,
@@ -59,18 +61,23 @@ class AgentRunner:
     def run(self, context: AgentContext, run_id: str) -> AgentRun:
         traces: list[AgentTrace] = []
         deal_snapshot = self.deal_context.run(context)
-        conversation = self._run_agent_output(
-            run_id,
-            "Conversation Intelligence Agent",
-            lambda: self.conversation.run(context),
-            traces,
-        )
-        stakeholders = self._run_agent_output(
-            run_id,
-            "Stakeholder Map Agent",
-            lambda: self.stakeholders.run(context),
-            traces,
-        )
+        with ThreadPoolExecutor(max_workers=2) as executor:
+            conversation_future = executor.submit(
+                self._run_agent_output,
+                run_id,
+                "Conversation Intelligence Agent",
+                lambda: self.conversation.run(context),
+                traces,
+            )
+            stakeholders_future = executor.submit(
+                self._run_agent_output,
+                run_id,
+                "Stakeholder Map Agent",
+                lambda: self.stakeholders.run(context),
+                traces,
+            )
+            conversation = conversation_future.result()
+            stakeholders = stakeholders_future.result()
         strategy = self._run_strategy(
             run_id,
             lambda: self.strategy.run(context, [conversation, stakeholders]),
