@@ -46,6 +46,7 @@ Live run using OpenAI structured outputs:
 cp .env.example .env
 # Edit .env and replace the placeholder API key.
 # Set CATO_OBSERVABILITY=false in .env to disable logs and trace entries.
+# Use CATO_OBSERVABILITY_IO=full only for local debugging; metadata is safer.
 uv run deal-intel ingest
 uv run deal-intel brief --opportunity OPP-1001 --user USR-5001
 uv run deal-intel brief --opportunity OPP-1003 --user USR-5003 --approval pending
