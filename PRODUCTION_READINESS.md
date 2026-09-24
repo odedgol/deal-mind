@@ -60,3 +60,36 @@ retried. A retry must not create a second business side effect.
 - Do not retry authorization failures, validation failures, or confirmed business rejections.
 - Replace file-backed Qdrant with a server or managed deployment before running multiple workers.
 - Move run artifacts from the local filesystem to durable shared storage.
+
+## What changes at production scale
+
+The prototype is intentionally runnable on one laptop. The following boundaries are explicit so
+that the local implementation is not mistaken for a production deployment:
+
+| MVP behavior | What breaks in production | Production replacement |
+| --- | --- | --- |
+| User sends `user_id` in the request | A caller can impersonate another user | Authenticate at the API edge and derive identity from a verified session or token; keep authorization in the workflow |
+| Local permission files | Permissions become stale or differ between workers | Use a governed CRM/authorization service or replicated policy store with cache invalidation |
+| One local Qdrant client and file storage | Multiple workers cannot share the folder | Managed/clustered Qdrant or OpenSearch behind a service URL |
+| `ingest` deletes and rebuilds one collection | Reads can see a missing or partial index during rebuild | Build a versioned collection, validate it, then atomically switch an alias |
+| Local `artifacts/runs` directory | Containers are ephemeral; artifacts are not shared or durable | Object storage plus a metadata database, with retention, encryption, and access control |
+| Synchronous workflow inside a FastAPI route | Long LLM calls consume worker capacity and requests can time out | Async provider clients or a durable job queue with status polling and cancellation |
+| Process-local approval lock/callback | Approval is lost if a process restarts and cannot cross workers | Persist approval state and resume the workflow from a durable state store |
+| Local JSON traces and stdout | No central search, alerting, or cross-service correlation | Central logs, metrics, distributed traces, redaction, retention, and a `run_id` propagated everywhere |
+| `.env` for `OPENAI_API_KEY` | Secrets leak through files, logs, images, or developer machines | Secret manager, key rotation, least privilege, and secret scanning in CI |
+| One model provider and one model configuration | Provider outage, model drift, runaway cost, or rate limits affect all runs | Model gateway with budgets, quotas, fallback policy, model pinning, and evaluation gates |
+| Local CORS and no API authentication | The endpoint is publicly callable if deployed as-is | SSO/OIDC, API scopes, CSRF strategy where applicable, rate limiting, and network policy |
+| React dev server | No hardened static delivery or browser security policy | Build once and serve through a CDN/reverse proxy with CSP, TLS, security headers, and frontend auth |
+| Basic `/health` response | Process can be healthy while Qdrant, model gateway, or source data is unavailable | Separate liveness/readiness checks and dependency-aware monitoring |
+| Read-only tools with retries | Future writes may be duplicated by retries or replay | Idempotency keys, durable operation records, and retry classification for every write tool |
+
+### Recommended production migration order
+
+1. Add real authentication and derive the requester identity server-side.
+2. Move Qdrant and run artifacts to managed, durable services.
+3. Make approval state durable and expose asynchronous job status.
+4. Add centralized observability, rate limits, budgets, and dependency health checks.
+5. Add deployment controls: containers, autoscaling, secrets management, backups, retention,
+   disaster recovery, and CI/CD security checks.
+
+This is the intended production path; implementing all of it is outside the runnable MVP scope.

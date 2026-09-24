@@ -128,3 +128,7 @@ API process, but it must not be shared by multiple API workers, containers, or a
 the same time. Production replaces it with a managed or clustered Qdrant deployment (or
 OpenSearch), configured through a service URL. Each stateless API worker can then use its own
 client connection while the database service coordinates concurrent access.
+
+Other production boundaries are documented in [PRODUCTION_READINESS.md](PRODUCTION_READINESS.md),
+including API authentication, durable approval state, asynchronous job execution, atomic index
+replacement, artifact storage, secrets management, model budgets, and centralized observability.
