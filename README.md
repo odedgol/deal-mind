@@ -44,6 +44,18 @@ Then call `GET http://127.0.0.1:8000/health` or send a request to `POST /brief`:
 
 The CLI defaults to an interactive approval question. The API uses an explicit approval value because HTTP requests cannot pause and ask a terminal question. Slack Socket Mode can be added later as another adapter over the same workflow.
 
+### React demo
+
+The local web UI lives in `frontend/` and uses React, Vite, and Tailwind:
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+Run `uv run deal-intel-api` in another terminal, then open `http://127.0.0.1:5173`.
+
 The generated synthetic Slack updates are stored at `synthetic_data/slack/account_team_updates.tsv`.
 
 Architecture and deployment diagrams are documented in [ARCHITECTURE.md](ARCHITECTURE.md).
