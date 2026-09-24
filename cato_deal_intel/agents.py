@@ -12,6 +12,7 @@ from .tools import (
     AuthorizedEvidenceSearchTool,
     DealContextTool,
     EvidenceSearchRequest,
+    RecommendationValidationTool,
     ToolSpec,
 )
 
@@ -81,11 +82,19 @@ class NegotiationStrategyAgent:
     name = "Negotiation Strategy Agent"
     tools: tuple[ToolSpec, ...] = STRATEGY_TOOLS
 
-    def __init__(self, llm: LLMAdapter) -> None:
+    def __init__(
+        self,
+        llm: LLMAdapter,
+        validator: RecommendationValidationTool | None = None,
+    ) -> None:
         self.llm = llm
+        self.validator = validator
 
     def run(self, context: AgentContext, specialists: list[AgentOutput]) -> StrategyOutput:
-        return run_strategy(context, specialists, self.llm)
+        output = run_strategy(context, specialists, self.llm)
+        if self.validator is not None:
+            return self.validator.run(output, context.evidence)
+        return output
 
 
 @observed(agent_name="deal_context", prompt_version="v1")

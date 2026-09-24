@@ -1,7 +1,14 @@
 from dataclasses import dataclass
 
-from .models import AuthorizationDecision, DealSnapshot, EvidenceItem, Opportunity
+from .models import (
+    AuthorizationDecision,
+    DealSnapshot,
+    EvidenceItem,
+    Opportunity,
+    StrategyOutput,
+)
 from .services import EvidenceService
+from .validation import validate_citations
 
 
 @dataclass(frozen=True)
@@ -75,6 +82,18 @@ class DealDeskPolicyTool:
             limit=4,
         )
         return next((item for item in policy if item.source_type == "policies"), None)
+
+
+class RecommendationValidationTool:
+    name = "validate_recommendation"
+
+    def run(
+        self,
+        recommendation: StrategyOutput,
+        evidence: list[EvidenceItem],
+    ) -> StrategyOutput:
+        validate_citations([recommendation], evidence)
+        return recommendation
 
 
 DEAL_CONTEXT_TOOLS = (

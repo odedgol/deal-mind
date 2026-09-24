@@ -13,7 +13,11 @@ from .agents import (
 from .llm import LLMAdapter
 from .models import AgentOutput, AgentTrace, DealSnapshot, StrategyOutput
 from .observability import observability_enabled
-from .tools import AuthorizedEvidenceSearchTool, DealContextTool
+from .tools import (
+    AuthorizedEvidenceSearchTool,
+    DealContextTool,
+    RecommendationValidationTool,
+)
 
 T = TypeVar("T", AgentOutput, StrategyOutput)
 
@@ -36,11 +40,12 @@ class AgentRunner:
         *,
         deal_context_tool: DealContextTool | None = None,
         search_tool: AuthorizedEvidenceSearchTool | None = None,
+        recommendation_validator: RecommendationValidationTool | None = None,
     ) -> None:
         self.deal_context = DealContextAgent(deal_context_tool)
         self.conversation = ConversationIntelligenceAgent(llm, search_tool)
         self.stakeholders = StakeholderMapAgent(llm, search_tool)
-        self.strategy = NegotiationStrategyAgent(llm)
+        self.strategy = NegotiationStrategyAgent(llm, recommendation_validator)
 
     def run(self, context: AgentContext, run_id: str) -> AgentRun:
         traces: list[AgentTrace] = []

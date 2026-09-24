@@ -10,7 +10,11 @@ from .llm import LLMAdapter
 from .models import Brief, EvidenceItem
 from .retrieval import EvidenceRetriever
 from .services import ApprovalService, DealService, EvidenceService, build_brief
-from .tools import AuthorizedEvidenceSearchTool, DealContextTool
+from .tools import (
+    AuthorizedEvidenceSearchTool,
+    DealContextTool,
+    RecommendationValidationTool,
+)
 from .validation import validate_citations
 
 
@@ -34,6 +38,7 @@ def create_brief(
         llm,
         deal_context_tool=DealContextTool(opportunity),
         search_tool=search_tool,
+        recommendation_validator=RecommendationValidationTool(),
     ).run(AgentContext(opportunity, evidence), run_id)
     evidence = _merge_evidence(evidence, search_tool.retrieved_evidence)
     validate_citations(
