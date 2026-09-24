@@ -14,6 +14,7 @@ from .agents import (
 )
 from .artifact_store import ArtifactStore
 from .data import SourceData
+from .embeddings import EmbeddingProvider
 from .llm import LLMAdapter
 from .models import (
     AgentOutput,
@@ -63,6 +64,7 @@ class DealState(TypedDict, total=False):
     approval_decision: Literal["approved", "rejected", "pending"]
     run_id: str
     qdrant_path: Path
+    embedding_provider: EmbeddingProvider
     opportunity: Opportunity
     authorization: AuthorizationDecision
     evidence: Annotated[list[EvidenceItem], _merge_unique_evidence]
@@ -135,7 +137,11 @@ def safe_denial_node(state: DealState) -> dict[str, object]:
 
 def retrieve_node(state: DealState) -> dict[str, object]:
     source = SourceData(state["root"])
-    retriever = EvidenceRetriever(path=state["qdrant_path"], require_existing=True)
+    retriever = EvidenceRetriever(
+        path=state["qdrant_path"],
+        require_existing=True,
+        embedding_provider=state["embedding_provider"],
+    )
     service = EvidenceService(source, retriever, state["trace_collector"], state["run_id"])
     evidence = service.retrieve(state["opportunity_id"], state["authorization"])
     return {"evidence": evidence, "retriever": retriever}

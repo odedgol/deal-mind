@@ -4,6 +4,7 @@ from typing import Literal
 import typer
 
 from .data import SourceData
+from .embeddings import configured_embedding_provider
 from .llm import configured_llm
 from .models import Brief
 from .retrieval import DEFAULT_QDRANT_PATH, EvidenceRetriever, RetrievalRequest
@@ -18,7 +19,10 @@ ARTIFACT_ROOT = Path("artifacts/runs")
 def ingest() -> None:
     """Load all supplied and synthetic evidence into a local Qdrant collection."""
     source = SourceData(DATA_ROOT)
-    retriever = EvidenceRetriever(path=DEFAULT_QDRANT_PATH)
+    retriever = EvidenceRetriever(
+        path=DEFAULT_QDRANT_PATH,
+        embedding_provider=configured_embedding_provider(),
+    )
     evidence = source.evidence()
     retriever.rebuild(evidence)
     typer.echo(f"Indexed {len(evidence)} evidence items into {DEFAULT_QDRANT_PATH}.")
@@ -39,7 +43,11 @@ def search(
     from .authorization import authorize
 
     decision = authorize(opportunity_record, requester)
-    retriever = EvidenceRetriever(path=DEFAULT_QDRANT_PATH, require_existing=True)
+    retriever = EvidenceRetriever(
+        path=DEFAULT_QDRANT_PATH,
+        require_existing=True,
+        embedding_provider=configured_embedding_provider(),
+    )
     results = retriever.retrieve(
         RetrievalRequest(
             query, opportunity, decision.allowed_source_types, decision.allowed_access_levels
@@ -66,6 +74,7 @@ def brief(
         user_id=user,
         llm=configured_llm(),
         approval_decision=approve,
+        embedding_provider=configured_embedding_provider(),
     )
     if isinstance(result, Brief):
         typer.echo(f"Saved run {result.run_id} to {ARTIFACT_ROOT / result.run_id}")

@@ -114,7 +114,7 @@ class EvidenceService:
                 opportunity_id=opportunity_id,
                 allowed_source_types=decision.allowed_source_types,
                 allowed_access_levels=decision.allowed_access_levels,
-                limit=2,
+                limit=20,
             ),
             decision,
         )

@@ -53,3 +53,26 @@ def test_restricted_opportunity_is_not_retrieved_for_insufficient_user(tmp_path:
 
     assert decision.allowed is False
     assert results == []
+
+
+def test_hybrid_index_is_persistent_across_retriever_instances(tmp_path: Path) -> None:
+    source = SourceData(ROOT)
+    qdrant_path = tmp_path / "qdrant"
+    EvidenceRetriever(path=qdrant_path).index(source.evidence())
+    retriever = EvidenceRetriever(path=qdrant_path, require_existing=True)
+    opportunity = next(item for item in source.opportunities() if item.opportunity_id == "OPP-1001")
+    requester = next(item for item in source.permissions() if item.user_id == "USR-5001")
+    decision = authorize(opportunity, requester)
+
+    results = retriever.retrieve(
+        RetrievalRequest(
+            query="buyer deployment urgency dashboard",
+            opportunity_id="OPP-1001",
+            allowed_source_types=decision.allowed_source_types,
+            allowed_access_levels=decision.allowed_access_levels,
+        ),
+        decision,
+    )
+
+    assert results
+    assert all(item.opportunity_id in {"OPP-1001", "*"} for item in results)

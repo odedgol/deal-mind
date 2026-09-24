@@ -4,6 +4,7 @@ from pathlib import Path
 from typing import Literal, cast
 
 from .artifact_store import ArtifactStore
+from .embeddings import EmbeddingProvider, HashEmbeddingProvider
 from .graph import DealState, build_deal_graph
 from .llm import LLMAdapter
 from .models import WorkflowResult
@@ -20,6 +21,7 @@ def create_brief(
     llm: LLMAdapter,
     approval_decision: Literal["approved", "rejected", "pending"] = "pending",
     qdrant_path: Path | None = None,
+    embedding_provider: EmbeddingProvider | None = None,
 ) -> WorkflowResult:
     """Run the LangGraph flow and return either a brief or a safe denial."""
     initial_state: DealState = {
@@ -32,6 +34,7 @@ def create_brief(
         "run_id": uuid.uuid4().hex,
         "trace_collector": AgentTraceCollector(),
         "qdrant_path": qdrant_path or Path(os.getenv("CATO_QDRANT_PATH", str(DEFAULT_QDRANT_PATH))),
+        "embedding_provider": embedding_provider or HashEmbeddingProvider(),
     }
     try:
         result = build_deal_graph().invoke(initial_state)

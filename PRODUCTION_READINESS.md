@@ -9,6 +9,20 @@ The MVP workflow is read-only with respect to external business systems:
 - Approval records are saved as local run artifacts.
 - Retries are safe for transient read-only calls when they do not repeat an external write.
 
+## Retrieval approach
+
+There are three practical retrieval approaches:
+
+1. Lexical retrieval, such as BM25, which is strong for exact terms, IDs, numbers, names,
+   and legal or pricing language.
+2. Dense semantic retrieval, which is strong for paraphrases and natural-language intent.
+3. Hybrid retrieval, which runs both channels and combines their rankings.
+
+This prototype chooses hybrid retrieval. Metadata authorization filters are applied before
+ranking, BM25 provides the lexical ranking, dense embeddings provide the semantic ranking,
+and Reciprocal Rank Fusion (RRF) combines both rankings. The agents receive only the final
+authorized results; they do not choose which security filter to apply.
+
 ## Idempotency preparation
 
 An idempotency key is not required for the current MVP because the workflow does not perform
