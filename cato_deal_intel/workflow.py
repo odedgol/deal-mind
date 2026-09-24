@@ -2,9 +2,11 @@ import uuid
 from pathlib import Path
 from typing import Literal, cast
 
+from .artifact_store import ArtifactStore
 from .graph import DealState, build_deal_graph
 from .llm import LLMAdapter
 from .models import WorkflowResult
+from .observability import AgentTraceCollector
 
 
 def create_brief(
@@ -25,6 +27,19 @@ def create_brief(
         "llm": llm,
         "approval_decision": approval_decision,
         "run_id": uuid.uuid4().hex,
+        "trace_collector": AgentTraceCollector(),
     }
-    result = build_deal_graph().invoke(initial_state)
+    try:
+        result = build_deal_graph().invoke(initial_state)
+    except Exception as error:
+        traces = initial_state["trace_collector"].traces
+        if traces:
+            ArtifactStore(artifacts_root).save_failure_trace(
+                run_id=initial_state["run_id"],
+                opportunity_id=opportunity_id,
+                user_id=user_id,
+                traces=traces,
+                error=error,
+            )
+        raise
     return cast(WorkflowResult, result.get("brief") or result["denial"])

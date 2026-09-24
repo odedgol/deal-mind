@@ -29,6 +29,7 @@ from .models import (
     RecommendedAction,
     StrategyOutput,
 )
+from .observability import AgentTraceCollector
 from .retrieval import EvidenceRetriever
 from .services import ApprovalService, DealService, EvidenceService, build_brief
 from .tools import (
@@ -73,6 +74,7 @@ class DealState(TypedDict, total=False):
     approvals: list[ApprovalRecord]
     brief: Brief
     traces: Annotated[list[AgentTrace], _merge_traces]
+    trace_collector: AgentTraceCollector
     denial: DeniedResult
 
 
@@ -142,6 +144,7 @@ def deal_context_node(state: DealState) -> dict[str, object]:
     snapshot, trace = _run_traced_agent(
         run_id=state["run_id"],
         agent_name=agent.name,
+        collector=state["trace_collector"],
         operation=lambda: agent.run(AgentContext(state["opportunity"], state["evidence"])),
     )
     return {"deal_snapshot": snapshot, "traces": [trace]}
@@ -154,6 +157,7 @@ def conversation_node(state: DealState) -> dict[str, object]:
     output, trace = _run_traced_agent(
         run_id=state["run_id"],
         agent_name=agent.name,
+        collector=state["trace_collector"],
         operation=lambda: agent.run(AgentContext(state["opportunity"], state["evidence"])),
     )
     return {
@@ -170,6 +174,7 @@ def stakeholders_node(state: DealState) -> dict[str, object]:
     output, trace = _run_traced_agent(
         run_id=state["run_id"],
         agent_name=agent.name,
+        collector=state["trace_collector"],
         operation=lambda: agent.run(AgentContext(state["opportunity"], state["evidence"])),
     )
     return {
@@ -192,6 +197,7 @@ def strategy_node(state: DealState) -> dict[str, object]:
     output, trace = _run_traced_agent(
         run_id=state["run_id"],
         agent_name=strategy_agent.name,
+        collector=state["trace_collector"],
         operation=lambda: strategy_agent.run(
             context, [state["conversation"], state["stakeholders"]]
         ),
@@ -249,10 +255,27 @@ def _merge_evidence(
 
 
 def _run_traced_agent[T](
-    *, run_id: str, agent_name: str, operation: Callable[[], T]
+    *,
+    run_id: str,
+    agent_name: str,
+    collector: AgentTraceCollector,
+    operation: Callable[[], T],
 ) -> tuple[T, AgentTrace]:
     started_at = datetime.now(UTC)
-    result = operation()
+    try:
+        result = operation()
+    except Exception as error:
+        trace = AgentTrace(
+            run_id=run_id,
+            agent_name=agent_name,
+            prompt_version="v1",
+            status="failed",
+            started_at=started_at,
+            completed_at=datetime.now(UTC),
+            error=type(error).__name__,
+        )
+        collector.record(trace)
+        raise
     trace = AgentTrace(
         run_id=run_id,
         agent_name=agent_name,
@@ -261,4 +284,5 @@ def _run_traced_agent[T](
         started_at=started_at,
         completed_at=datetime.now(UTC),
     )
+    collector.record(trace)
     return result, trace

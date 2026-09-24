@@ -4,10 +4,30 @@ import os
 import time
 from collections.abc import Callable
 from functools import wraps
+from threading import Lock
 from typing import Any, TypeVar, cast
+
+from .models import AgentTrace
 
 LOGGER = logging.getLogger("cato_deal_intel")
 F = TypeVar("F", bound=Callable[..., Any])
+
+
+class AgentTraceCollector:
+    """Collect traces safely when parallel LangGraph nodes are running."""
+
+    def __init__(self) -> None:
+        self._lock = Lock()
+        self._traces: dict[tuple[str, str], AgentTrace] = {}
+
+    def record(self, trace: AgentTrace) -> None:
+        with self._lock:
+            self._traces[(trace.run_id, trace.agent_name)] = trace
+
+    @property
+    def traces(self) -> list[AgentTrace]:
+        with self._lock:
+            return list(self._traces.values())
 
 
 def observability_enabled() -> bool:

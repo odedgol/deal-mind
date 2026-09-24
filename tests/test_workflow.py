@@ -1,6 +1,8 @@
 import json
 from pathlib import Path
 
+import pytest
+
 from cato_deal_intel.llm import FakeLLM
 from cato_deal_intel.models import Brief
 from cato_deal_intel.workflow import create_brief
@@ -61,3 +63,24 @@ def test_denied_workflow_does_not_create_artifact(tmp_path: Path) -> None:
     assert result.status == "denied"
     assert result.message == "Requester is not authorized for this request."
     assert not list(tmp_path.iterdir())
+
+
+def test_failed_agent_persists_failed_trace(tmp_path: Path) -> None:
+    class FailingLLM:
+        def complete(self, **_: object) -> object:
+            raise RuntimeError("simulated agent failure")
+
+    with pytest.raises(RuntimeError, match="simulated agent failure"):
+        create_brief(
+            root=ROOT,
+            artifacts_root=tmp_path,
+            opportunity_id="OPP-1001",
+            user_id="USR-5001",
+            llm=FailingLLM(),  # type: ignore[arg-type]
+        )
+
+    run_dir = next(tmp_path.iterdir())
+    traces = json.loads((run_dir / "trace.json").read_text())
+    assert any(trace["status"] == "failed" for trace in traces)
+    assert (run_dir / "error.json").exists()
+    assert not (run_dir / "brief.json").exists()

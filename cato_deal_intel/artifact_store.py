@@ -54,6 +54,32 @@ class ArtifactStore:
             path.write_text(json.dumps(_to_json(value), indent=2) + "\n", encoding="utf-8")
         (run_dir / "brief.md").write_text(_to_markdown(brief), encoding="utf-8")
 
+    def save_failure_trace(
+        self,
+        *,
+        run_id: str,
+        opportunity_id: str,
+        user_id: str,
+        traces: list[AgentTrace],
+        error: Exception,
+    ) -> None:
+        """Persist only safe diagnostics when an agent run fails."""
+        run_dir = self.root / run_id
+        run_dir.mkdir(parents=True, exist_ok=True)
+        files = {
+            "request.json": {
+                "run_id": run_id,
+                "opportunity_id": opportunity_id,
+                "user_id": user_id,
+            },
+            "trace.json": traces,
+            "error.json": {"error_type": type(error).__name__},
+        }
+        for filename, value in files.items():
+            (run_dir / filename).write_text(
+                json.dumps(_to_json(value), indent=2) + "\n", encoding="utf-8"
+            )
+
 
 def _to_json(value: Any) -> Any:
     if hasattr(value, "model_dump"):
