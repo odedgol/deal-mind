@@ -18,7 +18,9 @@ The task asks candidates to build a runnable, LLM-backed multi-agent prototype t
 
 The included data is fully synthetic and covers three fictional opportunities: `OPP-1001`, `OPP-1002`, and `OPP-1003`.
 
-This branch intentionally excludes the generated Slack-style update dataset. Candidates should create and ingest their own synthetic Slack-style updates as described in the assignment brief.
+The repository includes a generated Slack-style update dataset at
+`synthetic_data/slack/account_team_updates.tsv`; it is synthetic and is used by retrieval,
+prompt-injection boundaries, and the golden evaluation.
 
 ## Prototype implementation
 

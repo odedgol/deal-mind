@@ -14,6 +14,30 @@ required because Qdrant's file-backed local mode locks its storage directory. It
 production scaling strategy: multiple API workers must use a Qdrant server or managed Qdrant
 instance instead.
 
+## Implemented issue and solution register
+
+This register records the implementation problems found during the MVP and the decision made
+for each one. It is the handoff checklist for the manual rewrite.
+
+| Problem or symptom | Root cause | Implemented solution | Verification |
+| --- | --- | --- | --- |
+| A second request could fail with “storage folder is already accessed” | Each process or flow opened a file-backed Qdrant client independently | `QdrantClientFactory` owns one client per application component; the API reuses it and serializes requests | `tests/test_client_factory.py`, API reuse test |
+| Restricted Slack evidence was missing for an authorized restricted deal | Authorization allowed `standard` and `sensitive`, but omitted `restricted` | `can_view_restricted_account` now adds the `restricted` metadata filter | Retrieval test and authorized `OPP-1003` golden case |
+| Unauthorized requests appeared to have no run artifact | Authorization correctly stops the graph before retrieval | Denial is returned safely and no run is persisted because no process started | Unauthorized golden case and workflow tests |
+| Failed runs had no useful trace | Exceptions could bypass normal completion persistence | The traced operation records `status=failed`; the workflow persists the failure trace with the error type | `test_failed_agent_persists_failed_trace` |
+| Logs could expose prompts or business data | Full input/output logging is useful for debugging but unsafe by default | Annotation-based observability is controlled by `CATO_OBSERVABILITY`; metadata is the default and full I/O is opt-in with `CATO_OBSERVABILITY_IO=full` | Observability tests and `.env.example` |
+| Prompt injection could be mistaken for business instructions | Retrieved evidence is untrusted content | Prompts use `<untrusted_data>` boundaries, explicit system instructions, typed output validation, and citation validation | `tests/test_prompt_injection.py` |
+| Same request can use different token counts | Live model calls are not deterministic at the token level, even with `temperature=0`; no response cache is part of the MVP | Cost is measured from provider usage per call; exact replay requires a future response cache or recorded replay fixture | LLM cost tests and persisted usage summaries |
+| Budget reset after a server restart | In-memory usage is process-local | A file-backed `BudgetLedger` persists period spend; production must replace it with shared durable accounting | `test_budget_ledger_survives_new_controller` |
+| Human approval could be unclear in CLI, API, and React | Interfaces have different interaction models | CLI asks interactively, API accepts an explicit decision, and React displays a pending approval panel; production needs durable pause/resume state | Workflow, API, and frontend tests |
+| Retrieval could miss exact terms or paraphrases | BM25 and dense search each have blind spots | Hybrid BM25 + dense retrieval with RRF, metadata filters, recency weighting, and source reliability scoring | Retrieval tests and documented retrieval approach |
+| Improvements could regress behavior silently | No deterministic acceptance set existed | Four synthetic golden cases check status, approval routing, source coverage, and grounded citations | `evals/golden_set.json`, `uv run deal-intel evaluate` returns `4/4` |
+| Local MVP assumptions do not survive deployment | Filesystem, process-local state, and caller-supplied identity are not shared or trusted at scale | Production replacements are documented in the migration table below: authenticated identity, managed Qdrant, durable artifacts/state, centralized observability, secret manager, and model gateway | Architecture review and production checklist |
+
+The register distinguishes implemented MVP behavior from production work that is intentionally not
+hidden: the local solution is testable and runnable, while the production replacement is named
+explicitly wherever the local assumption would break.
+
 ## Retrieval approach
 
 There are three practical retrieval approaches:
