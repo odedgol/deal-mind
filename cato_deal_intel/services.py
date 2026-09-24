@@ -54,18 +54,34 @@ class EvidenceService:
         self.retriever = retriever
 
     def retrieve(self, opportunity_id: str, decision: AuthorizationDecision) -> list[EvidenceItem]:
+        results = self.search(
+            opportunity_id=opportunity_id,
+            query=self.SEARCH_QUERY,
+            decision=decision,
+            limit=8,
+        )
+        return self._include_slack_context(results, opportunity_id, decision)
+
+    def search(
+        self,
+        *,
+        opportunity_id: str,
+        query: str,
+        decision: AuthorizationDecision,
+        limit: int = 8,
+    ) -> list[EvidenceItem]:
         evidence = self.source.evidence()
         self.retriever.index(evidence)
-        results = self.retriever.retrieve(
+        return self.retriever.retrieve(
             RetrievalRequest(
-                query=self.SEARCH_QUERY,
+                query=query,
                 opportunity_id=opportunity_id,
                 allowed_source_types=decision.allowed_source_types,
                 allowed_access_levels=decision.allowed_access_levels,
+                limit=limit,
             ),
             decision,
         )
-        return self._include_slack_context(results, opportunity_id, decision)
 
     def _include_slack_context(
         self,
