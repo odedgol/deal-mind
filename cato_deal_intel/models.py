@@ -119,11 +119,13 @@ class StrategyOutput(StrictModel):
 class CostSummary(StrictModel):
     budget_usd: float | None = None
     spent_usd: float = 0.0
+    run_spent_usd: float = 0.0
     remaining_usd: float | None = None
     prompt_tokens: int = 0
     completion_tokens: int = 0
     call_count: int = 0
     models: list[str] = Field(default_factory=list)
+    period_key: str | None = None
 
 
 class ApprovalRecord(StrictModel):

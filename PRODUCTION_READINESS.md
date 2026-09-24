@@ -39,6 +39,11 @@ response's prompt and completion token counts are converted to cost using config
 token rates, accumulated for the adapter's run, and rejected after the configured budget is
 exceeded. Usage is written to structured logs without logging prompts or completions.
 
+The MVP also persists the current period's spend in `CATO_LLM_BUDGET_LEDGER_PATH` (monthly by
+default), so a server restart does not reset the remaining budget. The summary distinguishes
+the current run's spend from the period spend. In production this JSON ledger must be replaced
+with an atomic, shared usage database or provider billing service.
+
 The local defaults live in `.env.example`; pricing values must be reviewed whenever the provider
 pricing changes. A production model gateway should own the authoritative price table, quotas,
 budgets, fallback policy, and cross-worker accounting.
