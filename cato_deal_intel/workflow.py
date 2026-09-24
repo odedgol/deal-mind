@@ -4,7 +4,7 @@ from typing import Literal, cast
 
 from .graph import DealState, build_deal_graph
 from .llm import LLMAdapter
-from .models import Brief
+from .models import WorkflowResult
 
 
 def create_brief(
@@ -15,8 +15,8 @@ def create_brief(
     user_id: str,
     llm: LLMAdapter,
     approval_decision: Literal["approved", "rejected", "pending"] = "pending",
-) -> Brief:
-    """Run the LangGraph application flow and return the persisted brief."""
+) -> WorkflowResult:
+    """Run the LangGraph flow and return either a brief or a safe denial."""
     initial_state: DealState = {
         "root": root,
         "artifacts_root": artifacts_root,
@@ -27,4 +27,4 @@ def create_brief(
         "run_id": uuid.uuid4().hex,
     }
     result = build_deal_graph().invoke(initial_state)
-    return cast(Brief, result["brief"])
+    return cast(WorkflowResult, result.get("brief") or result["denial"])

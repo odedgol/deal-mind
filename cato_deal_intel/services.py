@@ -28,8 +28,6 @@ class DealService:
         opportunity = self._find_opportunity(opportunity_id)
         requester = self._find_requester(user_id)
         decision = authorize(opportunity, requester)
-        if not decision.allowed:
-            raise PermissionError(decision.reason)
         return opportunity, decision
 
     def _find_opportunity(self, opportunity_id: str) -> Opportunity:

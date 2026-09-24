@@ -21,6 +21,7 @@ from .models import (
     AuthorizationDecision,
     Brief,
     DealSnapshot,
+    DeniedResult,
     EvidenceItem,
     Opportunity,
     RecommendedAction,
@@ -64,11 +65,13 @@ class DealState(TypedDict, total=False):
     approvals: list[ApprovalRecord]
     brief: Brief
     traces: list[AgentTrace]
+    denial: DeniedResult
 
 
 def build_deal_graph() -> CompiledStateGraph[Any, Any, Any, Any]:
     graph = StateGraph(DealState)
     graph.add_node("authorize", authorize_node)
+    graph.add_node("safe_denial", safe_denial_node)
     graph.add_node("retrieve", retrieve_node)
     graph.add_node("deal_context", deal_context_node)
     graph.add_node("conversation", conversation_node)
@@ -79,7 +82,11 @@ def build_deal_graph() -> CompiledStateGraph[Any, Any, Any, Any]:
     graph.add_node("persist", persist_node)
 
     graph.add_edge(START, "authorize")
-    graph.add_edge("authorize", "retrieve")
+    graph.add_conditional_edges(
+        "authorize",
+        route_after_authorization,
+        {"authorized": "retrieve", "denied": "safe_denial"},
+    )
     graph.add_edge("retrieve", "deal_context")
     graph.add_edge("deal_context", "conversation")
     graph.add_edge("deal_context", "stakeholders")
@@ -88,13 +95,31 @@ def build_deal_graph() -> CompiledStateGraph[Any, Any, Any, Any]:
     graph.add_edge("approval", "build_brief")
     graph.add_edge("build_brief", "persist")
     graph.add_edge("persist", END)
+    graph.add_edge("safe_denial", END)
     return graph.compile()
 
 
 def authorize_node(state: DealState) -> dict[str, object]:
     source = SourceData(state["root"])
     opportunity, decision = DealService(source).authorize(state["opportunity_id"], state["user_id"])
-    return {"opportunity": opportunity, "authorization": decision}
+    authorized_state = {"opportunity": opportunity} if decision.allowed else {}
+    return {**authorized_state, "authorization": decision}
+
+
+def route_after_authorization(state: DealState) -> Literal["authorized", "denied"]:
+    """Choose the next graph branch from the authorization decision."""
+    return "authorized" if state["authorization"].allowed else "denied"
+
+
+def safe_denial_node(state: DealState) -> dict[str, object]:
+    """Return a generic denial without exposing protected deal information."""
+    denial = DeniedResult(
+        run_id=state["run_id"],
+        opportunity_id=state["opportunity_id"],
+        user_id=state["user_id"],
+        message="Requester is not authorized for this request.",
+    )
+    return {"denial": denial}
 
 
 def retrieve_node(state: DealState) -> dict[str, object]:

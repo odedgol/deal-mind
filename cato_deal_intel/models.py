@@ -133,3 +133,16 @@ class Brief(StrictModel):
     missing_information: list[str]
     source_evidence: list[EvidenceItem]
     confidence_and_review_warnings: list[str]
+
+
+class DeniedResult(StrictModel):
+    """Safe workflow result returned when authorization is denied."""
+
+    run_id: str
+    opportunity_id: str
+    user_id: str
+    status: Literal["denied"] = "denied"
+    message: str
+
+
+WorkflowResult = Brief | DeniedResult

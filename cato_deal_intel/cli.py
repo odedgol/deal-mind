@@ -5,6 +5,7 @@ import typer
 
 from .data import SourceData
 from .llm import configured_llm
+from .models import Brief
 from .retrieval import EvidenceRetriever, RetrievalRequest
 from .workflow import create_brief
 
@@ -67,7 +68,10 @@ def brief(
         llm=configured_llm(),
         approval_decision=approve,
     )
-    typer.echo(f"Saved run {result.run_id} to {ARTIFACT_ROOT / result.run_id}")
+    if isinstance(result, Brief):
+        typer.echo(f"Saved run {result.run_id} to {ARTIFACT_ROOT / result.run_id}")
+        return
+    typer.echo(f"Request denied: {result.message}")
 
 
 @app.command()
@@ -86,20 +90,22 @@ def demo() -> None:
             llm=configured_llm(),
             approval_decision="pending",
         )
-        typer.echo(
-            f"{opportunity}: run {result.run_id}; "
-            f"approval warnings={len(result.confidence_and_review_warnings)}"
-        )
-    try:
-        create_brief(
-            root=DATA_ROOT,
-            artifacts_root=ARTIFACT_ROOT,
-            opportunity_id="OPP-1003",
-            user_id="USR-5007",
-            llm=configured_llm(),
-        )
-    except PermissionError as error:
-        typer.echo(f"OPP-1003 denied: {error}")
+        if isinstance(result, Brief):
+            typer.echo(
+                f"{opportunity}: run {result.run_id}; "
+                f"approval warnings={len(result.confidence_and_review_warnings)}"
+            )
+            continue
+        typer.echo(f"{opportunity} denied: {result.message}")
+    denied = create_brief(
+        root=DATA_ROOT,
+        artifacts_root=ARTIFACT_ROOT,
+        opportunity_id="OPP-1003",
+        user_id="USR-5007",
+        llm=configured_llm(),
+    )
+    if not isinstance(denied, Brief):
+        typer.echo(f"OPP-1003 denied: {denied.message}")
 
 
 if __name__ == "__main__":
