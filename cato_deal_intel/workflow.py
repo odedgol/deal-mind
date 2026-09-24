@@ -27,6 +27,7 @@ from .models import (
     RecommendedAction,
     StrategyOutput,
 )
+from .observability import observability_enabled
 from .retrieval import EvidenceRetriever, RetrievalRequest
 from .validation import validate_citations
 
@@ -146,7 +147,8 @@ def _traced_specialist(
     try:
         output = call()
     except Exception as error:
-        traces.append(
+        _record_trace(
+            traces,
             AgentTrace(
                 run_id=run_id,
                 agent_name=name,
@@ -155,10 +157,11 @@ def _traced_specialist(
                 started_at=started,
                 completed_at=datetime.now(UTC),
                 error=str(error),
-            )
+            ),
         )
         raise
-    traces.append(
+    _record_trace(
+        traces,
         AgentTrace(
             run_id=run_id,
             agent_name=name,
@@ -166,7 +169,7 @@ def _traced_specialist(
             status="completed",
             started_at=started,
             completed_at=datetime.now(UTC),
-        )
+        ),
     )
     return output
 
@@ -182,7 +185,8 @@ def _traced_strategy(
     try:
         output = run_strategy(context, outputs, llm)
     except Exception as error:
-        traces.append(
+        _record_trace(
+            traces,
             AgentTrace(
                 run_id=run_id,
                 agent_name="Negotiation Strategy Agent",
@@ -191,10 +195,11 @@ def _traced_strategy(
                 started_at=started,
                 completed_at=datetime.now(UTC),
                 error=str(error),
-            )
+            ),
         )
         raise
-    traces.append(
+    _record_trace(
+        traces,
         AgentTrace(
             run_id=run_id,
             agent_name="Negotiation Strategy Agent",
@@ -202,9 +207,14 @@ def _traced_strategy(
             status="completed",
             started_at=started,
             completed_at=datetime.now(UTC),
-        )
+        ),
     )
     return output
+
+
+def _record_trace(traces: list[AgentTrace], trace: AgentTrace) -> None:
+    if observability_enabled():
+        traces.append(trace)
 
 
 def _route_approval(

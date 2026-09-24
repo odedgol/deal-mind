@@ -3,6 +3,7 @@ from dataclasses import dataclass
 
 from .llm import LLMAdapter, evidence_payload
 from .models import AgentOutput, DealSnapshot, EvidenceItem, Opportunity, StrategyOutput
+from .observability import observed
 
 
 @dataclass(frozen=True)
@@ -11,6 +12,7 @@ class AgentContext:
     evidence: list[EvidenceItem]
 
 
+@observed(agent_name="deal_context", prompt_version="v1")
 def run_deal_context(context: AgentContext) -> DealSnapshot:
     opportunity = context.opportunity
     ids = [item.evidence_id for item in context.evidence if item.source_type == "salesforce"]
@@ -26,10 +28,12 @@ def run_deal_context(context: AgentContext) -> DealSnapshot:
     )
 
 
+@observed(agent_name="conversation_intelligence", prompt_version="v1")
 def run_conversation_intelligence(context: AgentContext, llm: LLMAdapter) -> AgentOutput:
     return _run_specialist("Conversation Intelligence Agent", context, llm)
 
 
+@observed(agent_name="stakeholder_map", prompt_version="v1")
 def run_stakeholder_map(context: AgentContext, llm: LLMAdapter) -> AgentOutput:
     return _run_specialist("Stakeholder Map Agent", context, llm)
 
@@ -38,6 +42,7 @@ def run_buyer_goals(context: AgentContext, llm: LLMAdapter) -> AgentOutput:
     return _run_specialist("Buyer Goals Agent", context, llm)
 
 
+@observed(agent_name="negotiation_strategy", prompt_version="v1")
 def run_strategy(
     context: AgentContext,
     specialists: list[AgentOutput],
