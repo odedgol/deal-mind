@@ -1,3 +1,4 @@
+import os
 import uuid
 from pathlib import Path
 from typing import Literal, cast
@@ -7,6 +8,7 @@ from .graph import DealState, build_deal_graph
 from .llm import LLMAdapter
 from .models import WorkflowResult
 from .observability import AgentTraceCollector
+from .retrieval import DEFAULT_QDRANT_PATH
 
 
 def create_brief(
@@ -17,6 +19,7 @@ def create_brief(
     user_id: str,
     llm: LLMAdapter,
     approval_decision: Literal["approved", "rejected", "pending"] = "pending",
+    qdrant_path: Path | None = None,
 ) -> WorkflowResult:
     """Run the LangGraph flow and return either a brief or a safe denial."""
     initial_state: DealState = {
@@ -28,6 +31,7 @@ def create_brief(
         "approval_decision": approval_decision,
         "run_id": uuid.uuid4().hex,
         "trace_collector": AgentTraceCollector(),
+        "qdrant_path": qdrant_path or Path(os.getenv("CATO_QDRANT_PATH", str(DEFAULT_QDRANT_PATH))),
     }
     try:
         result = build_deal_graph().invoke(initial_state)

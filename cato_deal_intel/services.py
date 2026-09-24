@@ -68,8 +68,6 @@ class EvidenceService:
         decision: AuthorizationDecision,
         limit: int = 8,
     ) -> list[EvidenceItem]:
-        evidence = self.source.evidence()
-        self.retriever.index(evidence)
         return self.retriever.retrieve(
             RetrievalRequest(
                 query=query,

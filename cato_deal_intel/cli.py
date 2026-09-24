@@ -6,7 +6,7 @@ import typer
 from .data import SourceData
 from .llm import configured_llm
 from .models import Brief
-from .retrieval import EvidenceRetriever, RetrievalRequest
+from .retrieval import DEFAULT_QDRANT_PATH, EvidenceRetriever, RetrievalRequest
 from .workflow import create_brief
 
 app = typer.Typer(help="Create grounded, permission-aware deal intelligence briefs.")
@@ -18,10 +18,10 @@ ARTIFACT_ROOT = Path("artifacts/runs")
 def ingest() -> None:
     """Load all supplied and synthetic evidence into a local Qdrant collection."""
     source = SourceData(DATA_ROOT)
-    retriever = EvidenceRetriever()
+    retriever = EvidenceRetriever(path=DEFAULT_QDRANT_PATH)
     evidence = source.evidence()
-    retriever.index(evidence)
-    typer.echo(f"Indexed {len(evidence)} evidence items.")
+    retriever.rebuild(evidence)
+    typer.echo(f"Indexed {len(evidence)} evidence items into {DEFAULT_QDRANT_PATH}.")
 
 
 @app.command()
@@ -39,8 +39,7 @@ def search(
     from .authorization import authorize
 
     decision = authorize(opportunity_record, requester)
-    retriever = EvidenceRetriever()
-    retriever.index(source.evidence())
+    retriever = EvidenceRetriever(path=DEFAULT_QDRANT_PATH, require_existing=True)
     results = retriever.retrieve(
         RetrievalRequest(
             query, opportunity, decision.allowed_source_types, decision.allowed_access_levels

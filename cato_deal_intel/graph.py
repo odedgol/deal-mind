@@ -63,9 +63,11 @@ class DealState(TypedDict, total=False):
     llm: LLMAdapter
     approval_decision: Literal["approved", "rejected", "pending"]
     run_id: str
+    qdrant_path: Path
     opportunity: Opportunity
     authorization: AuthorizationDecision
     evidence: Annotated[list[EvidenceItem], _merge_unique_evidence]
+    retriever: EvidenceRetriever
     deal_snapshot: DealSnapshot
     conversation: AgentOutput
     stakeholders: AgentOutput
@@ -134,9 +136,10 @@ def safe_denial_node(state: DealState) -> dict[str, object]:
 
 def retrieve_node(state: DealState) -> dict[str, object]:
     source = SourceData(state["root"])
-    service = EvidenceService(source, EvidenceRetriever())
+    retriever = EvidenceRetriever(path=state["qdrant_path"], require_existing=True)
+    service = EvidenceService(source, retriever)
     evidence = service.retrieve(state["opportunity_id"], state["authorization"])
-    return {"evidence": evidence}
+    return {"evidence": evidence, "retriever": retriever}
 
 
 def deal_context_node(state: DealState) -> dict[str, object]:
@@ -151,7 +154,7 @@ def deal_context_node(state: DealState) -> dict[str, object]:
 
 
 def conversation_node(state: DealState) -> dict[str, object]:
-    service = EvidenceService(SourceData(state["root"]), EvidenceRetriever())
+    service = EvidenceService(SourceData(state["root"]), state["retriever"])
     search = AuthorizedEvidenceSearchTool(service, state["authorization"])
     agent = ConversationIntelligenceAgent(state["llm"], search)
     output, trace = _run_traced_agent(
@@ -168,7 +171,7 @@ def conversation_node(state: DealState) -> dict[str, object]:
 
 
 def stakeholders_node(state: DealState) -> dict[str, object]:
-    service = EvidenceService(SourceData(state["root"]), EvidenceRetriever())
+    service = EvidenceService(SourceData(state["root"]), state["retriever"])
     search = AuthorizedEvidenceSearchTool(service, state["authorization"])
     agent = StakeholderMapAgent(state["llm"], search)
     output, trace = _run_traced_agent(
@@ -185,7 +188,7 @@ def stakeholders_node(state: DealState) -> dict[str, object]:
 
 
 def strategy_node(state: DealState) -> dict[str, object]:
-    service = EvidenceService(SourceData(state["root"]), EvidenceRetriever())
+    service = EvidenceService(SourceData(state["root"]), state["retriever"])
     policy = DealDeskPolicyTool(service, state["authorization"])
     strategy_agent = NegotiationStrategyAgent(
         state["llm"],

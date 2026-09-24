@@ -1,12 +1,15 @@
 import hashlib
+import os
 import re
 from dataclasses import dataclass
+from pathlib import Path
 
 from qdrant_client import QdrantClient, models
 
 from .models import AuthorizationDecision, EvidenceItem
 
 COLLECTION_NAME = "deal_evidence"
+DEFAULT_QDRANT_PATH = Path(os.getenv("CATO_QDRANT_PATH", "artifacts/qdrant"))
 
 
 @dataclass(frozen=True)
@@ -21,9 +24,15 @@ class RetrievalRequest:
 class EvidenceRetriever:
     """Indexes evidence once and applies authorization inside every Qdrant query."""
 
-    def __init__(self, client: QdrantClient | None = None) -> None:
-        self.client = client or QdrantClient(":memory:")
-        self._ensure_collection()
+    def __init__(
+        self,
+        client: QdrantClient | None = None,
+        *,
+        path: Path | None = None,
+        require_existing: bool = False,
+    ) -> None:
+        self.client = client or (QdrantClient(path=str(path)) if path else QdrantClient(":memory:"))
+        self._ensure_collection(require_existing=require_existing)
 
     def index(self, evidence: list[EvidenceItem]) -> None:
         points = [
@@ -36,6 +45,13 @@ class EvidenceRetriever:
         ]
         if points:
             self.client.upsert(collection_name=COLLECTION_NAME, points=points)
+
+    def rebuild(self, evidence: list[EvidenceItem]) -> None:
+        """Replace the local index with the current source evidence."""
+        if self.client.collection_exists(COLLECTION_NAME):
+            self.client.delete_collection(COLLECTION_NAME)
+        self._ensure_collection()
+        self.index(evidence)
 
     def retrieve(
         self,
@@ -74,8 +90,10 @@ class EvidenceRetriever:
         )
         return ranked[: request.limit]
 
-    def _ensure_collection(self) -> None:
+    def _ensure_collection(self, *, require_existing: bool = False) -> None:
         if not self.client.collection_exists(COLLECTION_NAME):
+            if require_existing:
+                raise RuntimeError("Qdrant index not found. Run `uv run deal-intel ingest` first.")
             self.client.create_collection(
                 collection_name=COLLECTION_NAME,
                 vectors_config=models.VectorParams(size=1, distance=models.Distance.COSINE),
