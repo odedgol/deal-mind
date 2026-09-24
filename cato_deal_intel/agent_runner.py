@@ -5,10 +5,10 @@ from typing import TypeVar
 
 from .agents import (
     AgentContext,
-    run_conversation_intelligence,
-    run_deal_context,
-    run_stakeholder_map,
-    run_strategy,
+    ConversationIntelligenceAgent,
+    DealContextAgent,
+    NegotiationStrategyAgent,
+    StakeholderMapAgent,
 )
 from .llm import LLMAdapter
 from .models import AgentOutput, AgentTrace, DealSnapshot, StrategyOutput
@@ -30,26 +30,29 @@ class AgentRunner:
     """Runs the agents and returns their typed outputs as one application result."""
 
     def __init__(self, llm: LLMAdapter) -> None:
-        self.llm = llm
+        self.deal_context = DealContextAgent()
+        self.conversation = ConversationIntelligenceAgent(llm)
+        self.stakeholders = StakeholderMapAgent(llm)
+        self.strategy = NegotiationStrategyAgent(llm)
 
     def run(self, context: AgentContext, run_id: str) -> AgentRun:
         traces: list[AgentTrace] = []
-        deal_snapshot = run_deal_context(context)
+        deal_snapshot = self.deal_context.run(context)
         conversation = self._run_agent_output(
             run_id,
             "Conversation Intelligence Agent",
-            lambda: run_conversation_intelligence(context, self.llm),
+            lambda: self.conversation.run(context),
             traces,
         )
         stakeholders = self._run_agent_output(
             run_id,
             "Stakeholder Map Agent",
-            lambda: run_stakeholder_map(context, self.llm),
+            lambda: self.stakeholders.run(context),
             traces,
         )
         strategy = self._run_strategy(
             run_id,
-            lambda: run_strategy(context, [conversation, stakeholders], self.llm),
+            lambda: self.strategy.run(context, [conversation, stakeholders]),
             traces,
         )
         return AgentRun(deal_snapshot, conversation, stakeholders, strategy, traces)

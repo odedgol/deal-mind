@@ -4,12 +4,60 @@ from dataclasses import dataclass
 from .llm import LLMAdapter, evidence_payload
 from .models import AgentOutput, DealSnapshot, EvidenceItem, Opportunity, StrategyOutput
 from .observability import observed
+from .tools import (
+    CONVERSATION_TOOLS,
+    DEAL_CONTEXT_TOOLS,
+    STAKEHOLDER_TOOLS,
+    STRATEGY_TOOLS,
+    ToolSpec,
+)
 
 
 @dataclass(frozen=True)
 class AgentContext:
     opportunity: Opportunity
     evidence: list[EvidenceItem]
+
+
+class DealContextAgent:
+    name = "Deal Context Agent"
+    tools: tuple[ToolSpec, ...] = DEAL_CONTEXT_TOOLS
+
+    def run(self, context: AgentContext) -> DealSnapshot:
+        return run_deal_context(context)
+
+
+class ConversationIntelligenceAgent:
+    name = "Conversation Intelligence Agent"
+    tools: tuple[ToolSpec, ...] = CONVERSATION_TOOLS
+
+    def __init__(self, llm: LLMAdapter) -> None:
+        self.llm = llm
+
+    def run(self, context: AgentContext) -> AgentOutput:
+        return run_conversation_intelligence(context, self.llm)
+
+
+class StakeholderMapAgent:
+    name = "Stakeholder Map Agent"
+    tools: tuple[ToolSpec, ...] = STAKEHOLDER_TOOLS
+
+    def __init__(self, llm: LLMAdapter) -> None:
+        self.llm = llm
+
+    def run(self, context: AgentContext) -> AgentOutput:
+        return run_stakeholder_map(context, self.llm)
+
+
+class NegotiationStrategyAgent:
+    name = "Negotiation Strategy Agent"
+    tools: tuple[ToolSpec, ...] = STRATEGY_TOOLS
+
+    def __init__(self, llm: LLMAdapter) -> None:
+        self.llm = llm
+
+    def run(self, context: AgentContext, specialists: list[AgentOutput]) -> StrategyOutput:
+        return run_strategy(context, specialists, self.llm)
 
 
 @observed(agent_name="deal_context", prompt_version="v1")
