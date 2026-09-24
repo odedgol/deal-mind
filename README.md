@@ -56,6 +56,8 @@ npm run dev
 
 Run `uv run deal-intel-api` in another terminal, then open `http://127.0.0.1:5173`.
 
+The local Qdrant client is shared and requests are serialized inside the API process because file-backed Qdrant storage allows only one active local client. For multi-process or production deployment, use a Qdrant server instead of local storage.
+
 The generated synthetic Slack updates are stored at `synthetic_data/slack/account_team_updates.tsv`.
 
 Architecture and deployment diagrams are documented in [ARCHITECTURE.md](ARCHITECTURE.md).

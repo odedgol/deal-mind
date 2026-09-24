@@ -4,6 +4,8 @@ from collections.abc import Callable
 from pathlib import Path
 from typing import Literal, cast
 
+from qdrant_client import QdrantClient
+
 from .artifact_store import ArtifactStore
 from .embeddings import EmbeddingProvider, HashEmbeddingProvider
 from .graph import DealState, build_deal_graph
@@ -24,6 +26,7 @@ def create_brief(
     approval_prompt: Callable[[list[RecommendedAction]], Literal["approved", "rejected"]]
     | None = None,
     qdrant_path: Path | None = None,
+    qdrant_client: QdrantClient | None = None,
     embedding_provider: EmbeddingProvider | None = None,
 ) -> WorkflowResult:
     """Run the LangGraph flow and return either a brief or a safe denial."""
@@ -41,6 +44,8 @@ def create_brief(
     }
     if approval_prompt is not None:
         initial_state["approval_prompt"] = approval_prompt
+    if qdrant_client is not None:
+        initial_state["qdrant_client"] = qdrant_client
     try:
         result = build_deal_graph().invoke(initial_state)
     except Exception as error:

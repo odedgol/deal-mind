@@ -13,6 +13,16 @@ def test_health_endpoint() -> None:
     assert response.json() == {"status": "ok"}
 
 
+def test_api_reuses_one_local_qdrant_client(monkeypatch, tmp_path) -> None:
+    monkeypatch.setattr(api, "DEFAULT_QDRANT_PATH", tmp_path / "qdrant")
+    monkeypatch.setattr(api, "_qdrant_client", None)
+
+    first = api._get_qdrant_client()
+    second = api._get_qdrant_client()
+
+    assert first is second
+
+
 def test_brief_endpoint_reuses_workflow(monkeypatch, tmp_path) -> None:
     qdrant_path = tmp_path / "qdrant"
     EvidenceRetriever(path=qdrant_path).index(SourceData(api.DATA_ROOT).evidence())
@@ -20,6 +30,7 @@ def test_brief_endpoint_reuses_workflow(monkeypatch, tmp_path) -> None:
     monkeypatch.setattr(api, "configured_llm", lambda: FakeLLM())
     monkeypatch.setattr(api, "configured_embedding_provider", lambda: None)
     monkeypatch.setattr(api, "DEFAULT_QDRANT_PATH", qdrant_path)
+    monkeypatch.setattr(api, "_qdrant_client", None)
 
     response = TestClient(api.app).post(
         "/brief",

@@ -4,6 +4,7 @@ from typing import Annotated, Any, Literal, TypedDict
 
 from langgraph.graph import END, START, StateGraph
 from langgraph.graph.state import CompiledStateGraph
+from qdrant_client import QdrantClient
 
 from .agents import (
     AgentContext,
@@ -65,6 +66,7 @@ class DealState(TypedDict, total=False):
     approval_prompt: Callable[[list[RecommendedAction]], Literal["approved", "rejected"]]
     run_id: str
     qdrant_path: Path
+    qdrant_client: QdrantClient
     embedding_provider: EmbeddingProvider
     opportunity: Opportunity
     authorization: AuthorizationDecision
@@ -139,6 +141,7 @@ def safe_denial_node(state: DealState) -> dict[str, object]:
 def retrieve_node(state: DealState) -> dict[str, object]:
     source = SourceData(state["root"])
     retriever = EvidenceRetriever(
+        client=state.get("qdrant_client"),
         path=state["qdrant_path"],
         require_existing=True,
         embedding_provider=state["embedding_provider"],
