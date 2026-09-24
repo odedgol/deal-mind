@@ -39,7 +39,7 @@ def test_retrieval_applies_opportunity_and_permission_filters(tmp_path: Path) ->
 
     assert results
     assert all(item.opportunity_id in {"OPP-1003", "*"} for item in results)
-    assert all(item.access_level in {"standard", "sensitive"} for item in results)
+    assert all(item.access_level in {"standard", "sensitive", "restricted"} for item in results)
 
 
 def test_restricted_opportunity_is_not_retrieved_for_insufficient_user(tmp_path: Path) -> None:

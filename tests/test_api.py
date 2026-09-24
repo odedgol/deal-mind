@@ -1,6 +1,7 @@
 from fastapi.testclient import TestClient
 
 from cato_deal_intel import api
+from cato_deal_intel.client_factory import QdrantClientFactory
 from cato_deal_intel.data import SourceData
 from cato_deal_intel.llm import FakeLLM
 from cato_deal_intel.retrieval import EvidenceRetriever
@@ -14,11 +15,10 @@ def test_health_endpoint() -> None:
 
 
 def test_api_reuses_one_local_qdrant_client(monkeypatch, tmp_path) -> None:
-    monkeypatch.setattr(api, "DEFAULT_QDRANT_PATH", tmp_path / "qdrant")
-    monkeypatch.setattr(api, "_qdrant_client", None)
+    monkeypatch.setattr(api, "_qdrant_clients", QdrantClientFactory(tmp_path / "qdrant"))
 
-    first = api._get_qdrant_client()
-    second = api._get_qdrant_client()
+    first = api._qdrant_clients()
+    second = api._qdrant_clients()
 
     assert first is second
 
@@ -30,7 +30,7 @@ def test_brief_endpoint_reuses_workflow(monkeypatch, tmp_path) -> None:
     monkeypatch.setattr(api, "configured_llm", lambda: FakeLLM())
     monkeypatch.setattr(api, "configured_embedding_provider", lambda: None)
     monkeypatch.setattr(api, "DEFAULT_QDRANT_PATH", qdrant_path)
-    monkeypatch.setattr(api, "_qdrant_client", None)
+    monkeypatch.setattr(api, "_qdrant_clients", QdrantClientFactory(qdrant_path))
 
     response = TestClient(api.app).post(
         "/brief",

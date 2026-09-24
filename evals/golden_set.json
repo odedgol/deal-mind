@@ -1,0 +1,34 @@
+[
+  {
+    "name": "standard authorized renewal",
+    "opportunity_id": "OPP-1001",
+    "user_id": "USR-5001",
+    "expected_status": "brief",
+    "approval_required": false,
+    "required_source_types": ["salesforce", "gong", "slack"]
+  },
+  {
+    "name": "authorized restricted renewal",
+    "opportunity_id": "OPP-1003",
+    "user_id": "USR-5003",
+    "expected_status": "brief",
+    "approval_required": true,
+    "required_source_types": ["salesforce", "gong", "slack"]
+  },
+  {
+    "name": "unauthorized restricted request",
+    "opportunity_id": "OPP-1003",
+    "user_id": "USR-5007",
+    "expected_status": "denied",
+    "approval_required": false,
+    "required_source_types": []
+  },
+  {
+    "name": "second authorized expansion",
+    "opportunity_id": "OPP-1002",
+    "user_id": "USR-5002",
+    "expected_status": "brief",
+    "approval_required": false,
+    "required_source_types": ["salesforce", "gong", "slack"]
+  }
+]

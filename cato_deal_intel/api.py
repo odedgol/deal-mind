@@ -8,9 +8,9 @@ from typing import Literal
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, ConfigDict
-from qdrant_client import QdrantClient
 
 from .cli import ARTIFACT_ROOT, DATA_ROOT
+from .client_factory import QdrantClientFactory
 from .embeddings import configured_embedding_provider
 from .llm import configured_llm
 from .models import Brief, CostSummary, DeniedResult
@@ -38,15 +38,7 @@ app.add_middleware(
     allow_headers=["Content-Type"],
 )
 _brief_lock = Lock()
-_qdrant_client: QdrantClient | None = None
-
-
-def _get_qdrant_client() -> QdrantClient:
-    """Open one local Qdrant client and reuse it for every API request."""
-    global _qdrant_client
-    if _qdrant_client is None:
-        _qdrant_client = QdrantClient(path=str(DEFAULT_QDRANT_PATH))
-    return _qdrant_client
+_qdrant_clients = QdrantClientFactory(DEFAULT_QDRANT_PATH)
 
 
 @app.get("/health", response_model=HealthResponse)
@@ -67,7 +59,7 @@ def generate_brief(request: BriefRequest) -> Brief | DeniedResult:
             llm=configured_llm(),
             approval_decision=request.approval_decision,
             qdrant_path=DEFAULT_QDRANT_PATH,
-            qdrant_client_factory=_get_qdrant_client,
+            qdrant_client_factory=_qdrant_clients,
             embedding_provider=configured_embedding_provider(),
         )
 

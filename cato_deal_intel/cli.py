@@ -6,6 +6,7 @@ import typer
 
 from .data import SourceData
 from .embeddings import configured_embedding_provider
+from .evaluation import run_golden_evaluation
 from .llm import configured_llm
 from .models import Brief, CostSummary, RecommendedAction
 from .retrieval import DEFAULT_QDRANT_PATH, EvidenceRetriever, RetrievalRequest
@@ -93,6 +94,23 @@ def usage(run_id: str = typer.Option(..., "--run-id")) -> None:
         raise typer.BadParameter(f"Run was not found: {run_id}")
     brief = Brief.model_validate(json.loads(path.read_text(encoding="utf-8")))
     echo_cost_summary(brief.cost_summary)
+
+
+@app.command()
+def evaluate() -> None:
+    """Run the deterministic synthetic golden-set evaluation."""
+    report = run_golden_evaluation(
+        root=DATA_ROOT,
+        qdrant_path=Path("artifacts/eval-qdrant"),
+        artifacts_root=Path("artifacts/evaluations"),
+        golden_path=Path("evals/golden_set.json"),
+    )
+    typer.echo(f"Evaluation: {report.passed_cases}/{report.total_cases} passed")
+    for result in report.results:
+        status = "PASS" if result.passed else "FAIL"
+        typer.echo(f"{status} | {result.name} | {result.checks}")
+    if report.passed_cases != report.total_cases:
+        raise typer.Exit(code=1)
 
 
 def echo_cost_summary(summary: CostSummary) -> None:

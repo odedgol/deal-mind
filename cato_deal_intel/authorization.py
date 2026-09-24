@@ -19,6 +19,8 @@ def authorize(
     access_levels = {"standard"}
     if requester.can_view_sensitive_pricing:
         access_levels.add("sensitive")
+    if requester.can_view_restricted_account:
+        access_levels.add("restricted")
     return AuthorizationDecision(
         allowed=True,
         reason="Authorized.",
