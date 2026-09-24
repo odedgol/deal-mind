@@ -3,10 +3,13 @@ import os
 from collections.abc import Iterable
 from typing import Any, Protocol, TypeVar
 
+from dotenv import load_dotenv
 from openai import OpenAI
 from pydantic import BaseModel
 
 T = TypeVar("T", bound=BaseModel)
+
+load_dotenv()
 
 
 class LLMAdapter(Protocol):

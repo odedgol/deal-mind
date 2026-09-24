@@ -8,6 +8,7 @@ dependencies = [
     "typer>=0.15,<1",
     "qdrant-client>=1.12,<2",
     "openai>=1.60,<2",
+    "python-dotenv>=1.0,<2",
 ]
 
 [build-system]
