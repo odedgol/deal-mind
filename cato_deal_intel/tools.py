@@ -5,9 +5,10 @@ from .models import (
     DealSnapshot,
     EvidenceItem,
     Opportunity,
+    RecommendedAction,
     StrategyOutput,
 )
-from .services import EvidenceService
+from .services import ApprovalService, EvidenceService
 from .validation import validate_citations
 
 
@@ -73,6 +74,7 @@ class DealDeskPolicyTool:
     def __init__(self, service: EvidenceService, decision: AuthorizationDecision) -> None:
         self.service = service
         self.decision = decision
+        self.retrieved_evidence: list[EvidenceItem] = []
 
     def run(self, opportunity_id: str) -> EvidenceItem | None:
         policy = self.service.search(
@@ -81,7 +83,27 @@ class DealDeskPolicyTool:
             decision=self.decision,
             limit=4,
         )
-        return next((item for item in policy if item.source_type == "policies"), None)
+        result = next((item for item in policy if item.source_type == "policies"), None)
+        if result is not None and result.evidence_id not in {
+            item.evidence_id for item in self.retrieved_evidence
+        }:
+            self.retrieved_evidence.append(result)
+        return result
+
+
+class ApprovalRequestTool:
+    name = "request_approval"
+
+    def __init__(self, service: ApprovalService) -> None:
+        self.service = service
+
+    def run(
+        self,
+        opportunity: Opportunity,
+        actions: list[RecommendedAction],
+    ) -> list[RecommendedAction]:
+        routed, _ = self.service.prepare(opportunity, actions, "pending")
+        return routed
 
 
 class RecommendationValidationTool:

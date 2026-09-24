@@ -9,8 +9,10 @@ from .tools import (
     DEAL_CONTEXT_TOOLS,
     STAKEHOLDER_TOOLS,
     STRATEGY_TOOLS,
+    ApprovalRequestTool,
     AuthorizedEvidenceSearchTool,
     DealContextTool,
+    DealDeskPolicyTool,
     EvidenceSearchRequest,
     RecommendationValidationTool,
     ToolSpec,
@@ -86,12 +88,23 @@ class NegotiationStrategyAgent:
         self,
         llm: LLMAdapter,
         validator: RecommendationValidationTool | None = None,
+        policy_tool: DealDeskPolicyTool | None = None,
+        approval_tool: ApprovalRequestTool | None = None,
     ) -> None:
         self.llm = llm
         self.validator = validator
+        self.policy_tool = policy_tool
+        self.approval_tool = approval_tool
 
     def run(self, context: AgentContext, specialists: list[AgentOutput]) -> StrategyOutput:
+        if self.policy_tool is not None:
+            policy = self.policy_tool.run(context.opportunity.opportunity_id)
+            if policy is not None:
+                context = AgentContext(context.opportunity, [*context.evidence, policy])
         output = run_strategy(context, specialists, self.llm)
+        if self.approval_tool is not None:
+            actions = self.approval_tool.run(context.opportunity, output.actions)
+            output = output.model_copy(update={"actions": actions})
         if self.validator is not None:
             return self.validator.run(output, context.evidence)
         return output

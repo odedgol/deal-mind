@@ -14,8 +14,10 @@ from .llm import LLMAdapter
 from .models import AgentOutput, AgentTrace, DealSnapshot, StrategyOutput
 from .observability import observability_enabled
 from .tools import (
+    ApprovalRequestTool,
     AuthorizedEvidenceSearchTool,
     DealContextTool,
+    DealDeskPolicyTool,
     RecommendationValidationTool,
 )
 
@@ -41,11 +43,18 @@ class AgentRunner:
         deal_context_tool: DealContextTool | None = None,
         search_tool: AuthorizedEvidenceSearchTool | None = None,
         recommendation_validator: RecommendationValidationTool | None = None,
+        policy_tool: DealDeskPolicyTool | None = None,
+        approval_tool: ApprovalRequestTool | None = None,
     ) -> None:
         self.deal_context = DealContextAgent(deal_context_tool)
         self.conversation = ConversationIntelligenceAgent(llm, search_tool)
         self.stakeholders = StakeholderMapAgent(llm, search_tool)
-        self.strategy = NegotiationStrategyAgent(llm, recommendation_validator)
+        self.strategy = NegotiationStrategyAgent(
+            llm,
+            recommendation_validator,
+            policy_tool,
+            approval_tool,
+        )
 
     def run(self, context: AgentContext, run_id: str) -> AgentRun:
         traces: list[AgentTrace] = []
