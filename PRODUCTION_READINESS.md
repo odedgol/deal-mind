@@ -9,6 +9,11 @@ The MVP workflow is read-only with respect to external business systems:
 - Approval records are saved as local run artifacts.
 - Retries are safe for transient read-only calls when they do not repeat an external write.
 
+The local Qdrant client is shared and requests are serialized inside the API process. This is
+required because Qdrant's file-backed local mode locks its storage directory. It is not a
+production scaling strategy: multiple API workers must use a Qdrant server or managed Qdrant
+instance instead.
+
 ## Retrieval approach
 
 There are three practical retrieval approaches:
@@ -53,3 +58,5 @@ retried. A retry must not create a second business side effect.
 - Retry only transient failures such as timeouts, connection errors, rate limits, and temporary
   server errors.
 - Do not retry authorization failures, validation failures, or confirmed business rejections.
+- Replace file-backed Qdrant with a server or managed deployment before running multiple workers.
+- Move run artifacts from the local filesystem to durable shared storage.

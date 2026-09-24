@@ -75,13 +75,17 @@ flowchart TD
 
 ## Deployment view
 
-The MVP is a local CLI process. Qdrant runs in local persistent mode on disk; it is not a
-separate service. OpenAI is the external model gateway for chat completions and embeddings.
+The MVP runs locally through the CLI or the FastAPI service, with the React UI as a thin
+presentation layer. Qdrant runs in local persistent mode on disk; it is not a separate service.
+The API reuses one local client and serializes requests because file-backed Qdrant storage does
+not support multiple clients or processes opening the same folder concurrently. OpenAI is the
+external model gateway for chat completions and embeddings.
 
 ```mermaid
 flowchart LR
     USER[Sales user / reviewer]
     CLI[Terminal<br/>deal-intel CLI]
+    WEB[React UI<br/>Vite + Tailwind]
     ENV[.env<br/>API key + model + paths]
     APP[Python application process<br/>Typer + LangGraph + agents + tools]
     MODEL[OpenAI model gateway<br/>chat completions + embeddings]
@@ -92,8 +96,10 @@ flowchart LR
     MONITOR[Monitoring target<br/>MVP logs and traces<br/>production: Langfuse/OTel]
 
     USER --> CLI
+    USER --> WEB
     ENV -. loaded at startup .-> APP
     CLI --> APP
+    WEB -->|HTTP /brief| APP
     SOURCES -->|ingest once or after source changes| QDRANT
     APP -->|authorized retrieval| QDRANT
     APP -->|LLM and embedding requests| MODEL
@@ -114,3 +120,11 @@ flowchart LR
   high availability, and durable external storage.
 - Real Salesforce, Gong, Slack, or CRM writes are outside the MVP. Any future write-capable tool
   must add an idempotency contract before production use.
+
+### Production scaling boundary
+
+The local file-backed Qdrant client is intentionally an MVP choice. It is suitable for one local
+API process, but it must not be shared by multiple API workers, containers, or a CLI and API at
+the same time. Production replaces it with a managed or clustered Qdrant deployment (or
+OpenSearch), configured through a service URL. Each stateless API worker can then use its own
+client connection while the database service coordinates concurrent access.
