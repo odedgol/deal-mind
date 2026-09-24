@@ -1,0 +1,106 @@
+from pathlib import Path
+from typing import Literal
+
+import typer
+
+from .data import SourceData
+from .llm import configured_llm
+from .retrieval import EvidenceRetriever, RetrievalRequest
+from .workflow import create_brief
+
+app = typer.Typer(help="Create grounded, permission-aware deal intelligence briefs.")
+DATA_ROOT = Path("synthetic_data")
+ARTIFACT_ROOT = Path("artifacts/runs")
+
+
+@app.command()
+def ingest() -> None:
+    """Load all supplied and synthetic evidence into a local Qdrant collection."""
+    source = SourceData(DATA_ROOT)
+    retriever = EvidenceRetriever()
+    evidence = source.evidence()
+    retriever.index(evidence)
+    typer.echo(f"Indexed {len(evidence)} evidence items.")
+
+
+@app.command()
+def search(
+    opportunity: str = typer.Option(..., "--opportunity"),
+    user: str = typer.Option(..., "--user"),
+    query: str = typer.Option(..., "--query"),
+) -> None:
+    """Search only evidence authorized for the requester."""
+    source = SourceData(DATA_ROOT)
+    opportunity_record = next(
+        item for item in source.opportunities() if item.opportunity_id == opportunity
+    )
+    requester = next((item for item in source.permissions() if item.user_id == user), None)
+    from .authorization import authorize
+
+    decision = authorize(opportunity_record, requester)
+    retriever = EvidenceRetriever()
+    retriever.index(source.evidence())
+    results = retriever.retrieve(
+        RetrievalRequest(
+            query, opportunity, decision.allowed_source_types, decision.allowed_access_levels
+        ),
+        decision,
+    )
+    for item in results:
+        typer.echo(f"{item.evidence_id} | {item.source_file} | {item.text}")
+
+
+@app.command()
+def brief(
+    opportunity: str = typer.Option(..., "--opportunity"),
+    user: str = typer.Option(..., "--user"),
+    approve: Literal["approved", "rejected", "pending"] = typer.Option(
+        "pending", "--approval", help="approved, rejected, or pending"
+    ),
+) -> None:
+    """Run the four-agent workflow and save JSON and Markdown artifacts."""
+    result = create_brief(
+        root=DATA_ROOT,
+        artifacts_root=ARTIFACT_ROOT,
+        opportunity_id=opportunity,
+        user_id=user,
+        llm=configured_llm(),
+        approval_decision=approve,
+    )
+    typer.echo(f"Saved run {result.run_id} to {ARTIFACT_ROOT / result.run_id}")
+
+
+@app.command()
+def demo() -> None:
+    """Run the authorized offline demo; use OPENAI_API_KEY for live calls."""
+    import os
+
+    os.environ.setdefault("CATO_FAKE_LLM", "1")
+    scenarios = [("OPP-1001", "USR-5001"), ("OPP-1003", "USR-5003")]
+    for opportunity, user in scenarios:
+        result = create_brief(
+            root=DATA_ROOT,
+            artifacts_root=ARTIFACT_ROOT,
+            opportunity_id=opportunity,
+            user_id=user,
+            llm=configured_llm(),
+            approval_decision="pending",
+        )
+        typer.echo(
+            f"{opportunity}: run {result.run_id}; "
+            f"approval warnings={len(result.confidence_and_review_warnings)}"
+        )
+    try:
+        create_brief(
+            root=DATA_ROOT,
+            artifacts_root=ARTIFACT_ROOT,
+            opportunity_id="OPP-1003",
+            user_id="USR-5007",
+            llm=configured_llm(),
+        )
+    except PermissionError as error:
+        typer.echo(f"OPP-1003 denied: {error}")
+
+
+if __name__ == "__main__":
+    app()

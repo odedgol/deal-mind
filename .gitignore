@@ -5,9 +5,14 @@
 !Cato_GTM_AI_Engineer_Home_Task.md
 !synthetic_data/
 !synthetic_data/**
-
-synthetic_data/slack/
-synthetic_data/slack/**
+!synthetic_data/slack/
+!synthetic_data/slack/**
+!cato_deal_intel/
+!cato_deal_intel/**
+!tests/
+!tests/**
+!pyproject.toml
+!uv.lock
 
 .DS_Store
 **/.DS_Store

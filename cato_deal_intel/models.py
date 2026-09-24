@@ -1,0 +1,135 @@
+from datetime import date, datetime
+from typing import Literal
+
+from pydantic import BaseModel, ConfigDict, Field
+
+
+class StrictModel(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+
+class EvidenceItem(StrictModel):
+    evidence_id: str
+    opportunity_id: str
+    account_id: str | None = None
+    source_type: str
+    source_file: str
+    source_id: str
+    access_level: str
+    event_date: date | None = None
+    text: str
+    metadata: dict[str, str] = Field(default_factory=dict)
+
+
+class Finding(StrictModel):
+    text: str
+    evidence_ids: list[str]
+    confidence: float = Field(ge=0, le=1)
+    uncertainty: str | None = None
+
+
+class Opportunity(StrictModel):
+    opportunity_id: str
+    opportunity_name: str
+    account_id: str
+    account_name: str
+    stage: str
+    type: str
+    region: str
+    country: str
+    industry: str
+    owner: str
+    close_date: date
+    acv: int
+    tcv: int
+    renewal_term_months: int
+    probability: int
+    forecast_category: str
+    next_step: str
+    primary_competitor: str
+    risk_level: str
+    approval_required: bool
+    restricted_access: bool
+
+
+class PermissionProfile(StrictModel):
+    user_id: str
+    user_name: str
+    role: str
+    allowed_account_ids: set[str]
+    allowed_source_types: set[str]
+    can_view_sensitive_pricing: bool
+    can_request_approval: bool
+    can_view_restricted_account: bool
+
+
+class AuthorizationDecision(StrictModel):
+    allowed: bool
+    reason: str
+    opportunity_id: str
+    user_id: str
+    account_id: str | None = None
+    allowed_source_types: set[str] = Field(default_factory=set)
+    allowed_access_levels: set[str] = Field(default_factory=set)
+
+
+class AgentTrace(StrictModel):
+    run_id: str
+    agent_name: str
+    prompt_version: str
+    status: Literal["started", "completed", "failed"]
+    started_at: datetime
+    completed_at: datetime | None = None
+    error: str | None = None
+
+
+class DealSnapshot(StrictModel):
+    opportunity_id: str
+    account_name: str
+    stage: str
+    amount_acv: int
+    close_date: date
+    owner: str
+    risk_level: str
+    evidence_ids: list[str]
+
+
+class AgentOutput(StrictModel):
+    findings: list[Finding]
+    missing_information: list[str] = Field(default_factory=list)
+
+
+class RecommendedAction(StrictModel):
+    action: str
+    owner: str
+    rationale: str
+    evidence_ids: list[str]
+    requires_approval: bool
+
+
+class StrategyOutput(StrictModel):
+    summary: str
+    actions: list[RecommendedAction]
+    warnings: list[str] = Field(default_factory=list)
+
+
+class ApprovalRecord(StrictModel):
+    recommendation: str
+    reason: str
+    decision: Literal["approved", "rejected", "pending"]
+    comment: str | None = None
+    timestamp: datetime
+
+
+class Brief(StrictModel):
+    run_id: str
+    opportunity_id: str
+    deal_snapshot: DealSnapshot
+    executive_summary: str
+    buyer_goals: list[Finding]
+    stakeholder_map: list[Finding]
+    negotiation_state: list[Finding]
+    recommended_next_actions: list[RecommendedAction]
+    missing_information: list[str]
+    source_evidence: list[EvidenceItem]
+    confidence_and_review_warnings: list[str]
