@@ -25,8 +25,11 @@ There are three practical retrieval approaches:
 
 This prototype chooses hybrid retrieval. Metadata authorization filters are applied before
 ranking, BM25 provides the lexical ranking, dense embeddings provide the semantic ranking,
-and Reciprocal Rank Fusion (RRF) combines both rankings. The agents receive only the final
-authorized results; they do not choose which security filter to apply.
+and Reciprocal Rank Fusion (RRF) combines both rankings. The final score applies exponential
+recency decay with a 180-day half-life and a source reliability policy: policies 0.98,
+Salesforce 0.95, pricing 0.92, Gong 0.85, and Slack 0.72. A valid `source_reliability` metadata
+value can override the default for a source. The agents receive only the final authorized
+results; they do not choose which security filter to apply.
 
 ## Idempotency preparation
 

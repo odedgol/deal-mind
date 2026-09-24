@@ -2,7 +2,8 @@ import hashlib
 import os
 import re
 from dataclasses import dataclass
-from math import sqrt
+from datetime import date
+from math import exp, sqrt
 from pathlib import Path
 from typing import Any
 
@@ -13,6 +14,14 @@ from .models import AuthorizationDecision, EvidenceItem
 
 COLLECTION_NAME = "deal_evidence"
 DEFAULT_QDRANT_PATH = Path(os.getenv("CATO_QDRANT_PATH", "artifacts/qdrant"))
+RECENCY_HALF_LIFE_DAYS = 180
+SOURCE_RELIABILITY = {
+    "policies": 0.98,
+    "salesforce": 0.95,
+    "pricing": 0.92,
+    "gong": 0.85,
+    "slack": 0.72,
+}
 
 
 @dataclass(frozen=True)
@@ -22,6 +31,7 @@ class RetrievalRequest:
     allowed_source_types: set[str]
     allowed_access_levels: set[str]
     limit: int = 8
+    as_of_date: date | None = None
 
 
 class EvidenceRetriever:
@@ -105,10 +115,21 @@ class EvidenceRetriever:
         dense_rank = _rank_ids(dense_scores)
         ranked = sorted(
             candidates,
-            key=lambda candidate: _rrf_score(candidate[0].evidence_id, bm25_rank, dense_rank),
+            key=lambda candidate: self._ranking_score(
+                candidate[0],
+                _rrf_score(candidate[0].evidence_id, bm25_rank, dense_rank),
+                request.as_of_date or date.today(),
+            ),
             reverse=True,
         )
         return [item for item, _ in ranked[: request.limit]]
+
+    @staticmethod
+    def _ranking_score(item: EvidenceItem, hybrid_score: float, as_of_date: date) -> float:
+        """Blend retrieval relevance with freshness and source trust."""
+        freshness = _recency_score(item.event_date, as_of_date)
+        reliability = _source_reliability(item)
+        return hybrid_score * (0.7 + 0.3 * freshness) * (0.7 + 0.3 * reliability)
 
     def _ensure_collection(self, *, require_existing: bool = False) -> None:
         if not self.client.collection_exists(COLLECTION_NAME):
@@ -178,6 +199,25 @@ def _rank_ids(scores: dict[str, float]) -> dict[str, int]:
 
 def _rrf_score(evidence_id: str, *rankings: dict[str, int]) -> float:
     return sum(1 / (60 + ranking[evidence_id]) for ranking in rankings)
+
+
+def _recency_score(event_date: date | None, as_of_date: date) -> float:
+    """Apply exponential decay while keeping undated evidence retrievable."""
+    if event_date is None:
+        return 0.5
+    age_days = max(0, (as_of_date - event_date).days)
+    return exp(-0.69314718056 * age_days / RECENCY_HALF_LIFE_DAYS)
+
+
+def _source_reliability(item: EvidenceItem) -> float:
+    """Return an explicit source score, falling back to the source-type policy."""
+    configured_score = item.metadata.get("source_reliability")
+    if configured_score is not None:
+        try:
+            return min(1.0, max(0.0, float(configured_score)))
+        except ValueError:
+            pass
+    return SOURCE_RELIABILITY.get(item.source_type, 0.5)
 
 
 def _point_vector(vector: Any) -> list[float]:

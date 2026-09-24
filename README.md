@@ -60,6 +60,9 @@ The local Qdrant client is shared and requests are serialized inside the API pro
 
 The generated synthetic Slack updates are stored at `synthetic_data/slack/account_team_updates.tsv`.
 
+The retrieval layer uses hybrid BM25 + dense ranking with metadata authorization filters,
+recency decay, source reliability weighting, and citation validation.
+
 Architecture and deployment diagrams are documented in [ARCHITECTURE.md](ARCHITECTURE.md).
 Production idempotency and deployment notes are documented in
 [PRODUCTION_READINESS.md](PRODUCTION_READINESS.md).
