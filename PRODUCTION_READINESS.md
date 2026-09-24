@@ -31,6 +31,18 @@ Salesforce 0.95, pricing 0.92, Gong 0.85, and Slack 0.72. A valid `source_reliab
 value can override the default for a source. The agents receive only the final authorized
 results; they do not choose which security filter to apply.
 
+## Cost-aware model routing
+
+OpenAI calls use separate configuration points for specialist and strategy work. The specialist
+default can remain inexpensive while the strategy model can be upgraded independently. Each
+response's prompt and completion token counts are converted to cost using configurable per-million
+token rates, accumulated for the adapter's run, and rejected after the configured budget is
+exceeded. Usage is written to structured logs without logging prompts or completions.
+
+The local defaults live in `.env.example`; pricing values must be reviewed whenever the provider
+pricing changes. A production model gateway should own the authoritative price table, quotas,
+budgets, fallback policy, and cross-worker accounting.
+
 ## Idempotency preparation
 
 An idempotency key is not required for the current MVP because the workflow does not perform

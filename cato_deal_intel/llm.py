@@ -28,6 +28,57 @@ class RetryConfig:
     backoff_seconds: float = 0.5
 
 
+class LLMBudgetExceeded(RuntimeError):
+    """Raised when a run exceeds its configured model budget."""
+
+
+@dataclass(frozen=True)
+class UsageSnapshot:
+    model: str
+    prompt_tokens: int
+    completion_tokens: int
+    cost_usd: float
+
+
+class CostController:
+    """Track model usage and stop subsequent calls after the configured budget."""
+
+    def __init__(
+        self,
+        *,
+        budget_usd: float | None = None,
+        input_cost_per_million: float = 0.15,
+        output_cost_per_million: float = 0.60,
+    ) -> None:
+        self.budget_usd = budget_usd
+        self.input_cost_per_million = input_cost_per_million
+        self.output_cost_per_million = output_cost_per_million
+        self.total_cost_usd = 0.0
+        self.total_prompt_tokens = 0
+        self.total_completion_tokens = 0
+        self.snapshots: list[UsageSnapshot] = []
+
+    def record(self, *, model: str, prompt_tokens: int, completion_tokens: int) -> UsageSnapshot:
+        cost = (
+            prompt_tokens * self.input_cost_per_million
+            + completion_tokens * self.output_cost_per_million
+        ) / 1_000_000
+        snapshot = UsageSnapshot(model, prompt_tokens, completion_tokens, cost)
+        self.snapshots.append(snapshot)
+        self.total_cost_usd += cost
+        self.total_prompt_tokens += prompt_tokens
+        self.total_completion_tokens += completion_tokens
+        if self.budget_usd is not None and self.total_cost_usd > self.budget_usd:
+            raise LLMBudgetExceeded(
+                f"LLM budget exceeded: ${self.total_cost_usd:.4f} > ${self.budget_usd:.4f}"
+            )
+        return snapshot
+
+    def can_call(self) -> None:
+        if self.budget_usd is not None and self.total_cost_usd >= self.budget_usd:
+            raise LLMBudgetExceeded(f"LLM budget exhausted at ${self.total_cost_usd:.4f}")
+
+
 class FakeLLM:
     """Small deterministic adapter used by tests and offline development."""
 
@@ -77,6 +128,13 @@ class OpenAIAdapter:
         )
         configured_model = os.getenv("CATO_LLM_MODEL")
         self.model: str = model or configured_model or "gpt-4o-mini"
+        self.specialist_model = os.getenv("CATO_LLM_SPECIALIST_MODEL", self.model)
+        self.strategy_model = os.getenv("CATO_LLM_STRATEGY_MODEL", self.model)
+        self.cost_controller = CostController(
+            budget_usd=_optional_env_float("CATO_LLM_BUDGET_USD"),
+            input_cost_per_million=_env_float("CATO_LLM_INPUT_COST_PER_1M", 0.15),
+            output_cost_per_million=_env_float("CATO_LLM_OUTPUT_COST_PER_1M", 0.60),
+        )
 
     def complete(self, *, system: str, user: str, output_type: type[T]) -> T:
         return _retry_call(
@@ -85,15 +143,40 @@ class OpenAIAdapter:
         )
 
     def _complete_once(self, system: str, user: str, output_type: type[T]) -> T:
+        self.cost_controller.can_call()
+        model = self._model_for(output_type)
         response = self.client.beta.chat.completions.parse(
-            model=self.model,
+            model=model,
             messages=[{"role": "system", "content": system}, {"role": "user", "content": user}],
             response_format=output_type,
         )
         parsed = response.choices[0].message.parsed
         if parsed is None:
             raise ValueError("LLM returned no structured output")
+        usage = response.usage
+        if usage is not None:
+            snapshot = self.cost_controller.record(
+                model=model,
+                prompt_tokens=usage.prompt_tokens,
+                completion_tokens=usage.completion_tokens,
+            )
+            LOGGER.info(
+                "llm.usage model=%s prompt_tokens=%s completion_tokens=%s "
+                "cost_usd=%.6f total_cost_usd=%.6f",
+                snapshot.model,
+                snapshot.prompt_tokens,
+                snapshot.completion_tokens,
+                snapshot.cost_usd,
+                self.cost_controller.total_cost_usd,
+            )
         return parsed
+
+    def _model_for(self, output_type: type[T]) -> str:
+        return (
+            self.strategy_model
+            if output_type.__name__ == "StrategyOutput"
+            else self.specialist_model
+        )
 
 
 def configured_retry_config() -> RetryConfig:
@@ -146,6 +229,11 @@ def _env_float(name: str, default: float) -> float:
         return max(0.0, float(value))
     except ValueError as error:
         raise ValueError(f"{name} must be a number") from error
+
+
+def _optional_env_float(name: str) -> float | None:
+    value = os.getenv(name)
+    return None if value in {None, "", "0"} else _env_float(name, 0.0)
 
 
 def configured_llm() -> LLMAdapter:

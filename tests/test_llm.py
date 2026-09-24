@@ -2,7 +2,7 @@ import pytest
 from httpx import Request
 from openai import APITimeoutError
 
-from cato_deal_intel.llm import RetryConfig, _retry_call
+from cato_deal_intel.llm import CostController, LLMBudgetExceeded, RetryConfig, _retry_call
 
 
 def test_retry_call_retries_transient_timeout_with_exponential_backoff() -> None:
@@ -39,3 +39,19 @@ def test_retry_call_does_not_retry_non_transient_errors() -> None:
         _retry_call(operation, config=RetryConfig(max_retries=2))
 
     assert attempts == 1
+
+
+def test_cost_controller_tracks_tokens_and_enforces_budget() -> None:
+    controller = CostController(
+        budget_usd=0.001,
+        input_cost_per_million=1.0,
+        output_cost_per_million=1.0,
+    )
+
+    snapshot = controller.record(model="test-model", prompt_tokens=400, completion_tokens=300)
+
+    assert snapshot.cost_usd == 0.0007
+    assert controller.total_prompt_tokens == 400
+    assert controller.total_completion_tokens == 300
+    with pytest.raises(LLMBudgetExceeded):
+        controller.record(model="test-model", prompt_tokens=400, completion_tokens=700)
