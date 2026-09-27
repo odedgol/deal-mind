@@ -1,5 +1,5 @@
 from datetime import UTC, datetime
-from typing import Literal
+from typing import Literal, cast
 
 from ..models import (
     AgentOutput,
@@ -12,6 +12,7 @@ from ..models import (
     Opportunity,
     PermissionProfile,
     RecommendedAction,
+    RetrievalDebug,
     StrategyOutput,
 )
 from ..observability.tracing import AgentTraceCollector, trace_operation
@@ -52,11 +53,13 @@ class EvidenceService:
         retriever: EvidenceRepository,
         collector: AgentTraceCollector | None = None,
         run_id: str | None = None,
+        retrieval_debug: list[RetrievalDebug] | None = None,
     ) -> None:
         self.source = source
         self.retriever = retriever
         self.collector = collector
         self.run_id = run_id
+        self.retrieval_debug = retrieval_debug if retrieval_debug is not None else []
 
     def retrieve(self, opportunity_id: str, decision: AuthorizationDecision) -> list[EvidenceItem]:
         results = self.search(
@@ -83,12 +86,21 @@ class EvidenceService:
             limit=limit,
         )
 
-        def retrieve() -> list[EvidenceItem]:
-            return self.retriever.retrieve(request, decision)
+        def retrieve() -> tuple[list[EvidenceItem], RetrievalDebug | None]:
+            retrieve_with_debug = getattr(self.retriever, "retrieve_with_debug", None)
+            if callable(retrieve_with_debug):
+                return cast(
+                    tuple[list[EvidenceItem], RetrievalDebug],
+                    retrieve_with_debug(request, decision),
+                )
+            return self.retriever.retrieve(request, decision), None
 
         if self.collector is None or self.run_id is None:
-            return retrieve()
-        results, _ = trace_operation(
+            results, debug = retrieve()
+            if debug is not None:
+                self.retrieval_debug.append(debug)
+            return results
+        (results, debug), _ = trace_operation(
             collector=self.collector,
             run_id=self.run_id,
             event_type="retrieval",
@@ -96,6 +108,8 @@ class EvidenceService:
             operation=retrieve,
             metadata={"opportunity_id": opportunity_id, "result_limit": str(limit)},
         )
+        if debug is not None:
+            self.retrieval_debug.append(debug)
         return results
 
     def _include_slack_context(
@@ -155,6 +169,7 @@ def build_brief(
     strategy: StrategyOutput,
     actions: list[RecommendedAction],
     approvals: list[ApprovalRecord],
+    retrieval_debug: list[RetrievalDebug] | None = None,
     cost_summary: CostSummary | None = None,
 ) -> Brief:
     warnings = strategy.warnings + [
@@ -176,6 +191,7 @@ def build_brief(
         missing_information=conversation.missing_information + stakeholders.missing_information,
         source_evidence=evidence,
         confidence_and_review_warnings=warnings,
+        retrieval_debug=retrieval_debug or [],
         cost_summary=cost_summary or CostSummary(),
     )
 

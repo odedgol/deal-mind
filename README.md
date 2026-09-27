@@ -350,7 +350,7 @@ CATO_FAKE_LLM=1 uv run pytest -q tests/e2e -m e2e
 
 Current verification baseline:
 
-- Python tests: **50 passed**
+- Python tests: **53 passed**
 - Fake evaluation: **10/10 passed**
 - Ruff: clean
 - Mypy: clean

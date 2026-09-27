@@ -15,7 +15,7 @@ DEFAULT_QDRANT_PATH = QDRANT_PATH
 SOURCE = SourceData(DATA_ROOT)
 APPROVAL_STORE: ApprovalRepository = ApprovalStore(Path(ARTIFACT_ROOT))
 QDRANT_CLIENTS = QdrantClientFactory(DEFAULT_QDRANT_PATH)
-BRIEF_LOCK = Lock()
+APPROVAL_LOCK = Lock()
 
 
 def permission_profile(user_id: str) -> PermissionProfile | None:

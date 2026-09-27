@@ -33,6 +33,7 @@ from ..models import (
     EvidenceItem,
     Opportunity,
     RecommendedAction,
+    RetrievalDebug,
     StrategyOutput,
 )
 from ..observability.tracing import AgentTraceCollector, trace_operation
@@ -57,6 +58,12 @@ def _merge_traces(current: list[AgentTrace], incoming: list[AgentTrace]) -> list
     return list(traces.values())
 
 
+def _merge_retrieval_debug(
+    current: list[RetrievalDebug], incoming: list[RetrievalDebug]
+) -> list[RetrievalDebug]:
+    return current + incoming
+
+
 class DealState(TypedDict, total=False):
     root: Path
     source: DealRepository
@@ -74,6 +81,7 @@ class DealState(TypedDict, total=False):
     opportunity: Opportunity
     authorization: AuthorizationDecision
     evidence: Annotated[list[EvidenceItem], _merge_unique_evidence]
+    retrieval_debug: Annotated[list[RetrievalDebug], _merge_retrieval_debug]
     retriever: EvidenceRepository
     deal_snapshot: DealSnapshot
     conversation: AgentOutput
@@ -154,10 +162,14 @@ def retrieve_node(state: DealState) -> dict[str, object]:
         embedding_provider=state["embedding_provider"],
     )
     service = EvidenceService(
-        state["source"], retriever, state["trace_collector"], state["run_id"]
+        state["source"], retriever, state["trace_collector"], state["run_id"], []
     )
     evidence = service.retrieve(state["opportunity_id"], state["authorization"])
-    return {"evidence": evidence, "retriever": retriever}
+    return {
+        "evidence": evidence,
+        "retriever": retriever,
+        "retrieval_debug": service.retrieval_debug,
+    }
 
 
 def deal_context_node(state: DealState) -> dict[str, object]:
@@ -179,6 +191,7 @@ def conversation_node(state: DealState) -> dict[str, object]:
         state["retriever"],
         state["trace_collector"],
         state["run_id"],
+        [],
     )
     search = AuthorizedEvidenceSearchTool(
         service, state["authorization"], state["trace_collector"], state["run_id"]
@@ -193,6 +206,7 @@ def conversation_node(state: DealState) -> dict[str, object]:
     return {
         "conversation": output,
         "evidence": _merge_evidence(state["evidence"], search.retrieved_evidence),
+        "retrieval_debug": service.retrieval_debug,
         "traces": [trace],
     }
 
@@ -203,6 +217,7 @@ def stakeholders_node(state: DealState) -> dict[str, object]:
         state["retriever"],
         state["trace_collector"],
         state["run_id"],
+        [],
     )
     search = AuthorizedEvidenceSearchTool(
         service, state["authorization"], state["trace_collector"], state["run_id"]
@@ -217,6 +232,7 @@ def stakeholders_node(state: DealState) -> dict[str, object]:
     return {
         "stakeholders": output,
         "evidence": _merge_evidence(state["evidence"], search.retrieved_evidence),
+        "retrieval_debug": service.retrieval_debug,
         "traces": [trace],
     }
 
@@ -227,6 +243,7 @@ def strategy_node(state: DealState) -> dict[str, object]:
         state["retriever"],
         state["trace_collector"],
         state["run_id"],
+        [],
     )
     policy = DealDeskPolicyTool(
         service, state["authorization"], state["trace_collector"], state["run_id"]
@@ -258,6 +275,7 @@ def strategy_node(state: DealState) -> dict[str, object]:
     return {
         "strategy": output,
         "evidence": evidence,
+        "retrieval_debug": service.retrieval_debug,
         "traces": [trace, recommendation_trace],
     }
 
@@ -295,6 +313,7 @@ def build_brief_node(state: DealState) -> dict[str, object]:
         strategy=state["strategy"],
         actions=state["actions"],
         approvals=state["approvals"],
+        retrieval_debug=state.get("retrieval_debug", []),
         cost_summary=usage_summary(state["llm"]),
     )
     return {"brief": brief}

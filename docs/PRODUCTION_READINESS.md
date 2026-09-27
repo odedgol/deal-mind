@@ -9,10 +9,12 @@ The MVP workflow is read-only with respect to external business systems:
 - Approval records are saved as local run artifacts.
 - Retries are safe for transient read-only calls when they do not repeat an external write.
 
-The local Qdrant client is shared and requests are serialized inside the API process. This is
-required because Qdrant's file-backed local mode locks its storage directory. It is not a
-production scaling strategy: multiple API workers must use a Qdrant server or managed Qdrant
-instance instead.
+The API shares one file-backed Qdrant client within the process. The client factory uses a small
+initialization lock so concurrent first requests cannot open two clients for the same storage
+directory. After initialization, authorized read requests are not serialized by an application-wide
+brief lock and can run concurrently. Ingestion/rebuild remains an exclusive operation, and the
+file-backed directory must not be opened by multiple API workers or processes; production must use
+a Qdrant server or managed Qdrant instance for that boundary.
 
 `SourceData` has a separate lifecycle from Qdrant. A single brief workflow shares one
 `SourceData` instance across its graph nodes, so its cached opportunity and permission indexes
@@ -49,7 +51,7 @@ for each one. It is the handoff checklist for the manual rewrite.
 
 | Problem or symptom | Root cause | Implemented solution | Verification |
 | --- | --- | --- | --- |
-| A second request could fail with “storage folder is already accessed” | Each process or flow opened a file-backed Qdrant client independently | `QdrantClientFactory` owns one client per application component; the API reuses it and serializes requests | `tests/test_client_factory.py`, API reuse test |
+| A second request could fail with “storage folder is already accessed” | Concurrent first requests could open independent file-backed Qdrant clients for the same directory | `QdrantClientFactory` initializes one shared client under a small lock; read workflows run concurrently, while approval writes use a separate approval lock | `tests/test_client_factory.py`, concurrent API read test |
 | Restricted Slack evidence was missing for an authorized restricted deal | Authorization allowed `standard` and `sensitive`, but omitted `restricted` | `can_view_restricted_account` now adds the `restricted` metadata filter | Retrieval test and authorized `OPP-1003` golden case |
 | Unauthorized requests appeared to have no run artifact | Authorization correctly stops the graph before retrieval | Denial is returned safely and no run is persisted because no process started | Unauthorized golden case and workflow tests |
 | Failed runs had no useful trace | Exceptions could bypass normal completion persistence | The traced operation records `status=failed`; the workflow persists the failure trace with the error type | `test_failed_agent_persists_failed_trace` |

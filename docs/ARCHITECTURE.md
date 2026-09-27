@@ -210,9 +210,10 @@ The MVP runs locally through the CLI or the FastAPI service, with the React UI a
 presentation layer. Approval requests and decisions are stored in the local run-artifact folder;
 this is suitable for the single-process demo, not a multi-worker production approval queue.
 Qdrant runs in local persistent mode on disk; it is not a separate service.
-The API reuses one local client and serializes requests because file-backed Qdrant storage does
-not support multiple clients or processes opening the same folder concurrently. OpenAI is the
-external model gateway for chat completions and embeddings.
+The API reuses one local client. Its factory protects only first-time client initialization, so
+authorized read requests can run concurrently within the single API process. File-backed Qdrant
+still must not be opened by multiple API workers or processes, and ingestion/rebuild remains an
+exclusive operation. OpenAI is the external model gateway for chat completions and embeddings.
 
 ```mermaid
 flowchart LR

@@ -7,6 +7,7 @@ from ..models import (
     EvidenceItem,
     Opportunity,
     PermissionProfile,
+    RetrievalDebug,
 )
 from ..retrieval.index import RetrievalRequest
 
@@ -29,6 +30,12 @@ class EvidenceRepository(Protocol):
         request: RetrievalRequest,
         decision: AuthorizationDecision,
     ) -> list[EvidenceItem]: ...
+
+    def retrieve_with_debug(
+        self,
+        request: RetrievalRequest,
+        decision: AuthorizationDecision,
+    ) -> tuple[list[EvidenceItem], RetrievalDebug]: ...
 
 
 class ApprovalRepository(Protocol):

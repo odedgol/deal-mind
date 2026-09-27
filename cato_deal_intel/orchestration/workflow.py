@@ -51,6 +51,7 @@ def create_brief(
             if embedding_provider is not None
             else HashEmbeddingProvider()
         ),
+        "retrieval_debug": [],
     }
     if approval_prompt is not None:
         initial_state["approval_prompt"] = approval_prompt

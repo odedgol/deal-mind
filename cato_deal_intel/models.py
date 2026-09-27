@@ -129,6 +129,18 @@ class CostSummary(StrictModel):
     period_key: str | None = None
 
 
+class RetrievalDebug(StrictModel):
+    """Safe counts that explain how an authorized retrieval was narrowed."""
+
+    query: str
+    opportunity_id: str
+    authorized_candidates: int
+    dense_candidates: int
+    final_results: int
+    final_evidence_ids: list[str] = Field(default_factory=list)
+    allowed_source_types: list[str] = Field(default_factory=list)
+
+
 class ApprovalRecord(StrictModel):
     recommendation: str
     reason: str
@@ -165,6 +177,7 @@ class Brief(StrictModel):
     missing_information: list[str]
     source_evidence: list[EvidenceItem]
     confidence_and_review_warnings: list[str]
+    retrieval_debug: list[RetrievalDebug] = Field(default_factory=list)
     cost_summary: CostSummary = Field(default_factory=CostSummary)
 
 

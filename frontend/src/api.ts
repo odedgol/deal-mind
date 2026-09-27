@@ -33,6 +33,16 @@ export type EvidenceItem = {
   metadata: Record<string, string>;
 };
 
+export type RetrievalDebug = {
+  query: string;
+  opportunity_id: string;
+  authorized_candidates: number;
+  dense_candidates: number;
+  final_results: number;
+  final_evidence_ids: string[];
+  allowed_source_types: string[];
+};
+
 export type BriefResponse = {
   run_id: string;
   opportunity_id: string;
@@ -55,6 +65,7 @@ export type BriefResponse = {
   missing_information: string[];
   source_evidence: EvidenceItem[];
   confidence_and_review_warnings: string[];
+  retrieval_debug: RetrievalDebug[];
   cost_summary: {
     budget_usd: number | null;
     spent_usd: number;

@@ -25,35 +25,34 @@ router = APIRouter(tags=["Demo"])
 )
 def generate_brief(request: BriefRequest) -> Brief | DeniedResult:
     """Run the same workflow exposed by the CLI and return its result."""
-    with deps.BRIEF_LOCK:
-        if deps.requester_is_only_eligible_approver(
-            request.opportunity_id, request.user_id
-        ):
+    if deps.requester_is_only_eligible_approver(
+        request.opportunity_id, request.user_id
+    ):
+        raise HTTPException(
+            status_code=409,
+            detail="This approval-required request needs another Deal Desk Approver.",
+        )
+    result = create_brief(
+        root=deps.DATA_ROOT,
+        source=deps.SOURCE,
+        artifacts_root=deps.ARTIFACT_ROOT,
+        opportunity_id=request.opportunity_id,
+        user_id=request.user_id,
+        llm=configured_llm(),
+        approval_decision="pending",
+        qdrant_path=deps.DEFAULT_QDRANT_PATH,
+        qdrant_client_factory=deps.QDRANT_CLIENTS,
+        embedding_provider=configured_embedding_provider(),
+    )
+    if isinstance(result, Brief) and result.run_status == "awaiting_approval":
+        approval_request = _new_approval_request(result, request.user_id)
+        if not approval_request.eligible_approver_user_ids:
             raise HTTPException(
                 status_code=409,
-                detail="This approval-required request needs another Deal Desk Approver.",
+                detail="No eligible Deal Desk Approver is configured for this run.",
             )
-        result = create_brief(
-            root=deps.DATA_ROOT,
-            source=deps.SOURCE,
-            artifacts_root=deps.ARTIFACT_ROOT,
-            opportunity_id=request.opportunity_id,
-            user_id=request.user_id,
-            llm=configured_llm(),
-            approval_decision="pending",
-            qdrant_path=deps.DEFAULT_QDRANT_PATH,
-            qdrant_client_factory=deps.QDRANT_CLIENTS,
-            embedding_provider=configured_embedding_provider(),
-        )
-        if isinstance(result, Brief) and result.run_status == "awaiting_approval":
-            approval_request = _new_approval_request(result, request.user_id)
-            if not approval_request.eligible_approver_user_ids:
-                raise HTTPException(
-                    status_code=409,
-                    detail="No eligible Deal Desk Approver is configured for this run.",
-                )
-            deps.APPROVAL_STORE.create(approval_request)
-        return result
+        deps.APPROVAL_STORE.create(approval_request)
+    return result
 
 
 def _new_approval_request(brief: Brief, requester_user_id: str) -> ApprovalRequest:

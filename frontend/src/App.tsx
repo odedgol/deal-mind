@@ -34,6 +34,7 @@ import type {
   DeniedResponse,
   Finding,
   RecommendedAction,
+  RetrievalDebug,
 } from "./api";
 
 type Persona = {
@@ -54,6 +55,16 @@ type ChatMessage = {
   brief?: BriefResponse;
   approval?: ApprovalInboxItem;
   opportunityOptions?: typeof demoOpportunities;
+};
+
+type DebugStepStatus = "pending" | "active" | "complete" | "denied" | "skipped" | "error";
+
+type DebugStep = {
+  id: string;
+  label: string;
+  description: string;
+  status: DebugStepStatus;
+  detail?: string;
 };
 
 const demoOpportunities = [
@@ -79,6 +90,16 @@ type BriefSectionState = Record<BriefSectionKey, boolean>;
 
 const allSectionsExpanded = (): BriefSectionState =>
   Object.fromEntries(briefSectionKeys.map((key) => [key, true])) as BriefSectionState;
+
+const createDebugSteps = (opportunityId?: string, userId?: string): DebugStep[] => [
+  { id: "request", label: "Request context", description: "Opportunity and requester selected", status: opportunityId && userId ? "complete" : "pending", detail: opportunityId && userId ? `${opportunityId} · ${userId}` : "Waiting for a request" },
+  { id: "authorization", label: "Authorization gate", description: "Check access before retrieval", status: "pending" },
+  { id: "retrieval", label: "Governed retrieval", description: "Apply metadata filters, then search evidence", status: "pending" },
+  { id: "agents", label: "Specialist agents", description: "Build typed findings and recommendations", status: "pending" },
+  { id: "citations", label: "Citation validation", description: "Verify every referenced evidence ID", status: "pending" },
+  { id: "approval", label: "Human approval", description: "Route sensitive recommendations when required", status: "pending" },
+  { id: "output", label: "Brief output", description: "Persist and display the result", status: "pending" },
+];
 
 const personas: Persona[] = [
   { userId: "USR-5001", name: "Maya Levin", initials: "ML", role: "Account Owner", accounts: ["ACC-2001"], restricted: false, color: "bg-teal-700" },
@@ -108,6 +129,9 @@ function App() {
   const [detailsOpen, setDetailsOpen] = useState(true);
   const [directMessage, setDirectMessage] = useState<"channel" | "deal-desk">("channel");
   const [reviewerUnreadCount, setReviewerUnreadCount] = useState(0);
+  const [debugMode, setDebugMode] = useState(false);
+  const [debugSteps, setDebugSteps] = useState<DebugStep[]>(() => createDebugSteps());
+  const [retrievalDebug, setRetrievalDebug] = useState<RetrievalDebug[]>([]);
   const messageScrollRef = useRef<HTMLDivElement>(null);
   const endOfMessages = useRef<HTMLDivElement>(null);
   const composerRef = useRef<HTMLTextAreaElement>(null);
@@ -233,6 +257,8 @@ function App() {
   };
 
   const requestBrief = async (opportunityId: string) => {
+    setDebugSteps(createDebugSteps(opportunityId, user.userId).map((step) => step.id === "authorization" ? { ...step, status: "active" } : step));
+    setRetrievalDebug([]);
     setLoading(true);
     setError(null);
     try {
@@ -241,12 +267,31 @@ function App() {
         user_id: user.userId,
       });
       if (isDenied(result)) {
+        setDebugSteps((current) => current.map((step) => {
+          if (step.id === "authorization") return { ...step, status: "denied", detail: "Access denied; retrieval and generation were not started." };
+          if (step.id === "request") return { ...step, detail: `${opportunityId} · ${user.userId}` };
+          return { ...step, status: "skipped", detail: "Skipped after authorization denial" };
+        }));
         addMessage({
           role: "bot",
           text: "I’m sorry, but you are not authorized to access this opportunity. I can’t show deal details or source information for this request.",
         });
         return;
       }
+      const citationIds = collectCitationIds(result);
+      const sourceTypes = [...new Set(result.source_evidence.map((item) => item.source_type))].sort();
+      setRetrievalDebug(result.retrieval_debug ?? []);
+      setDebugSteps((current) => current.map((step) => {
+        if (step.id === "authorization") return { ...step, status: "complete", detail: "Authorized requester" };
+        if (step.id === "retrieval") return { ...step, status: "complete", detail: `${result.source_evidence.length} evidence items · ${sourceTypes.join(", ")}` };
+        if (step.id === "agents") return { ...step, status: "complete", detail: "Deal context, conversation, stakeholders, strategy" };
+        if (step.id === "citations") return { ...step, status: "complete", detail: `${citationIds.length} evidence IDs referenced` };
+        if (step.id === "approval") return result.run_status === "awaiting_approval"
+          ? { ...step, status: "active", detail: "Waiting for Deal Desk reviewer" }
+          : { ...step, status: "skipped", detail: "No approval required for this result" };
+        if (step.id === "output") return { ...step, status: "complete", detail: `Run ${result.run_id.slice(0, 8)} persisted` };
+        return step;
+      }));
       addMessage({
         role: "bot",
         text: result.run_status === "awaiting_approval"
@@ -255,6 +300,7 @@ function App() {
         brief: result,
       });
     } catch (requestError) {
+      setDebugSteps((current) => current.map((step) => step.status === "active" ? { ...step, status: "error", detail: "Request failed before this step completed" } : step));
       const message = requestError instanceof Error ? requestError.message : "The request failed.";
       setError(message);
       addMessage({ role: "bot", text: "I couldn’t complete that request. Check that the local API is running, then try again." });
@@ -340,7 +386,7 @@ function App() {
         <button className="rail-action" title="Saved items"><Bookmark size={19} /></button>
         <div className="rail-spacer" />
         <button className="rail-action" title="Add workspace"><Plus size={20} /></button>
-        <Avatar persona={user} size="small" />
+        <Avatar persona={user} size="small" label="D" />
       </nav>
 
       <aside className="channel-sidebar">
@@ -467,6 +513,14 @@ function App() {
             </select>
             <p className="details-note">This selector is for demonstrating permission behavior. A real Slack integration would map the authenticated Slack user automatically.</p>
             <div className="details-rule" />
+            <div className="details-label">Visual testing</div>
+            <button type="button" className={`debug-toggle ${debugMode ? "enabled" : ""}`} onClick={() => setDebugMode((enabled) => !enabled)} aria-pressed={debugMode}>
+              <Activity size={15} />
+              <span><strong>Visual workflow trace</strong><small>{debugMode ? "Showing each selected step" : "Show request decisions and evidence"}</small></span>
+              <span className="debug-toggle-state">{debugMode ? "ON" : "OFF"}</span>
+            </button>
+            {debugMode && <DebugFlowPanel steps={debugSteps} retrievalDebug={retrievalDebug} />}
+            <div className="details-rule" />
             <div className="details-label">In this conversation</div>
             <DetailRow icon={<Hash size={15} />} title="deal-intel-demo" subtitle="Local Slack-style demo channel" />
             <DetailRow icon={<Users size={15} />} title="3 members" subtitle="You, Deal Intel, Deal Desk" />
@@ -515,6 +569,37 @@ function MessageRow({
       </div>
     </article>
   );
+}
+
+function DebugFlowPanel({ steps, retrievalDebug = [] }: { steps: DebugStep[]; retrievalDebug?: RetrievalDebug[] }) {
+  return <div className="debug-flow-panel" aria-label="Visual workflow trace">
+    <div className="debug-flow-heading"><span>Current request flow</span><small>UI verification only</small></div>
+    <div className="debug-flow-list">
+      {steps.map((step, index) => <div className={`debug-step ${step.status}`} key={step.id}>
+        <div className="debug-step-marker"><DebugStatusIcon status={step.status} /><span>{index + 1}</span></div>
+        <div className="debug-step-copy"><strong>{step.label}</strong><small>{step.description}</small>{step.detail && <em>{step.detail}</em>}</div>
+      </div>)}
+    </div>
+    {retrievalDebug.length > 0 && <div className="debug-retrieval-breakdown">
+      <div className="debug-breakdown-title">Retrieval breakdown</div>
+      {retrievalDebug.map((item, index) => <div className="debug-query" key={`${item.query}-${index}`}>
+        <strong>Query {index + 1} · {item.query}</strong>
+        <span><b>{item.authorized_candidates}</b> after permission filter → <b>{item.dense_candidates}</b> dense candidates → <b>{item.final_results}</b> final results</span>
+        <small>Selected: {item.final_evidence_ids.length ? item.final_evidence_ids.join(", ") : "none"}</small>
+      </div>)}
+    </div>}
+    {retrievalDebug.length === 0 && steps.some((step) => step.id === "retrieval" && step.status === "complete") && <div className="debug-retrieval-missing">
+      Retrieval diagnostics were not returned by the API. Restart the API with the latest build.
+    </div>}
+  </div>;
+}
+
+function DebugStatusIcon({ status }: { status: DebugStepStatus }) {
+  if (status === "complete") return <Check size={11} />;
+  if (status === "denied") return <LockKeyhole size={11} />;
+  if (status === "error") return <X size={11} />;
+  if (status === "skipped") return <span className="debug-skip-mark">—</span>;
+  return <span className="debug-dot" />;
 }
 
 function BriefCard({
@@ -626,8 +711,8 @@ function TypingIndicator() {
   return <div className="typing-row"><div className="message-avatar bot-avatar"><Bot size={17} /></div><div><strong>Deal Intel</strong><div className="typing-copy"><span className="typing-dots"><i /><i /><i /></span> Checking access, retrieving evidence, and preparing your brief…</div></div></div>;
 }
 
-function Avatar({ persona, size }: { persona: Persona; size?: "small" }) {
-  return <div className={`profile-avatar ${persona.color} ${size === "small" ? "small" : ""}`}>{persona.initials}</div>;
+function Avatar({ persona, size, label }: { persona: Persona; size?: "small"; label?: string }) {
+  return <div className={`profile-avatar ${persona.color} ${size === "small" ? "small" : ""}`}>{label ?? persona.initials}</div>;
 }
 
 function NavItem({ icon, hash, label, selected, muted, badge, onClick }: { icon?: ReactNode; hash?: boolean; label: string; selected?: boolean; muted?: boolean; badge?: number; onClick?: () => void }) {
@@ -647,6 +732,15 @@ function currentTime() {
 
 function findOpportunityId(text: string) {
   return text.match(/\bOPP-\d{4}\b/i)?.[0].toUpperCase() ?? null;
+}
+
+function collectCitationIds(brief: BriefResponse) {
+  const ids = new Set<string>();
+  for (const finding of [...brief.buyer_goals, ...brief.stakeholder_map, ...brief.negotiation_state]) {
+    finding.evidence_ids.forEach((id) => ids.add(id));
+  }
+  brief.recommended_next_actions.forEach((action) => action.evidence_ids.forEach((id) => ids.add(id)));
+  return [...ids];
 }
 
 function requesterStatusMessage(brief: BriefResponse) {

@@ -40,7 +40,7 @@ Slack evidence is cited in the applicable authorized scenarios.
 
 ## Verification status
 
-- Full test suite: **51 passed**
+- Full test suite: **53 passed**
 - Ruff: **clean**
 - Mypy: **clean**
 

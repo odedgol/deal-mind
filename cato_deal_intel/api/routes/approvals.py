@@ -47,7 +47,7 @@ def decide_approval(run_id: str, request: ApprovalDecisionRequest) -> ApprovalIn
             status_code=403,
             detail="Only a Deal Desk Approver can decide this request.",
         )
-    with deps.BRIEF_LOCK:
+    with deps.APPROVAL_LOCK:
         try:
             approval_request, brief = deps.APPROVAL_STORE.decide(
                 run_id,

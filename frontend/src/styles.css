@@ -130,6 +130,42 @@ button:disabled { cursor: not-allowed; opacity: .55; }
 .details-label { margin-bottom: 8px; color: #777; font-size: 10px; font-weight: 750; letter-spacing: .5px; text-transform: uppercase; }
 .details-content select { width: 100%; min-height: 34px; padding: 6px 8px; border: 1px solid #d8d5d8; border-radius: 6px; color: #302e30; background: #fff; font-size: 11px; }
 .details-note { margin: 8px 0 0; color: #777; font-size: 10px; line-height: 1.5; }
+.debug-toggle { display: flex; width: 100%; align-items: center; gap: 8px; padding: 9px 10px; border: 1px solid #ded7e2; border-radius: 7px; color: #65447a; background: #fff; text-align: left; }
+.debug-toggle:hover, .debug-toggle.enabled { border-color: #b99bc8; background: #faf7fc; }
+.debug-toggle > span:nth-child(2) { display: grid; min-width: 0; gap: 2px; flex: 1; }
+.debug-toggle strong { color: #403247; font-size: 10px; }
+.debug-toggle small { overflow: hidden; color: #817783; font-size: 9px; text-overflow: ellipsis; white-space: nowrap; }
+.debug-toggle-state { padding: 2px 5px; border-radius: 4px; color: #817783; background: #f0edf1; font-size: 8px; font-weight: 800; }
+.debug-toggle.enabled .debug-toggle-state { color: #fff; background: #6f438a; }
+.debug-flow-panel { margin-top: 10px; padding: 10px; border: 1px solid #ded7e2; border-radius: 8px; background: #fff; }
+.debug-flow-heading { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; margin-bottom: 10px; color: #493750; font-size: 10px; font-weight: 800; }
+.debug-flow-heading small { color: #918993; font-size: 8px; font-weight: 500; }
+.debug-flow-list { display: grid; gap: 0; }
+.debug-step { position: relative; display: grid; grid-template-columns: 22px minmax(0, 1fr); gap: 8px; min-height: 45px; }
+.debug-step:not(:last-child)::before { position: absolute; top: 21px; bottom: 0; left: 9px; width: 1px; background: #e2dce5; content: ""; }
+.debug-step-marker { position: relative; z-index: 1; display: grid; place-items: center; width: 20px; height: 20px; border: 1px solid #d8d1db; border-radius: 50%; color: #8d8590; background: #fff; font-size: 0; }
+.debug-step-marker > span:last-child { display: none; }
+.debug-step-copy { min-width: 0; padding-bottom: 9px; }
+.debug-step-copy strong, .debug-step-copy small, .debug-step-copy em { display: block; }
+.debug-step-copy strong { color: #514c53; font-size: 10px; font-weight: 750; }
+.debug-step-copy small { margin-top: 2px; color: #8a838b; font-size: 8px; line-height: 1.35; }
+.debug-step-copy em { margin-top: 3px; overflow-wrap: anywhere; color: #6a5274; font-size: 8px; font-style: normal; line-height: 1.35; }
+.debug-step.complete .debug-step-marker { border-color: #8dc8a5; color: #fff; background: #16804a; }
+.debug-step.complete .debug-step-copy strong { color: #236a3e; }
+.debug-step.active .debug-step-marker { border-color: #c9a7d5; background: #faf3fc; }
+.debug-step.active .debug-dot { width: 7px; height: 7px; border-radius: 50%; background: #7b4b8e; box-shadow: 0 0 0 3px #eadbf0; }
+.debug-step.denied .debug-step-marker, .debug-step.error .debug-step-marker { border-color: #e1a3a3; color: #fff; background: #b43c3c; }
+.debug-step.denied .debug-step-copy strong, .debug-step.error .debug-step-copy strong { color: #9a3030; }
+.debug-step.skipped { opacity: .58; }
+.debug-skip-mark { color: #8d8590; font-size: 13px; line-height: 1; }
+.debug-retrieval-breakdown { margin-top: 2px; padding-top: 9px; border-top: 1px solid #eee8f0; }
+.debug-breakdown-title { margin-bottom: 7px; color: #5b4265; font-size: 9px; font-weight: 800; letter-spacing: .4px; text-transform: uppercase; }
+.debug-query { display: grid; gap: 3px; margin-top: 7px; padding: 7px; border-radius: 5px; background: #faf7fc; }
+.debug-query strong { overflow: hidden; color: #60436c; font-size: 8px; text-overflow: ellipsis; white-space: nowrap; }
+.debug-query span, .debug-query small { color: #726b74; font-size: 8px; line-height: 1.4; }
+.debug-query span b { color: #4c3158; font-weight: 800; }
+.debug-query small { overflow-wrap: anywhere; color: #8b828d; }
+.debug-retrieval-missing { margin-top: 9px; padding: 7px; border: 1px solid #ecd9a7; border-radius: 5px; color: #80631d; background: #fffaf0; font-size: 8px; line-height: 1.4; }
 .detail-row { display: flex; align-items: flex-start; gap: 9px; margin: 12px 0; color: #6c686c; }
 .detail-row > span { padding-top: 2px; }
 .detail-row strong, .detail-row small { display: block; }

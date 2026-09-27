@@ -1,4 +1,5 @@
 import json
+from concurrent.futures import ThreadPoolExecutor
 from importlib import import_module
 from pathlib import Path
 
@@ -84,6 +85,33 @@ def test_brief_endpoint_reuses_workflow(monkeypatch: pytest.MonkeyPatch, tmp_pat
     usage_response = TestClient(api.app).get(f"/runs/{run_id}/usage")
     assert usage_response.status_code == 200
     assert usage_response.json()["run_spent_usd"] is not None
+
+
+def test_authorized_read_requests_can_run_concurrently(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    qdrant_path = tmp_path / "qdrant"
+    EvidenceRetriever(path=qdrant_path).index(SourceData(deps.DATA_ROOT).evidence())
+    monkeypatch.setattr(deps, "ARTIFACT_ROOT", tmp_path)
+    monkeypatch.setattr(deps, "APPROVAL_STORE", ApprovalStore(tmp_path))
+    monkeypatch.setattr(brief_routes, "configured_llm", lambda: FakeLLMProvider())
+    monkeypatch.setattr(brief_routes, "configured_embedding_provider", lambda: None)
+    monkeypatch.setattr(deps, "DEFAULT_QDRANT_PATH", qdrant_path)
+    monkeypatch.setattr(deps, "QDRANT_CLIENTS", QdrantClientFactory(qdrant_path))
+    client = TestClient(api.app)
+
+    def request_brief(_: int) -> tuple[int, str]:
+        response = client.post(
+            "/brief",
+            json={"opportunity_id": "OPP-1001", "user_id": "USR-5001"},
+        )
+        return response.status_code, response.json()["run_status"]
+
+    with ThreadPoolExecutor(max_workers=4) as executor:
+        results = list(executor.map(request_brief, range(4)))
+
+    assert results == [(200, "completed")] * 4
+    assert len(list(tmp_path.glob("*/brief.json"))) == 4
 
 
 def test_brief_endpoint_returns_safe_denial() -> None:

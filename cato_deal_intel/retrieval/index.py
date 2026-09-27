@@ -7,7 +7,7 @@ from pathlib import Path
 
 from qdrant_client import QdrantClient, models
 
-from ..models import AuthorizationDecision, EvidenceItem
+from ..models import AuthorizationDecision, EvidenceItem, RetrievalDebug
 from ..storage.paths import QDRANT_PATH
 from .embeddings import EmbeddingProvider, HashEmbeddingProvider
 
@@ -73,8 +73,23 @@ class EvidenceRetriever:
         request: RetrievalRequest,
         decision: AuthorizationDecision,
     ) -> list[EvidenceItem]:
+        results, _ = self.retrieve_with_debug(request, decision)
+        return results
+
+    def retrieve_with_debug(
+        self,
+        request: RetrievalRequest,
+        decision: AuthorizationDecision,
+    ) -> tuple[list[EvidenceItem], RetrievalDebug]:
         if not decision.allowed:
-            return []
+            return [], RetrievalDebug(
+                query=request.query,
+                opportunity_id=request.opportunity_id,
+                authorized_candidates=0,
+                dense_candidates=0,
+                final_results=0,
+                allowed_source_types=sorted(decision.allowed_source_types),
+            )
         query_filter = models.Filter(
             must=[
                 models.FieldCondition(
@@ -91,6 +106,11 @@ class EvidenceRetriever:
                 ),
             ]
         )
+        authorized_candidates = self.client.count(
+            collection_name=COLLECTION_NAME,
+            count_filter=query_filter,
+            exact=True,
+        ).count
         query_embedding = self.embedding_provider.embed([request.query])[0]
         response = self.client.query_points(
             collection_name=COLLECTION_NAME,
@@ -119,7 +139,17 @@ class EvidenceRetriever:
             ),
             reverse=True,
         )
-        return [item for item, _ in ranked[: request.limit]]
+        results = [item for item, _ in ranked[: request.limit]]
+        debug = RetrievalDebug(
+            query=request.query,
+            opportunity_id=request.opportunity_id,
+            authorized_candidates=authorized_candidates,
+            dense_candidates=len(candidates),
+            final_results=len(results),
+            final_evidence_ids=[item.evidence_id for item in results],
+            allowed_source_types=sorted(decision.allowed_source_types),
+        )
+        return results, debug
 
     @staticmethod
     def _ranking_score(item: EvidenceItem, hybrid_score: float, as_of_date: date) -> float:
