@@ -12,7 +12,7 @@ from ..retrieval.embeddings import EmbeddingProvider, HashEmbeddingProvider
 from ..retrieval.sources.data import SourceData
 from ..storage.artifact_store import ArtifactStore
 from ..storage.paths import QDRANT_PATH
-from .graph import DealState, build_deal_graph
+from .graph import InitialDealState, build_deal_graph
 
 DEAL_GRAPH = build_deal_graph()
 
@@ -35,7 +35,7 @@ def create_brief(
     embedding_provider: EmbeddingProvider | None = None,
 ) -> WorkflowResult:
     """Run the LangGraph flow and return either a brief or a safe denial."""
-    initial_state: DealState = {
+    initial_state: InitialDealState = {
         "root": root,
         "source": source if source is not None else SourceData(root),
         "artifacts_root": artifacts_root,

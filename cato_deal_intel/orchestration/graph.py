@@ -1,6 +1,6 @@
 from collections.abc import Callable
 from pathlib import Path
-from typing import Annotated, Any, Literal, TypedDict
+from typing import Annotated, Any, Literal, NotRequired, TypedDict
 
 from langgraph.graph import END, START, StateGraph
 from langgraph.graph.state import CompiledStateGraph
@@ -64,7 +64,7 @@ def _merge_retrieval_debug(
     return current + incoming
 
 
-class DealState(TypedDict, total=False):
+class InitialDealState(TypedDict):
     root: Path
     source: DealRepository
     artifacts_root: Path
@@ -72,16 +72,23 @@ class DealState(TypedDict, total=False):
     user_id: str
     llm: LLMProvider
     approval_decision: Literal["ask", "approved", "rejected", "pending"]
-    approval_prompt: Callable[[list[RecommendedAction]], Literal["approved", "rejected"]]
     run_id: str
     qdrant_path: Path
-    qdrant_client: QdrantClient
-    qdrant_client_factory: Callable[[], QdrantClient]
     embedding_provider: EmbeddingProvider
+    retrieval_debug: Annotated[list[RetrievalDebug], _merge_retrieval_debug]
+    trace_collector: AgentTraceCollector
+
+    approval_prompt: NotRequired[
+        Callable[[list[RecommendedAction]], Literal["approved", "rejected"]]
+    ]
+    qdrant_client: NotRequired[QdrantClient]
+    qdrant_client_factory: NotRequired[Callable[[], QdrantClient]]
+
+
+class DealState(InitialDealState):
     opportunity: Opportunity
     authorization: AuthorizationDecision
     evidence: Annotated[list[EvidenceItem], _merge_unique_evidence]
-    retrieval_debug: Annotated[list[RetrievalDebug], _merge_retrieval_debug]
     retriever: EvidenceRepository
     deal_snapshot: DealSnapshot
     conversation: AgentOutput
@@ -91,7 +98,6 @@ class DealState(TypedDict, total=False):
     approvals: list[ApprovalRecord]
     brief: Brief
     traces: Annotated[list[AgentTrace], _merge_traces]
-    trace_collector: AgentTraceCollector
     denial: DeniedResult
 
 
