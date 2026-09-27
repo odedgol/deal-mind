@@ -83,7 +83,7 @@ def test_brief_endpoint_reuses_workflow(monkeypatch: pytest.MonkeyPatch, tmp_pat
     run_id = response.json()["run_id"]
     usage_response = TestClient(api.app).get(f"/runs/{run_id}/usage")
     assert usage_response.status_code == 200
-    assert usage_response.json()["budget_usd"] is not None
+    assert usage_response.json()["run_spent_usd"] is not None
 
 
 def test_brief_endpoint_returns_safe_denial() -> None:
