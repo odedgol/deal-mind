@@ -7,9 +7,11 @@ import pytest
 from fastapi.testclient import TestClient
 
 from cato_deal_intel.llm.fake_provider import FakeLLMProvider
+from cato_deal_intel.orchestration.services import ApprovalRequestService, RunArtifactService
 from cato_deal_intel.retrieval.index import EvidenceRetriever
 from cato_deal_intel.retrieval.sources.data import SourceData
 from cato_deal_intel.storage.approval_store import ApprovalStore
+from cato_deal_intel.storage.artifact_store import ArtifactStore
 from cato_deal_intel.storage.client_factory import QdrantClientFactory
 
 api = import_module("cato_deal_intel.api.app")
@@ -62,13 +64,17 @@ def test_api_reuses_one_local_qdrant_client(
 
 def test_brief_endpoint_reuses_workflow(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
     qdrant_path = tmp_path / "qdrant"
-    EvidenceRetriever(path=qdrant_path).index(SourceData(deps.DATA_ROOT).evidence())
-    monkeypatch.setattr(deps, "ARTIFACT_ROOT", tmp_path)
-    monkeypatch.setattr(deps, "APPROVAL_STORE", ApprovalStore(tmp_path))
+    evidence_repository = EvidenceRetriever(path=qdrant_path)
+    evidence_repository.index(SourceData(deps.SOURCE_DATA_ROOT).evidence())
+    monkeypatch.setattr(deps, "ARTIFACTS_ROOT", tmp_path)
+    monkeypatch.setattr(
+        deps, "RUN_ARTIFACT_SERVICE", RunArtifactService(ArtifactStore(tmp_path))
+    )
+    monkeypatch.setattr(deps, "APPROVAL_SERVICE", ApprovalRequestService(ApprovalStore(tmp_path)))
     monkeypatch.setattr(brief_routes, "configured_llm", lambda: FakeLLMProvider())
-    monkeypatch.setattr(brief_routes, "configured_embedding_provider", lambda: None)
     monkeypatch.setattr(deps, "DEFAULT_QDRANT_PATH", qdrant_path)
     monkeypatch.setattr(deps, "QDRANT_CLIENTS", QdrantClientFactory(qdrant_path))
+    monkeypatch.setattr(deps, "EVIDENCE_REPOSITORY", evidence_repository)
 
     response = TestClient(api.app).post(
         "/brief",
@@ -91,13 +97,17 @@ def test_authorized_read_requests_can_run_concurrently(
     monkeypatch: pytest.MonkeyPatch, tmp_path: Path
 ) -> None:
     qdrant_path = tmp_path / "qdrant"
-    EvidenceRetriever(path=qdrant_path).index(SourceData(deps.DATA_ROOT).evidence())
-    monkeypatch.setattr(deps, "ARTIFACT_ROOT", tmp_path)
-    monkeypatch.setattr(deps, "APPROVAL_STORE", ApprovalStore(tmp_path))
+    evidence_repository = EvidenceRetriever(path=qdrant_path)
+    evidence_repository.index(SourceData(deps.SOURCE_DATA_ROOT).evidence())
+    monkeypatch.setattr(deps, "ARTIFACTS_ROOT", tmp_path)
+    monkeypatch.setattr(
+        deps, "RUN_ARTIFACT_SERVICE", RunArtifactService(ArtifactStore(tmp_path))
+    )
+    monkeypatch.setattr(deps, "APPROVAL_SERVICE", ApprovalRequestService(ApprovalStore(tmp_path)))
     monkeypatch.setattr(brief_routes, "configured_llm", lambda: FakeLLMProvider())
-    monkeypatch.setattr(brief_routes, "configured_embedding_provider", lambda: None)
     monkeypatch.setattr(deps, "DEFAULT_QDRANT_PATH", qdrant_path)
     monkeypatch.setattr(deps, "QDRANT_CLIENTS", QdrantClientFactory(qdrant_path))
+    monkeypatch.setattr(deps, "EVIDENCE_REPOSITORY", evidence_repository)
     client = TestClient(api.app)
 
     def request_brief(_: int) -> tuple[int, str]:
@@ -136,13 +146,17 @@ def test_approval_decision_updates_existing_run(
     monkeypatch: pytest.MonkeyPatch, tmp_path: Path, decision: str, expected_run_status: str
 ) -> None:
     qdrant_path = tmp_path / "qdrant"
-    EvidenceRetriever(path=qdrant_path).index(SourceData(deps.DATA_ROOT).evidence())
-    monkeypatch.setattr(deps, "ARTIFACT_ROOT", tmp_path)
-    monkeypatch.setattr(deps, "APPROVAL_STORE", ApprovalStore(tmp_path))
+    evidence_repository = EvidenceRetriever(path=qdrant_path)
+    evidence_repository.index(SourceData(deps.SOURCE_DATA_ROOT).evidence())
+    monkeypatch.setattr(deps, "ARTIFACTS_ROOT", tmp_path)
+    monkeypatch.setattr(
+        deps, "RUN_ARTIFACT_SERVICE", RunArtifactService(ArtifactStore(tmp_path))
+    )
+    monkeypatch.setattr(deps, "APPROVAL_SERVICE", ApprovalRequestService(ApprovalStore(tmp_path)))
     monkeypatch.setattr(brief_routes, "configured_llm", lambda: FakeLLMProvider())
-    monkeypatch.setattr(brief_routes, "configured_embedding_provider", lambda: None)
     monkeypatch.setattr(deps, "DEFAULT_QDRANT_PATH", qdrant_path)
     monkeypatch.setattr(deps, "QDRANT_CLIENTS", QdrantClientFactory(qdrant_path))
+    monkeypatch.setattr(deps, "EVIDENCE_REPOSITORY", evidence_repository)
     client = TestClient(api.app)
 
     generated = client.post("/brief", json={"opportunity_id": "OPP-1003", "user_id": "USR-5003"})
@@ -223,7 +237,7 @@ def test_approval_decision_updates_existing_run(
 def test_deal_desk_approver_cannot_request_and_approve_own_restricted_deal(
     monkeypatch: pytest.MonkeyPatch, tmp_path: Path
 ) -> None:
-    monkeypatch.setattr(deps, "ARTIFACT_ROOT", tmp_path)
+    monkeypatch.setattr(deps, "ARTIFACTS_ROOT", tmp_path)
     response = TestClient(api.app).post(
         "/brief",
         json={"opportunity_id": "OPP-1003", "user_id": "USR-5005"},

@@ -5,7 +5,6 @@ from fastapi import APIRouter, HTTPException
 from ...llm.settings import configured_llm
 from ...models import ApprovalRequest, Brief, DeniedResult
 from ...orchestration.workflow import create_brief
-from ...retrieval.embeddings import configured_embedding_provider
 from .. import dependencies as deps
 from ..schemas import BriefRequest
 
@@ -33,16 +32,13 @@ def generate_brief(request: BriefRequest) -> Brief | DeniedResult:
             detail="This approval-required request needs another Deal Desk Approver.",
         )
     result = create_brief(
-        root=deps.DATA_ROOT,
-        source=deps.SOURCE,
-        artifacts_root=deps.ARTIFACT_ROOT,
+        deal_repository=deps.DEAL_REPOSITORY,
+        run_artifact_service=deps.RUN_ARTIFACT_SERVICE,
         opportunity_id=request.opportunity_id,
         user_id=request.user_id,
         llm=configured_llm(),
         approval_decision="pending",
-        qdrant_path=deps.DEFAULT_QDRANT_PATH,
-        qdrant_client_factory=deps.QDRANT_CLIENTS,
-        embedding_provider=configured_embedding_provider(),
+        evidence_repository=deps.EVIDENCE_REPOSITORY,
     )
     if isinstance(result, Brief) and result.run_status == "awaiting_approval":
         approval_request = _new_approval_request(result, request.user_id)
@@ -51,14 +47,14 @@ def generate_brief(request: BriefRequest) -> Brief | DeniedResult:
                 status_code=409,
                 detail="No eligible Deal Desk Approver is configured for this run.",
             )
-        deps.APPROVAL_STORE.create(approval_request)
+        deps.APPROVAL_SERVICE.create(approval_request)
     return result
 
 
 def _new_approval_request(brief: Brief, requester_user_id: str) -> ApprovalRequest:
-    profiles = deps.SOURCE.permissions()
-    requester = deps.SOURCE.permission_profile(requester_user_id)
-    opportunity = deps.SOURCE.opportunity(brief.opportunity_id)
+    profiles = deps.DEAL_REPOSITORY.permissions()
+    requester = deps.DEAL_REPOSITORY.permission_profile(requester_user_id)
+    opportunity = deps.DEAL_REPOSITORY.opportunity(brief.opportunity_id)
     approvers = deps.eligible_approvers(opportunity, profiles, requester_user_id)
     return ApprovalRequest(
         run_id=brief.run_id,

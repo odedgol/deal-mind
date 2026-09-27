@@ -17,7 +17,7 @@ def approval_inbox(user_id: str) -> list[ApprovalInboxItem]:
         return []
     return [
         ApprovalInboxItem(approval_request=request, brief=brief)
-        for request, brief in deps.APPROVAL_STORE.inbox(user_id)
+        for request, brief in deps.APPROVAL_SERVICE.inbox(user_id)
     ]
 
 
@@ -31,7 +31,7 @@ def approval_inbox_count(user_id: str) -> ApprovalInboxCount:
     if not deps.is_deal_desk_approver(deps.permission_profile(user_id)):
         return ApprovalInboxCount(count=0)
     return ApprovalInboxCount(
-        count=len(deps.APPROVAL_STORE.inbox(user_id))
+        count=len(deps.APPROVAL_SERVICE.inbox(user_id))
     )
 
 
@@ -49,7 +49,7 @@ def decide_approval(run_id: str, request: ApprovalDecisionRequest) -> ApprovalIn
         )
     with deps.APPROVAL_LOCK:
         try:
-            approval_request, brief = deps.APPROVAL_STORE.decide(
+            approval_request, brief = deps.APPROVAL_SERVICE.decide(
                 run_id,
                 reviewer_user_id=request.reviewer_user_id,
                 decision=request.decision,

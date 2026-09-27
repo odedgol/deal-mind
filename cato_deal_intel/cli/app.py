@@ -1,4 +1,3 @@
-import json
 import os
 from pathlib import Path
 from typing import Literal
@@ -10,28 +9,37 @@ from ..llm.fake_provider import FakeLLMProvider
 from ..llm.providers import OpenAIProvider
 from ..llm.settings import configured_llm
 from ..models import Brief, CostSummary, RecommendedAction
+from ..orchestration.services import RunArtifactService
 from ..orchestration.workflow import create_brief
 from ..retrieval.embeddings import configured_embedding_provider
 from ..retrieval.index import EvidenceRetriever, RetrievalRequest
 from ..retrieval.sources.data import SourceData
 from ..security.authorization import authorize
+from ..storage.artifact_store import ArtifactStore
 from ..storage.paths import QDRANT_PATH, RUN_ARTIFACTS_PATH, SOURCE_DATA_PATH
 
 app = typer.Typer(help="Create grounded, permission-aware deal intelligence briefs.")
-DATA_ROOT = SOURCE_DATA_PATH
-ARTIFACT_ROOT = RUN_ARTIFACTS_PATH
+SOURCE_DATA_ROOT = SOURCE_DATA_PATH
+ARTIFACTS_ROOT = RUN_ARTIFACTS_PATH
+RUN_ARTIFACT_SERVICE = RunArtifactService(ArtifactStore(ARTIFACTS_ROOT))
 DEFAULT_QDRANT_PATH = QDRANT_PATH
+DEAL_REPOSITORY = SourceData(SOURCE_DATA_ROOT)
+EVIDENCE_REPOSITORY = EvidenceRetriever(
+    path=DEFAULT_QDRANT_PATH,
+    require_existing=True,
+    embedding_provider=configured_embedding_provider(),
+)
 
 
 @app.command()
 def ingest() -> None:
     """Load all supplied and synthetic evidence into a local Qdrant collection."""
-    source = SourceData(DATA_ROOT)
+    deal_repository = SourceData(SOURCE_DATA_ROOT)
     retriever = EvidenceRetriever(
         path=DEFAULT_QDRANT_PATH,
         embedding_provider=configured_embedding_provider(),
     )
-    evidence = source.evidence()
+    evidence = deal_repository.evidence()
     retriever.rebuild(evidence)
     typer.echo(f"Indexed {len(evidence)} evidence items into {DEFAULT_QDRANT_PATH}.")
 
@@ -43,11 +51,11 @@ def search(
     query: str = typer.Option(..., "--query"),
 ) -> None:
     """Search only evidence authorized for the requester."""
-    source = SourceData(DATA_ROOT)
+    deal_repository = SourceData(SOURCE_DATA_ROOT)
     opportunity_record = next(
-        item for item in source.opportunities() if item.opportunity_id == opportunity
+        item for item in deal_repository.opportunities() if item.opportunity_id == opportunity
     )
-    requester = next((item for item in source.permissions() if item.user_id == user), None)
+    requester = next((item for item in deal_repository.permissions() if item.user_id == user), None)
     decision = authorize(opportunity_record, requester)
     retriever = EvidenceRetriever(
         path=DEFAULT_QDRANT_PATH,
@@ -74,17 +82,17 @@ def brief(
 ) -> None:
     """Run the four-agent workflow and save JSON and Markdown artifacts."""
     result = create_brief(
-        root=DATA_ROOT,
-        artifacts_root=ARTIFACT_ROOT,
+        deal_repository=DEAL_REPOSITORY,
+        run_artifact_service=RUN_ARTIFACT_SERVICE,
+        evidence_repository=EVIDENCE_REPOSITORY,
         opportunity_id=opportunity,
         user_id=user,
         llm=configured_llm(),
         approval_decision=approve,
         approval_prompt=prompt_for_approval,
-        embedding_provider=configured_embedding_provider(),
     )
     if isinstance(result, Brief):
-        typer.echo(f"Saved run {result.run_id} to {ARTIFACT_ROOT / result.run_id}")
+        typer.echo(f"Saved run {result.run_id} to {ARTIFACTS_ROOT / result.run_id}")
         echo_cost_summary(result.cost_summary)
         return
     typer.echo(f"Request denied: {result.message}")
@@ -93,10 +101,9 @@ def brief(
 @app.command()
 def usage(run_id: str = typer.Option(..., "--run-id")) -> None:
     """Show token usage and remaining budget for a completed run."""
-    path = ARTIFACT_ROOT / run_id / "brief.json"
-    if not path.exists():
+    brief = RUN_ARTIFACT_SERVICE.find_brief(run_id)
+    if brief is None:
         raise typer.BadParameter(f"Run was not found: {run_id}")
-    brief = Brief.model_validate(json.loads(path.read_text(encoding="utf-8")))
     echo_cost_summary(brief.cost_summary)
 
 
@@ -124,7 +131,7 @@ def evaluate(
         results = []
         if suite in {"all", "workflow"}:
             workflow_report = run_golden_evaluation(
-                root=DATA_ROOT,
+                source_data_root=SOURCE_DATA_ROOT,
                 qdrant_path=Path(f"artifacts/eval-qdrant-{selected_mode}"),
                 artifacts_root=Path(f"artifacts/evaluations/{selected_mode}"),
                 golden_path=Path("evals/scenarios/golden_set.json"),
@@ -182,8 +189,9 @@ def demo() -> None:
     scenarios = [("OPP-1001", "USR-5001"), ("OPP-1003", "USR-5003")]
     for opportunity, user in scenarios:
         result = create_brief(
-            root=DATA_ROOT,
-            artifacts_root=ARTIFACT_ROOT,
+            deal_repository=DEAL_REPOSITORY,
+            run_artifact_service=RUN_ARTIFACT_SERVICE,
+            evidence_repository=EVIDENCE_REPOSITORY,
             opportunity_id=opportunity,
             user_id=user,
             llm=configured_llm(),
@@ -197,8 +205,9 @@ def demo() -> None:
             continue
         typer.echo(f"{opportunity} denied: {result.message}")
     denied = create_brief(
-        root=DATA_ROOT,
-        artifacts_root=ARTIFACT_ROOT,
+        deal_repository=DEAL_REPOSITORY,
+        run_artifact_service=RUN_ARTIFACT_SERVICE,
+        evidence_repository=EVIDENCE_REPOSITORY,
         opportunity_id="OPP-1003",
         user_id="USR-5007",
         llm=configured_llm(),

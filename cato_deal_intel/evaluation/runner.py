@@ -7,16 +7,17 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Literal
 
-from qdrant_client import QdrantClient
-
 from ..agents.prompts import grounded_system, protected_payload
 from ..llm.fake_provider import FakeLLMProvider
 from ..llm.protocols import LLMProvider
 from ..llm.settings import evidence_payload
 from ..models import AgentOutput, Brief, DeniedResult, EvidenceItem, RecommendedAction
+from ..orchestration.services import RunArtifactService
 from ..orchestration.workflow import create_brief
+from ..repositories.contracts import DealRepository, EvidenceRepository
 from ..retrieval.index import EvidenceRetriever
 from ..retrieval.sources.data import SourceData
+from ..storage.artifact_store import ArtifactStore
 from ..storage.client_factory import QdrantClientFactory
 
 EvaluationStatus = Literal["brief", "denied"]
@@ -73,7 +74,7 @@ def load_golden_set(path: Path) -> list[GoldenCase]:
 
 def run_golden_evaluation(
     *,
-    root: Path,
+    source_data_root: Path,
     qdrant_path: Path,
     artifacts_root: Path,
     golden_path: Path,
@@ -83,17 +84,30 @@ def run_golden_evaluation(
     if repeats < 1:
         raise ValueError("repeats must be at least 1")
 
-    source = SourceData(root)
+    source = SourceData(source_data_root)
+    run_artifact_service = RunArtifactService(ArtifactStore(artifacts_root))
     clients = QdrantClientFactory(qdrant_path)
     client = clients()
     try:
-        EvidenceRetriever(client=client).rebuild(source.evidence())
+        evidence_repository = EvidenceRetriever(
+            client=client,
+            path=qdrant_path,
+            require_existing=False,
+        )
+        evidence_repository.rebuild(source.evidence())
         cases = load_golden_set(golden_path)
         results: list[CaseResult] = []
         for repeat in range(1, repeats + 1):
             llm = llm_factory()
             results.extend(
-                _evaluate_case(case, root, qdrant_path, artifacts_root, client, llm, repeat)
+                _evaluate_case(
+                    case,
+                    source,
+                    run_artifact_service,
+                    evidence_repository,
+                    llm,
+                    repeat,
+                )
                 for case in cases
             )
     finally:
@@ -262,23 +276,21 @@ def _forbidden_facts_are_absent(facts: list[str], output: AgentOutput) -> bool:
 
 def _evaluate_case(
     case: GoldenCase,
-    root: Path,
-    qdrant_path: Path,
-    artifacts_root: Path,
-    client: QdrantClient,
+    deal_repository: DealRepository,
+    run_artifact_service: RunArtifactService,
+    evidence_repository: EvidenceRepository,
     llm: LLMProvider,
     repeat: int,
 ) -> CaseResult:
     try:
         result = create_brief(
-            root=root,
-            artifacts_root=artifacts_root,
+            deal_repository=deal_repository,
+            run_artifact_service=run_artifact_service,
             opportunity_id=case.opportunity_id,
             user_id=case.user_id,
             llm=llm,
             approval_decision="pending",
-            qdrant_path=qdrant_path,
-            qdrant_client=client,
+            evidence_repository=evidence_repository,
         )
     except Exception as error:
         checks = {

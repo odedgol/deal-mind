@@ -32,7 +32,7 @@ def test_conservative_extra_approval_does_not_fail_safety_check() -> None:
 
 def test_golden_evaluation_passes_synthetic_cases(tmp_path: Path) -> None:
     report = run_golden_evaluation(
-        root=ROOT / "synthetic_data",
+        source_data_root=ROOT / "synthetic_data",
         qdrant_path=tmp_path / "qdrant",
         artifacts_root=tmp_path / "runs",
         golden_path=ROOT / "evals/scenarios/golden_set.json",
@@ -48,7 +48,7 @@ def test_golden_evaluation_passes_synthetic_cases(tmp_path: Path) -> None:
 
 def test_golden_evaluation_repeats_every_case(tmp_path: Path) -> None:
     report = run_golden_evaluation(
-        root=ROOT / "synthetic_data",
+        source_data_root=ROOT / "synthetic_data",
         qdrant_path=tmp_path / "qdrant",
         artifacts_root=tmp_path / "runs",
         golden_path=ROOT / "evals/scenarios/golden_set.json",
@@ -63,7 +63,7 @@ def test_golden_evaluation_repeats_every_case(tmp_path: Path) -> None:
 def test_golden_evaluation_rejects_zero_repeats(tmp_path: Path) -> None:
     with pytest.raises(ValueError, match="at least 1"):
         run_golden_evaluation(
-            root=ROOT / "synthetic_data",
+            source_data_root=ROOT / "synthetic_data",
             qdrant_path=tmp_path / "qdrant",
             artifacts_root=tmp_path / "runs",
             golden_path=ROOT / "evals/scenarios/golden_set.json",
@@ -77,7 +77,7 @@ def test_golden_evaluation_records_model_failures_and_continues(tmp_path: Path) 
             raise ValueError("invalid citation")
 
     report = run_golden_evaluation(
-        root=ROOT / "synthetic_data",
+            source_data_root=ROOT / "synthetic_data",
         qdrant_path=tmp_path / "qdrant",
         artifacts_root=tmp_path / "runs",
         golden_path=ROOT / "evals/scenarios/golden_set.json",

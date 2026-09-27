@@ -20,6 +20,12 @@ class ArtifactStore:
     def __init__(self, root: Path) -> None:
         self.root = root
 
+    def find_brief(self, run_id: str) -> Brief | None:
+        path = self.root / run_id / "brief.json"
+        if not path.exists():
+            return None
+        return Brief.model_validate_json(path.read_text(encoding="utf-8"))
+
     def save_run(
         self,
         *,

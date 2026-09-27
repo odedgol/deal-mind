@@ -1,10 +1,8 @@
 from collections.abc import Callable
-from pathlib import Path
 from typing import Annotated, Any, Literal, NotRequired, TypedDict
 
 from langgraph.graph import END, START, StateGraph
 from langgraph.graph.state import CompiledStateGraph
-from qdrant_client import QdrantClient
 
 from ..agents.core import (
     AgentContext,
@@ -38,10 +36,13 @@ from ..models import (
 )
 from ..observability.tracing import AgentTraceCollector, trace_operation
 from ..repositories.contracts import DealRepository, EvidenceRepository
-from ..retrieval.embeddings import EmbeddingProvider
-from ..retrieval.index import EvidenceRetriever
-from ..storage.artifact_store import ArtifactStore
-from .services import ApprovalService, DealService, EvidenceService, build_brief
+from .services import (
+    ApprovalService,
+    DealService,
+    EvidenceService,
+    RunArtifactService,
+    build_brief,
+)
 
 
 def _merge_unique_evidence(
@@ -65,31 +66,26 @@ def _merge_retrieval_debug(
 
 
 class InitialDealState(TypedDict):
-    root: Path
-    source: DealRepository
-    artifacts_root: Path
+    deal_repository: DealRepository
     opportunity_id: str
     user_id: str
     llm: LLMProvider
     approval_decision: Literal["ask", "approved", "rejected", "pending"]
     run_id: str
-    qdrant_path: Path
-    embedding_provider: EmbeddingProvider
+    evidence_repository: EvidenceRepository
     retrieval_debug: Annotated[list[RetrievalDebug], _merge_retrieval_debug]
     trace_collector: AgentTraceCollector
+    run_artifact_service: RunArtifactService
 
     approval_prompt: NotRequired[
         Callable[[list[RecommendedAction]], Literal["approved", "rejected"]]
     ]
-    qdrant_client: NotRequired[QdrantClient]
-    qdrant_client_factory: NotRequired[Callable[[], QdrantClient]]
 
 
 class DealState(InitialDealState):
     opportunity: Opportunity
     authorization: AuthorizationDecision
     evidence: Annotated[list[EvidenceItem], _merge_unique_evidence]
-    retriever: EvidenceRepository
     deal_snapshot: DealSnapshot
     conversation: AgentOutput
     stakeholders: AgentOutput
@@ -121,6 +117,7 @@ def build_deal_graph() -> CompiledStateGraph[Any, Any, Any, Any]:
         {"authorized": "retrieve", "denied": "safe_denial"},
     )
     graph.add_edge("retrieve", "deal_context")
+    # parallelize conversation and stakeholder mapping to reduce total runtime
     graph.add_edge("deal_context", "conversation")
     graph.add_edge("deal_context", "stakeholders")
     graph.add_edge(["conversation", "stakeholders"], "strategy")
@@ -133,7 +130,7 @@ def build_deal_graph() -> CompiledStateGraph[Any, Any, Any, Any]:
 
 
 def authorize_node(state: DealState) -> dict[str, object]:
-    opportunity, decision = DealService(state["source"]).authorize(
+    opportunity, decision = DealService(state["deal_repository"]).authorize(
         state["opportunity_id"], state["user_id"]
     )
     authorized_state = {"opportunity": opportunity} if decision.allowed else {}
@@ -157,23 +154,16 @@ def safe_denial_node(state: DealState) -> dict[str, object]:
 
 
 def retrieve_node(state: DealState) -> dict[str, object]:
-    client = state.get("qdrant_client")
-    if client is None:
-        factory = state.get("qdrant_client_factory")
-        client = factory() if factory is not None else None
-    retriever = EvidenceRetriever(
-        client=client,
-        path=state["qdrant_path"],
-        require_existing=True,
-        embedding_provider=state["embedding_provider"],
-    )
     service = EvidenceService(
-        state["source"], retriever, state["trace_collector"], state["run_id"], []
+        state["deal_repository"],
+        state["evidence_repository"],
+        state["trace_collector"],
+        state["run_id"],
+        [],
     )
     evidence = service.retrieve(state["opportunity_id"], state["authorization"])
     return {
         "evidence": evidence,
-        "retriever": retriever,
         "retrieval_debug": service.retrieval_debug,
     }
 
@@ -193,8 +183,8 @@ def deal_context_node(state: DealState) -> dict[str, object]:
 
 def conversation_node(state: DealState) -> dict[str, object]:
     service = EvidenceService(
-        state["source"],
-        state["retriever"],
+        state["deal_repository"],
+        state["evidence_repository"],
         state["trace_collector"],
         state["run_id"],
         [],
@@ -219,8 +209,8 @@ def conversation_node(state: DealState) -> dict[str, object]:
 
 def stakeholders_node(state: DealState) -> dict[str, object]:
     service = EvidenceService(
-        state["source"],
-        state["retriever"],
+        state["deal_repository"],
+        state["evidence_repository"],
         state["trace_collector"],
         state["run_id"],
         [],
@@ -245,8 +235,8 @@ def stakeholders_node(state: DealState) -> dict[str, object]:
 
 def strategy_node(state: DealState) -> dict[str, object]:
     service = EvidenceService(
-        state["source"],
-        state["retriever"],
+        state["deal_repository"],
+        state["evidence_repository"],
         state["trace_collector"],
         state["run_id"],
         [],
@@ -326,7 +316,7 @@ def build_brief_node(state: DealState) -> dict[str, object]:
 
 
 def persist_node(state: DealState) -> dict[str, object]:
-    ArtifactStore(state["artifacts_root"]).save_run(
+    state["run_artifact_service"].save_completed_run(
         run_id=state["run_id"],
         requester_user_id=state["user_id"],
         opportunity=state["opportunity"],

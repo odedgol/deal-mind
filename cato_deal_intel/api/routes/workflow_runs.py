@@ -1,6 +1,3 @@
-import json
-from pathlib import Path
-
 from fastapi import APIRouter, HTTPException
 
 from ...models import Brief, CostSummary
@@ -16,7 +13,7 @@ router = APIRouter(tags=["Runs"])
 )
 def requester_runs(user_id: str) -> list[Brief]:
     """Let a requester return to their run and see its latest approval status."""
-    return deps.APPROVAL_STORE.requester_runs(user_id)
+    return deps.APPROVAL_SERVICE.requester_runs(user_id)
 
 
 @router.get(
@@ -28,8 +25,7 @@ def requester_runs(user_id: str) -> list[Brief]:
 )
 def get_run_usage(run_id: str) -> CostSummary:
     """Return the persisted model usage summary for one completed run."""
-    path = Path(deps.ARTIFACT_ROOT) / run_id / "brief.json"
-    if not path.exists():
+    brief = deps.RUN_ARTIFACT_SERVICE.find_brief(run_id)
+    if brief is None:
         raise HTTPException(status_code=404, detail="Run was not found.")
-    brief = Brief.model_validate(json.loads(path.read_text(encoding="utf-8")))
     return brief.cost_summary

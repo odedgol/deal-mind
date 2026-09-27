@@ -5,9 +5,11 @@ import pytest
 from fastapi.testclient import TestClient
 
 from cato_deal_intel.llm.fake_provider import FakeLLMProvider
+from cato_deal_intel.orchestration.services import ApprovalRequestService, RunArtifactService
 from cato_deal_intel.retrieval.index import EvidenceRetriever
 from cato_deal_intel.retrieval.sources.data import SourceData
 from cato_deal_intel.storage.approval_store import ApprovalStore
+from cato_deal_intel.storage.artifact_store import ArtifactStore
 from cato_deal_intel.storage.client_factory import QdrantClientFactory
 
 api = importlib.import_module("cato_deal_intel.api.app")
@@ -18,13 +20,17 @@ brief_routes = importlib.import_module("cato_deal_intel.api.routes.briefs")
 @pytest.fixture
 def e2e_client(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> TestClient:
     qdrant_path = tmp_path / "qdrant"
-    EvidenceRetriever(path=qdrant_path).index(SourceData(deps.DATA_ROOT).evidence())
-    monkeypatch.setattr(deps, "ARTIFACT_ROOT", tmp_path)
-    monkeypatch.setattr(deps, "APPROVAL_STORE", ApprovalStore(tmp_path))
+    evidence_repository = EvidenceRetriever(path=qdrant_path)
+    evidence_repository.index(SourceData(deps.SOURCE_DATA_ROOT).evidence())
+    monkeypatch.setattr(deps, "ARTIFACTS_ROOT", tmp_path)
+    monkeypatch.setattr(
+        deps, "RUN_ARTIFACT_SERVICE", RunArtifactService(ArtifactStore(tmp_path))
+    )
+    monkeypatch.setattr(deps, "APPROVAL_SERVICE", ApprovalRequestService(ApprovalStore(tmp_path)))
     monkeypatch.setattr(brief_routes, "configured_llm", lambda: FakeLLMProvider())
-    monkeypatch.setattr(brief_routes, "configured_embedding_provider", lambda: None)
     monkeypatch.setattr(deps, "DEFAULT_QDRANT_PATH", qdrant_path)
     monkeypatch.setattr(deps, "QDRANT_CLIENTS", QdrantClientFactory(qdrant_path))
+    monkeypatch.setattr(deps, "EVIDENCE_REPOSITORY", evidence_repository)
     return TestClient(api.app)
 
 

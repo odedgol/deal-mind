@@ -1,6 +1,9 @@
 from typing import Literal, Protocol
 
 from ..models import (
+    AgentOutput,
+    AgentTrace,
+    ApprovalRecord,
     ApprovalRequest,
     AuthorizationDecision,
     Brief,
@@ -8,6 +11,7 @@ from ..models import (
     Opportunity,
     PermissionProfile,
     RetrievalDebug,
+    StrategyOutput,
 )
 from ..retrieval.index import RetrievalRequest
 
@@ -55,3 +59,35 @@ class ApprovalRepository(Protocol):
         decision: Literal["approved", "rejected"],
         comment: str | None,
     ) -> tuple[ApprovalRequest, Brief]: ...
+
+
+class ArtifactRepository(Protocol):
+    """Persistence contract for completed and failed workflow runs."""
+
+    def find_brief(self, run_id: str) -> Brief | None: ...
+
+    def save_run(
+        self,
+        *,
+        run_id: str,
+        requester_user_id: str,
+        opportunity: Opportunity,
+        decision: AuthorizationDecision,
+        evidence: list[EvidenceItem],
+        conversation: AgentOutput,
+        stakeholders: AgentOutput,
+        strategy: StrategyOutput,
+        approvals: list[ApprovalRecord],
+        brief: Brief,
+        traces: list[AgentTrace],
+    ) -> None: ...
+
+    def save_failure_trace(
+        self,
+        *,
+        run_id: str,
+        opportunity_id: str,
+        user_id: str,
+        traces: list[AgentTrace],
+        error: Exception,
+    ) -> None: ...

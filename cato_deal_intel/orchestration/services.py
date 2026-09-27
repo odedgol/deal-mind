@@ -3,7 +3,9 @@ from typing import Literal, cast
 
 from ..models import (
     AgentOutput,
+    AgentTrace,
     ApprovalRecord,
+    ApprovalRequest,
     AuthorizationDecision,
     Brief,
     CostSummary,
@@ -16,14 +18,106 @@ from ..models import (
     StrategyOutput,
 )
 from ..observability.tracing import AgentTraceCollector, trace_operation
-from ..repositories.contracts import DealRepository, EvidenceRepository
+from ..repositories.contracts import (
+    ApprovalRepository,
+    ArtifactRepository,
+    DealRepository,
+    EvidenceRepository,
+)
 from ..retrieval.index import RetrievalRequest
 from ..security.authorization import authorize
 
 
+class RunArtifactService:
+    """Application boundary for persisting successful and failed workflow runs."""
+
+    def __init__(self, repository: ArtifactRepository) -> None:
+        self.repository = repository
+
+    def find_brief(self, run_id: str) -> Brief | None:
+        return self.repository.find_brief(run_id)
+
+    def save_completed_run(
+        self,
+        *,
+        run_id: str,
+        requester_user_id: str,
+        opportunity: Opportunity,
+        decision: AuthorizationDecision,
+        evidence: list[EvidenceItem],
+        conversation: AgentOutput,
+        stakeholders: AgentOutput,
+        strategy: StrategyOutput,
+        approvals: list[ApprovalRecord],
+        brief: Brief,
+        traces: list[AgentTrace],
+    ) -> None:
+        self.repository.save_run(
+            run_id=run_id,
+            requester_user_id=requester_user_id,
+            opportunity=opportunity,
+            decision=decision,
+            evidence=evidence,
+            conversation=conversation,
+            stakeholders=stakeholders,
+            strategy=strategy,
+            approvals=approvals,
+            brief=brief,
+            traces=traces,
+        )
+
+    def save_failed_run(
+        self,
+        *,
+        run_id: str,
+        opportunity_id: str,
+        user_id: str,
+        traces: list[AgentTrace],
+        error: Exception,
+    ) -> None:
+        self.repository.save_failure_trace(
+            run_id=run_id,
+            opportunity_id=opportunity_id,
+            user_id=user_id,
+            traces=traces,
+            error=error,
+        )
+
+
+class ApprovalRequestService:
+    """Application boundary for approval request persistence and decisions."""
+
+    def __init__(self, repository: ApprovalRepository) -> None:
+        self.repository = repository
+
+    def create(self, request: ApprovalRequest) -> None:
+        self.repository.create(request)
+
+    def inbox(self, user_id: str) -> list[tuple[ApprovalRequest, Brief]]:
+        return self.repository.inbox(user_id)
+
+    def requester_runs(self, user_id: str) -> list[Brief]:
+        return self.repository.requester_runs(user_id)
+
+    def decide(
+        self,
+        run_id: str,
+        *,
+        reviewer_user_id: str,
+        decision: Literal["approved", "rejected"],
+        comment: str | None,
+    ) -> tuple[ApprovalRequest, Brief]:
+        return self.repository.decide(
+            run_id,
+            reviewer_user_id=reviewer_user_id,
+            decision=decision,
+            comment=comment,
+        )
+
+
 class DealService:
-    def __init__(self, source: DealRepository) -> None:
-        self.source = source
+    def __init__(self, deal_repository: DealRepository) -> None:
+        self.deal_repository = deal_repository
 
     def authorize(
         self, opportunity_id: str, user_id: str
@@ -34,13 +128,13 @@ class DealService:
         return opportunity, decision
 
     def _find_opportunity(self, opportunity_id: str) -> Opportunity:
-        match = self.source.opportunity(opportunity_id)
+        match = self.deal_repository.opportunity(opportunity_id)
         if match is None:
             raise ValueError("Opportunity was not found.")
         return match
 
     def _find_requester(self, user_id: str) -> PermissionProfile | None:
-        return self.source.permission_profile(user_id)
+        return self.deal_repository.permission_profile(user_id)
 
 
 class EvidenceService:
@@ -49,13 +143,13 @@ class EvidenceService:
 
     def __init__(
         self,
-        source: DealRepository,
+        deal_repository: DealRepository,
         retriever: EvidenceRepository,
         collector: AgentTraceCollector | None = None,
         run_id: str | None = None,
         retrieval_debug: list[RetrievalDebug] | None = None,
     ) -> None:
-        self.source = source
+        self.deal_repository = deal_repository
         self.retriever = retriever
         self.collector = collector
         self.run_id = run_id
