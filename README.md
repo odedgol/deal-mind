@@ -43,7 +43,7 @@ flowchart LR
     B --> T[Traces / usage / audit]
 ```
 
-![System architecture](docs/deal-intelligence-system-map.png)
+![System architecture](docs/architecture-overview.png)
 
 Detailed responsibilities and the production deployment view are in
 [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
