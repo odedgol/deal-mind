@@ -40,12 +40,17 @@ Slack evidence is cited in the applicable authorized scenarios.
 
 ## Verification status
 
-- Full test suite: **50 passed**
+- Full test suite: **51 passed**
 - Ruff: **clean**
 - Mypy: **clean**
 
 ## Scope note
 
-These results are from the deterministic offline evaluation path. A live LLM
-run must be recorded separately with its model, date, configuration, and run
-artifact IDs before claiming live-provider performance.
+The submission includes live-provider artifacts in `submission/sample_runs/`:
+
+- `openai-slack-opp-1001`: live `gpt-4o-mini` run with generated Slack citation
+  `slack:SLACK-1001-03`.
+- `openai-approved-opp-1003`: live `gpt-4o-mini` restricted-opportunity run with approval.
+
+The deterministic evaluation path remains the repeatable regression baseline; live-provider
+artifacts are evidence of real execution and are not used as deterministic test fixtures.

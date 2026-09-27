@@ -1,0 +1,229 @@
+[
+  {
+    "trace_id": "246bca7d818f4feda759f146603fb38a",
+    "run_id": "8016b20b7801404a9969efc225a718d6",
+    "event_type": "retrieval",
+    "name": "qdrant.retrieve",
+    "prompt_version": "v1",
+    "status": "completed",
+    "started_at": "2026-09-27T19:04:25.782198Z",
+    "completed_at": "2026-09-27T19:04:26.101716Z",
+    "error": null,
+    "metadata": {
+      "opportunity_id": "OPP-1001",
+      "result_limit": "8"
+    }
+  },
+  {
+    "trace_id": "9438dc32f86e4eeaa1015a24b1a89620",
+    "run_id": "8016b20b7801404a9969efc225a718d6",
+    "event_type": "retrieval",
+    "name": "qdrant.retrieve",
+    "prompt_version": "v1",
+    "status": "completed",
+    "started_at": "2026-09-27T19:04:26.101890Z",
+    "completed_at": "2026-09-27T19:04:26.802731Z",
+    "error": null,
+    "metadata": {
+      "opportunity_id": "OPP-1001",
+      "result_limit": "20"
+    }
+  },
+  {
+    "trace_id": "b175ae3f899044a4be72ce90274f7ef0",
+    "run_id": "8016b20b7801404a9969efc225a718d6",
+    "event_type": "tool",
+    "name": "get_opportunity_snapshot",
+    "prompt_version": "v1",
+    "status": "completed",
+    "started_at": "2026-09-27T19:04:26.804161Z",
+    "completed_at": "2026-09-27T19:04:26.804180Z",
+    "error": null,
+    "metadata": {}
+  },
+  {
+    "trace_id": "07ce17ebef494a0e9d47727e5ffe7ffe",
+    "run_id": "8016b20b7801404a9969efc225a718d6",
+    "event_type": "agent",
+    "name": "Deal Context Agent",
+    "prompt_version": "v1",
+    "status": "completed",
+    "started_at": "2026-09-27T19:04:26.804146Z",
+    "completed_at": "2026-09-27T19:04:26.804189Z",
+    "error": null,
+    "metadata": {}
+  },
+  {
+    "trace_id": "9aa29d2208e3481e9d67e384b980ab27",
+    "run_id": "8016b20b7801404a9969efc225a718d6",
+    "event_type": "retrieval",
+    "name": "qdrant.retrieve",
+    "prompt_version": "v1",
+    "status": "completed",
+    "started_at": "2026-09-27T19:04:26.804845Z",
+    "completed_at": "2026-09-27T19:04:27.004103Z",
+    "error": null,
+    "metadata": {
+      "opportunity_id": "OPP-1001",
+      "result_limit": "8"
+    }
+  },
+  {
+    "trace_id": "bdf725da1d9045ff9fa4576cd46b2b2f",
+    "run_id": "8016b20b7801404a9969efc225a718d6",
+    "event_type": "tool",
+    "name": "search_authorized_evidence",
+    "prompt_version": "v1",
+    "status": "completed",
+    "started_at": "2026-09-27T19:04:26.804831Z",
+    "completed_at": "2026-09-27T19:04:27.004155Z",
+    "error": null,
+    "metadata": {}
+  },
+  {
+    "trace_id": "a130d5ff20774fd99d69849249417d4e",
+    "run_id": "8016b20b7801404a9969efc225a718d6",
+    "event_type": "retrieval",
+    "name": "qdrant.retrieve",
+    "prompt_version": "v1",
+    "status": "completed",
+    "started_at": "2026-09-27T19:04:26.805874Z",
+    "completed_at": "2026-09-27T19:04:27.033318Z",
+    "error": null,
+    "metadata": {
+      "opportunity_id": "OPP-1001",
+      "result_limit": "8"
+    }
+  },
+  {
+    "trace_id": "ab2d08148cac421a95525e1b9e041f89",
+    "run_id": "8016b20b7801404a9969efc225a718d6",
+    "event_type": "tool",
+    "name": "search_authorized_evidence",
+    "prompt_version": "v1",
+    "status": "completed",
+    "started_at": "2026-09-27T19:04:26.805866Z",
+    "completed_at": "2026-09-27T19:04:27.033340Z",
+    "error": null,
+    "metadata": {}
+  },
+  {
+    "trace_id": "14e55dc6243a4edb887fa65a2b0bb89b",
+    "run_id": "8016b20b7801404a9969efc225a718d6",
+    "event_type": "agent",
+    "name": "Conversation Intelligence Agent",
+    "prompt_version": "v1",
+    "status": "completed",
+    "started_at": "2026-09-27T19:04:26.804813Z",
+    "completed_at": "2026-09-27T19:04:31.345122Z",
+    "error": null,
+    "metadata": {}
+  },
+  {
+    "trace_id": "e3ca5573837344e49ebff90b50759f59",
+    "run_id": "8016b20b7801404a9969efc225a718d6",
+    "event_type": "agent",
+    "name": "Stakeholder Map Agent",
+    "prompt_version": "v1",
+    "status": "completed",
+    "started_at": "2026-09-27T19:04:26.805852Z",
+    "completed_at": "2026-09-27T19:04:31.992886Z",
+    "error": null,
+    "metadata": {}
+  },
+  {
+    "trace_id": "46800ac070574fc6a01e8d09f57e9e82",
+    "run_id": "8016b20b7801404a9969efc225a718d6",
+    "event_type": "retrieval",
+    "name": "qdrant.retrieve",
+    "prompt_version": "v1",
+    "status": "completed",
+    "started_at": "2026-09-27T19:04:31.994501Z",
+    "completed_at": "2026-09-27T19:04:32.204382Z",
+    "error": null,
+    "metadata": {
+      "opportunity_id": "OPP-1001",
+      "result_limit": "4"
+    }
+  },
+  {
+    "trace_id": "c1676872e1a547adbe4d34ad71c5265c",
+    "run_id": "8016b20b7801404a9969efc225a718d6",
+    "event_type": "tool",
+    "name": "get_deal_desk_policy",
+    "prompt_version": "v1",
+    "status": "completed",
+    "started_at": "2026-09-27T19:04:31.994483Z",
+    "completed_at": "2026-09-27T19:04:32.204411Z",
+    "error": null,
+    "metadata": {}
+  },
+  {
+    "trace_id": "e3fa6e0290224989a766b134669f9f47",
+    "run_id": "8016b20b7801404a9969efc225a718d6",
+    "event_type": "tool",
+    "name": "request_approval",
+    "prompt_version": "v1",
+    "status": "completed",
+    "started_at": "2026-09-27T19:04:36.098015Z",
+    "completed_at": "2026-09-27T19:04:36.098028Z",
+    "error": null,
+    "metadata": {
+      "action_count": "2"
+    }
+  },
+  {
+    "trace_id": "97596bb44e184ef192c775720e917e8c",
+    "run_id": "8016b20b7801404a9969efc225a718d6",
+    "event_type": "tool",
+    "name": "validate_recommendation",
+    "prompt_version": "v1",
+    "status": "completed",
+    "started_at": "2026-09-27T19:04:36.098107Z",
+    "completed_at": "2026-09-27T19:04:36.098118Z",
+    "error": null,
+    "metadata": {
+      "citation_count": "3"
+    }
+  },
+  {
+    "trace_id": "e8320e96cd704e6d909380d58028c569",
+    "run_id": "8016b20b7801404a9969efc225a718d6",
+    "event_type": "agent",
+    "name": "Negotiation Strategy Agent",
+    "prompt_version": "v1",
+    "status": "completed",
+    "started_at": "2026-09-27T19:04:31.994468Z",
+    "completed_at": "2026-09-27T19:04:36.098128Z",
+    "error": null,
+    "metadata": {}
+  },
+  {
+    "trace_id": "1f8938ce07bd4ded94d351ff6101ffdd",
+    "run_id": "8016b20b7801404a9969efc225a718d6",
+    "event_type": "recommendation",
+    "name": "strategy.recommendations",
+    "prompt_version": "v1",
+    "status": "completed",
+    "started_at": "2026-09-27T19:04:36.098153Z",
+    "completed_at": "2026-09-27T19:04:36.098154Z",
+    "error": null,
+    "metadata": {
+      "action_count": "2"
+    }
+  },
+  {
+    "trace_id": "823abc96486b4c7f94abceca4fbd4841",
+    "run_id": "8016b20b7801404a9969efc225a718d6",
+    "event_type": "approval",
+    "name": "approval.prepare",
+    "prompt_version": "v1",
+    "status": "completed",
+    "started_at": "2026-09-27T19:04:36.099052Z",
+    "completed_at": "2026-09-27T19:04:36.099069Z",
+    "error": null,
+    "metadata": {
+      "action_count": "2"
+    }
+  }
+]

@@ -1,0 +1,452 @@
+{
+  "run_id": "8016b20b7801404a9969efc225a718d6",
+  "opportunity_id": "OPP-1001",
+  "run_status": "completed",
+  "deal_snapshot": {
+    "opportunity_id": "OPP-1001",
+    "account_name": "Northstar Foods Cooperative",
+    "stage": "6.0 Order Review",
+    "amount_acv": 4217500,
+    "close_date": "2026-05-17",
+    "owner": "Maya Levin",
+    "risk_level": "medium",
+    "evidence_ids": []
+  },
+  "executive_summary": "The renewal opportunity for Northstar Foods Cooperative is valued at an ACV of 4,217,500 and a TCV of 12,652,500, with a renewal term of 36 months. The deal is currently in the 'Order Review' stage, with a close date set for May 17, 2026. Key stakeholders, including the CISO and Procurement Director, have specific requirements regarding success metrics and payment schedules, which need to be addressed to avoid delays. There are risks associated with legal language and payment terms that could impact the timeline.",
+  "executive_summary_evidence_ids": [
+    "salesforce:opportunities.tsv:OPP-1001",
+    "gong:transcript:CALL-008",
+    "gong:summary:CALL-004",
+    "gong:summary:CALL-009"
+  ],
+  "buyer_goals": [
+    {
+      "text": "The renewal opportunity for Northstar Foods Cooperative is valued at an Annual Contract Value (ACV) of 4,217,500 and a Total Contract Value (TCV) of 12,652,500, with a renewal term of 36 months.",
+      "evidence_ids": [
+        "salesforce:opportunities.tsv:OPP-1001"
+      ],
+      "confidence": 1.0,
+      "uncertainty": null
+    },
+    {
+      "text": "The opportunity is currently in the 'Order Review' stage, with a close date set for May 17, 2026.",
+      "evidence_ids": [
+        "salesforce:opportunities.tsv:OPP-1001"
+      ],
+      "confidence": 1.0,
+      "uncertainty": null
+    },
+    {
+      "text": "The primary competitor for this renewal is LegacyNet Shield.",
+      "evidence_ids": [
+        "salesforce:opportunities.tsv:OPP-1001"
+      ],
+      "confidence": 1.0,
+      "uncertainty": null
+    },
+    {
+      "text": "The CISO, Elena Voss, supports the renewal but has specific requirements for success metrics and documentation, indicating a cautious but positive sentiment towards the deal.",
+      "evidence_ids": [
+        "gong:transcript:CALL-008",
+        "salesforce:contacts.tsv:CON-3001"
+      ],
+      "confidence": 1.0,
+      "uncertainty": null
+    },
+    {
+      "text": "Procurement has requested a payment schedule in writing and is concerned about the clarity of the uplift explanation and legal language.",
+      "evidence_ids": [
+        "gong:summary:CALL-004",
+        "gong:transcript:CALL-004"
+      ],
+      "confidence": 1.0,
+      "uncertainty": null
+    },
+    {
+      "text": "There are risks associated with the legal language and payment terms that may delay the order review process.",
+      "evidence_ids": [
+        "gong:summary:CALL-004"
+      ],
+      "confidence": 1.0,
+      "uncertainty": null
+    },
+    {
+      "text": "The next step is to send a revised order form and migration success plan by April 28, 2026.",
+      "evidence_ids": [
+        "salesforce:opportunities.tsv:OPP-1001"
+      ],
+      "confidence": 1.0,
+      "uncertainty": null
+    },
+    {
+      "text": "There is a noted conflict regarding the acceptance of the dashboard, as one team indicates it is accepted while another call lists it as still open.",
+      "evidence_ids": [
+        "slack:SLACK-1001-03"
+      ],
+      "confidence": 1.0,
+      "uncertainty": null
+    }
+  ],
+  "stakeholder_map": [
+    {
+      "text": "The renewal opportunity for Northstar Foods Cooperative is projected to close on May 17, 2026, with a total contract value (TCV) of 12,652,500 and an annual contract value (ACV) of 4,217,500.",
+      "evidence_ids": [
+        "gong:summary:CALL-008",
+        "gong:summary:CALL-009",
+        "gong:summary:CALL-004"
+      ],
+      "confidence": 0.9,
+      "uncertainty": null
+    },
+    {
+      "text": "The primary competitor for this renewal is LegacyNet Shield.",
+      "evidence_ids": [
+        "gong:summary:CALL-003"
+      ],
+      "confidence": 0.8,
+      "uncertainty": null
+    },
+    {
+      "text": "The Chief Information Security Officer (CISO), Elena Voss, supports the renewal but has specific requirements for success metrics and documentation, indicating a cautious but positive sentiment towards the deal.",
+      "evidence_ids": [
+        "salesforce:contacts.tsv:CON-3001",
+        "gong:summary:CALL-008"
+      ],
+      "confidence": 0.85,
+      "uncertainty": null
+    },
+    {
+      "text": "Procurement Director Iris Calder is focused on the renewal uplift and payment schedule, indicating a neutral sentiment towards the deal.",
+      "evidence_ids": [
+        "salesforce:contacts.tsv:CON-3003",
+        "gong:summary:CALL-004"
+      ],
+      "confidence": 0.8,
+      "uncertainty": null
+    },
+    {
+      "text": "There are risks associated with the renewal, including the need for accurate legal language and a clear payment schedule, which could delay the order review process.",
+      "evidence_ids": [
+        "gong:summary:CALL-004",
+        "gong:summary:CALL-009"
+      ],
+      "confidence": 0.75,
+      "uncertainty": null
+    },
+    {
+      "text": "The negotiation is described as a documentation-heavy renewal with governance dependencies, indicating a structured approach to finalizing the deal.",
+      "evidence_ids": [
+        "gong:transcript:CALL-008"
+      ],
+      "confidence": 0.9,
+      "uncertainty": null
+    }
+  ],
+  "negotiation_state": [
+    {
+      "text": "The renewal opportunity for Northstar Foods Cooperative is valued at an Annual Contract Value (ACV) of 4,217,500 and a Total Contract Value (TCV) of 12,652,500, with a renewal term of 36 months.",
+      "evidence_ids": [
+        "salesforce:opportunities.tsv:OPP-1001"
+      ],
+      "confidence": 1.0,
+      "uncertainty": null
+    },
+    {
+      "text": "The opportunity is currently in the 'Order Review' stage, with a close date set for May 17, 2026.",
+      "evidence_ids": [
+        "salesforce:opportunities.tsv:OPP-1001"
+      ],
+      "confidence": 1.0,
+      "uncertainty": null
+    },
+    {
+      "text": "The primary competitor for this renewal is LegacyNet Shield.",
+      "evidence_ids": [
+        "salesforce:opportunities.tsv:OPP-1001"
+      ],
+      "confidence": 1.0,
+      "uncertainty": null
+    },
+    {
+      "text": "The CISO, Elena Voss, supports the renewal but has specific requirements for success metrics and documentation, indicating a cautious but positive sentiment towards the deal.",
+      "evidence_ids": [
+        "gong:transcript:CALL-008",
+        "salesforce:contacts.tsv:CON-3001"
+      ],
+      "confidence": 1.0,
+      "uncertainty": null
+    },
+    {
+      "text": "Procurement has requested a payment schedule in writing and is concerned about the clarity of the uplift explanation and legal language.",
+      "evidence_ids": [
+        "gong:summary:CALL-004",
+        "gong:transcript:CALL-004"
+      ],
+      "confidence": 1.0,
+      "uncertainty": null
+    },
+    {
+      "text": "There are risks associated with the legal language and payment terms that may delay the order review process.",
+      "evidence_ids": [
+        "gong:summary:CALL-004"
+      ],
+      "confidence": 1.0,
+      "uncertainty": null
+    },
+    {
+      "text": "The next step is to send a revised order form and migration success plan by April 28, 2026.",
+      "evidence_ids": [
+        "salesforce:opportunities.tsv:OPP-1001"
+      ],
+      "confidence": 1.0,
+      "uncertainty": null
+    },
+    {
+      "text": "There is a noted conflict regarding the acceptance of the dashboard, as one team indicates it is accepted while another call lists it as still open.",
+      "evidence_ids": [
+        "slack:SLACK-1001-03"
+      ],
+      "confidence": 1.0,
+      "uncertainty": null
+    }
+  ],
+  "recommended_next_actions": [
+    {
+      "action": "Send revised order form and migration success plan by April 28, 2026.",
+      "owner": "Maya Levin",
+      "rationale": "This step is necessary to address the outstanding requirements from procurement and legal, ensuring the deal progresses towards signature.",
+      "evidence_ids": [
+        "salesforce:opportunities.tsv:OPP-1001"
+      ],
+      "requires_approval": false
+    },
+    {
+      "action": "Clarify success metrics required by the CISO and finalize the payment schedule terms.",
+      "owner": "Maya Levin",
+      "rationale": "Addressing these requirements is critical to securing stakeholder support and avoiding potential blockers in the renewal process.",
+      "evidence_ids": [
+        "gong:transcript:CALL-008",
+        "gong:summary:CALL-004"
+      ],
+      "requires_approval": false
+    }
+  ],
+  "missing_information": [
+    "What specific success metrics are required by the CISO for the renewal?",
+    "What are the exact terms of the payment schedule being proposed?",
+    "What specific metrics are required for the success metrics as per the CISO's request?",
+    "What are the final legal language requirements that need to be addressed before closing the deal?",
+    "Is there any additional feedback from the legal team that could impact the renewal process?"
+  ],
+  "source_evidence": [
+    {
+      "evidence_id": "gong:summary:CALL-008",
+      "opportunity_id": "OPP-1001",
+      "account_id": "ACC-2001",
+      "source_type": "gong",
+      "source_file": "synthetic_data/gong/gong_call_summaries.tsv",
+      "source_id": "CALL-008",
+      "access_level": "standard",
+      "event_date": "2026-04-18",
+      "text": "Stakeholders aligned on renewal path if vendor provides final owner matrix and success metrics. CISO supports renewal, procurement wants payment schedule in writing, technical owner wants migration success metrics included. Risks: Missing payment schedule could become a last-minute blocker.",
+      "metadata": {
+        "title": "Final pre-signature negotiation prep",
+        "participants": "CON-3001, CON-3002, CON-3003"
+      }
+    },
+    {
+      "evidence_id": "gong:summary:CALL-009",
+      "opportunity_id": "OPP-1001",
+      "account_id": "ACC-2001",
+      "source_type": "gong",
+      "source_file": "synthetic_data/gong/gong_call_summaries.tsv",
+      "source_id": "CALL-009",
+      "access_level": "standard",
+      "event_date": "2026-04-24",
+      "text": "Final document review found no new commercial objections, but legal asked for confirmation that retention language matches policy. No new discount request, legal review nearly complete, procurement expects signature package next. Risks: Policy citation must be accurate or legal may reopen redlines.",
+      "metadata": {
+        "title": "Renewal document review",
+        "participants": "CON-3003, CON-3005"
+      }
+    },
+    {
+      "evidence_id": "gong:summary:CALL-005",
+      "opportunity_id": "OPP-1001",
+      "account_id": "ACC-2001",
+      "source_type": "gong",
+      "source_file": "synthetic_data/gong/gong_call_summaries.tsv",
+      "source_id": "CALL-005",
+      "access_level": "standard",
+      "event_date": "2026-04-08",
+      "text": "Executive buyer confirmed business case but asked for final risk register before signature. Business case accepted, legal not fully closed, buyer wants single escalation owner. Risks: Final risk register may be too vague for executive approval if legal dependency is omitted.",
+      "metadata": {
+        "title": "Executive checkpoint",
+        "participants": "CON-3001, CON-3005"
+      }
+    },
+    {
+      "evidence_id": "policy:deal-desk",
+      "opportunity_id": "*",
+      "account_id": null,
+      "source_type": "policies",
+      "source_file": "synthetic_data/policies/deal_desk_policy.md",
+      "source_id": "deal-desk-policy",
+      "access_level": "standard",
+      "event_date": null,
+      "text": "# Synthetic Deal Desk and Approval Policy\n\nThese rules are fictional and intended only for the AI Engineer exam dataset.\n\n## Approval Rules\n\n1. Discounts greater than 10 percent require Deal Desk approval before they are recommended internally or shared with a customer.\n2. Discounts greater than 15 percent require both Deal Desk and sales leader approval.\n3. Any negative renewal uplift requires Deal Desk approval, even if the percentage discount is below threshold.\n4. Liability cap changes require legal approval before customer-facing language is generated.\n5. Data retention, restricted research data, or customer-specific security language requires legal approval before it is shared externally.\n6. Customer-facing concession language must not be generated unless the recommendation has an approved status.\n7. Low-confidence recommendations, conflicting evidence, or missing source data must be routed to a human reviewer.\n8. Restricted account sources may only be retrieved and summarized for users whose permission profile allows restricted account access.\n9. Sensitive pricing notes may only be shown to users with `can_view_sensitive_pricing=true`.\n10. If source access is denied, the system must not reveal a summary, title, quote, inferred fact, or metadata from the restricted source.\n",
+      "metadata": {}
+    },
+    {
+      "evidence_id": "gong:transcript:CALL-008",
+      "opportunity_id": "OPP-1001",
+      "account_id": null,
+      "source_type": "gong",
+      "source_file": "synthetic_data/gong/transcripts/OPP-1001_CALL-008.md",
+      "source_id": "CALL-008",
+      "access_level": "standard",
+      "event_date": null,
+      "text": "# Transcript: CALL-008 - Final pre-signature negotiation prep\n\n**Opportunity:** OPP-1001  \n**Account:** ACC-2001  \n**Date:** 2026-04-18  \n**Source access level:** standard\n\nVendor AE: We are close to signature, so I want to confirm the final blockers and the internal story each of you needs.\n\nElena Voss, CISO: My story is straightforward. We renew because the platform is central to access control, and the next phase reduces the exceptions that create audit noise. What I still need is the executive summary and the success metrics.\n\nMarco Devlin, VP Infrastructure: I need the owner matrix. I know everyone agrees in principle, but when a plant manager pushes back, I need a named person and an escalation path.\n\nIris Calder, Procurement Director: Procurement needs the payment schedule in writing. The verbal outline sounded acceptable, but finance will not approve a renewal based on a call summary.\n\nVendor AE: We have three documents in draft: executive summary, owner matrix, and payment schedule. Are those the only open items?\n\nElena Voss: Legal still needs the data retention citation, but Amara told me it is not a business blocker if the citation is accurate.\n\nIris Calder: Correct. Legal will not reopen the whole agreement unless the language changes materially.\n\nMarco Devlin: For success metrics, include baseline and target. If the metric is just \"number of migrated sites,\" it will look like project management. We need exception reduction and closure time.\n\nVendor Customer Success: Suggested metrics are active regional exceptions, average exception age, first-wave sites completed, rollback events, and support response time during cutover.\n\nElena Voss: Add one metric for policy drift. The board audit committee asked about unmanaged cloud access. It does not need to be perfect, but it should be visible.\n\nVendor AE: Good. We will add policy drift findings and remediation status.\n\nIris Calder: One concern: the payment schedule should not read like we are withholding payment until every metric is green. That would create another negotiation.\n\nMarco Devlin: Agreed. The metrics are governance metrics. Payment should be tied to readiness deliverables, not perfect outcomes.\n\nVendor AE: So payment milestone is tied to first-wave readiness checklist and support bridge schedule, while success metrics are reported separately.\n\nIris Calder: That is the distinction I need.\n\nElena Voss: I also want the recommendation to avoid saying \"expansion.\" We are renewing. If you put expansion language in the brief, procurement will ask whether we are buying more than planned.\n\nVendor AE: Understood. We will position this as renewal with operational assurance, not expansion.\n\nMarco Devlin: One more subtle point: the legacy-site plan should not make it sound like older plants are exempt forever. Temporary means temporary.\n\nVendor Customer Success: We can define review dates for every legacy-site exception.\n\nElena Voss: That will help. My approval is dependent on showing that exceptions shrink over time.\n\nVendor AE: To summarize: final packet includes executive summary, success metrics, owner matrix, payment schedule, accurate data retention citation, and legacy-site review dates. No expansion framing.\n\nIris Calder: Yes. Send it as one packet.\n\nElena Voss: If it lands by the date you proposed, I can support signature in the May window.\n\nMarco Devlin: And I can support the operational plan if the escalation path is real.\n\nVendor AE: What would make the confidence level lower in the brief?\n\nIris Calder: If the payment schedule is described as approved before finance sees it. That would be wrong.\n\nElena Voss: If the brief ignores legal. Legal is not blocking, but it is still open. A good brief should say \"near complete\" rather than \"done.\"\n\nMarco Devlin: If the owner matrix has generic names like \"regional IT.\" We need named owner groups, not necessarily personal names, but real groups with accountability.\n\nVendor Customer Success: For missing information, I hear finance approval of payment schedule, final legal citation, confirmed owner groups for two regions, and baseline exception counts.\n\nElena Voss: Correct. Baseline exception counts are important. Without baseline, success metrics become hand-wavy.\n\nVendor AE: Should the recommended next action be to ask for signature or to complete the packet?\n\nIris Calder: Complete the packet. Asking for signature before packet completion will irritate procurement.\n\nMarco Devlin: And include the support bridge schedule. My team needs to see that cutover help is not theoretical.\n\nElena Voss: The negotiation posture should be calm. We are not in a hostile negotiation. We are in a documentation-heavy renewal with a few governance dependencies.\n\nVendor AE: That phrasing is useful: documentation-heavy renewal with governance dependencies.\n\nElena Voss: Yes. If the system says the deal is at risk because legal has one citation open, that would be overdramatic. If it says there is no risk, that would also be wrong.\n",
+      "metadata": {}
+    },
+    {
+      "evidence_id": "gong:summary:CALL-004",
+      "opportunity_id": "OPP-1001",
+      "account_id": "ACC-2001",
+      "source_type": "gong",
+      "source_file": "synthetic_data/gong/gong_call_summaries.tsv",
+      "source_id": "CALL-004",
+      "access_level": "standard",
+      "event_date": "2026-04-01",
+      "text": "Procurement challenged the uplift and legal asked for narrower liability wording. Payment schedule requested, liability clause needs redline response, renewal still targeted for May. Risks: Legal language and payment terms may push order review later.",
+      "metadata": {
+        "title": "Procurement commercial review",
+        "participants": "CON-3003, CON-3005"
+      }
+    },
+    {
+      "evidence_id": "gong:summary:CALL-003",
+      "opportunity_id": "OPP-1001",
+      "account_id": "ACC-2001",
+      "source_type": "gong",
+      "source_file": "synthetic_data/gong/gong_call_summaries.tsv",
+      "source_id": "CALL-003",
+      "access_level": "standard",
+      "event_date": "2026-03-25",
+      "text": "Buyer linked renewal to measurable reduction in unmanaged access and cloud policy drift. CISO wants quarterly success metrics, network lead wants dashboard exports, competitor mentioned as cheaper but less integrated. Risks: Price pressure could increase if outcomes are not quantified.",
+      "metadata": {
+        "title": "Security outcomes alignment",
+        "participants": "CON-3001, CON-3004"
+      }
+    },
+    {
+      "evidence_id": "gong:transcript:CALL-004",
+      "opportunity_id": "OPP-1001",
+      "account_id": null,
+      "source_type": "gong",
+      "source_file": "synthetic_data/gong/transcripts/OPP-1001_CALL-004.md",
+      "source_id": "CALL-004",
+      "access_level": "standard",
+      "event_date": null,
+      "text": "# Transcript: CALL-004 - Procurement commercial review\n\n**Opportunity:** OPP-1001  \n**Account:** ACC-2001  \n**Date:** 2026-04-01  \n**Source access level:** standard\n\nVendor AE: Today we are focused on the order form, payment schedule, and the open legal language. Iris, do you want to start with the commercial items?\n\nIris Calder, Procurement Director: The uplift is not a surprise, but I need a better explanation of what changed. The business sponsor is supportive, but procurement still has to document why this renewal is not flat.\n\nVendor AE: The proposed uplift reflects expanded branch coverage, additional cloud application controls, and support for the migration success plan. We can separate the base renewal from the operational enablement items if that helps.\n\nIris Calder: Separate them in the explanation, not necessarily in the order form. I do not want three mini-orders that create confusion. I want the final paperwork to be simple.\n\nAmara Quinn, Legal Counsel: My open item is the liability wording. We are not asking for a custom framework, but one sentence reads broader than what our privacy team approved.\n\nVendor Legal Rep: We reviewed your comment. We can propose narrower wording that ties the obligation to documented service commitments rather than any indirect business interruption.\n\nAmara Quinn: That may work. I need to see it in writing. Please do not send a side email saying, \"we will be flexible.\" That creates ambiguity.\n\nIris Calder: On payment schedule, finance asked whether the annual payment can be split into two milestones. One at signature and one after the first wave of migration is complete.\n\nVendor AE: That may be possible, but we need to check whether it changes the approval path. Would a two-payment schedule solve the procurement concern?\n\nIris Calder: It would help. The team is not trying to reopen price. They want confidence that the migration support is real.\n\nVendor AE: That is useful. We can draft two payment options: standard annual billing and a milestone schedule tied to the first migration wave.\n\nAmara Quinn: Make sure the milestone language does not imply acceptance criteria that conflict with the service agreement. I am comfortable with operational milestones, not vague success promises.\n\nVendor Customer Success: We can define the milestone as completion of the first-wave readiness checklist and support bridge schedule, not business outcome acceptance.\n\nIris Calder: That sounds closer. Also, the final order form should include the renewal term and the covered products in one place. Last year's order had too many attachments.\n\nVendor AE: Understood. One clean order form, separate explanatory memo if needed.\n\nAmara Quinn: For the data retention clause, I am not blocking the deal. I just need an accurate reference to the policy. If the citation is wrong, it will bounce back.\n\nVendor Legal Rep: We will include the policy citation and redline response by Friday.\n\nIris Calder: From procurement, I can move quickly if I receive the payment options, the order form, and the explanation of uplift. Please do not send them in three unrelated threads.\n\nVendor AE: We will package them together. Are there any new competitive pricing concerns?\n\nIris Calder: There is always a cheaper option. That is not the same as a better option. If the CISO and infrastructure team say this is the safer renewal, procurement will not fight that. But we still need clean paperwork.\n\nVendor AE: Action items: vendor sends revised liability language, payment schedule options, a clean order form, and a concise uplift explanation. Northstar reviews the package with legal and finance.\n\nAmara Quinn: Correct. And mark anything that requires approval on your side. I do not want to discover late that a payment schedule was offered but not approved.\n\nIris Calder: Also, separate facts from recommendations in the memo. Facts are renewal term, covered products, billing options, and migration deliverables. Recommendation is why Northstar should choose one path.\n\nVendor AE: That is a helpful distinction. We will keep the commercial facts in a table and put recommendation language in a short note.\n\nAmara Quinn: Please avoid saying the vendor \"guarantees\" migration outcomes unless the contract says that. Say you will provide the readiness checklist and support bridge.\n\nVendor Legal Rep: Agreed. The legal commitment is service delivery and support availability, not a guarantee that every site has zero issues.\n\nIris Calder: Finance will also ask whether the two-payment option changes total cost. If it does, show that. If it does not, say so clearly.\n\nVendor AE: It should not change total contract value, but we will confirm internally before sending.\n\nAmara Quinn: Another caution: if the data retention citation is from a standard policy, include the policy name and version date. Our reviewers dislike orphaned links.\n\nVendor Legal Rep: We can include a policy reference line and attach the approved excerpt.\n\nIris Calder: Good. The fastest path is boring documentation. No new promises, no surprise attachments, no unclear approvals.\n\nVendor AE: So the brief should flag commercial confidence as medium-high, with legal citation and payment schedule as remaining dependencies.\n\nIris Calder: Yes. The business is aligned. The paperwork just has to stop creating questions.\n",
+      "metadata": {}
+    },
+    {
+      "evidence_id": "slack:SLACK-1001-03",
+      "opportunity_id": "OPP-1001",
+      "account_id": "ACC-2001",
+      "source_type": "slack",
+      "source_file": "synthetic_data/slack/account_team_updates.tsv",
+      "source_id": "SLACK-1001-03",
+      "access_level": "standard",
+      "event_date": "2026-04-21",
+      "text": "Possible conflict: one team note says the dashboard is accepted, while the latest call still lists dashboard delivery as open.",
+      "metadata": {
+        "synthetic_notice": "SYNTHETIC - generated for MVP demo",
+        "channel": "#synthetic-northstar-deal"
+      }
+    },
+    {
+      "evidence_id": "slack:SLACK-1001-02",
+      "opportunity_id": "OPP-1001",
+      "account_id": "ACC-2001",
+      "source_type": "slack",
+      "source_file": "synthetic_data/slack/account_team_updates.tsv",
+      "source_id": "SLACK-1001-02",
+      "access_level": "standard",
+      "event_date": "2026-04-20",
+      "text": "Adds missing context: the customer operations lead prefers a single escalation owner for the first two plant cutovers.",
+      "metadata": {
+        "synthetic_notice": "SYNTHETIC - generated for MVP demo",
+        "channel": "#synthetic-northstar-deal"
+      }
+    },
+    {
+      "evidence_id": "slack:SLACK-1001-01",
+      "opportunity_id": "OPP-1001",
+      "account_id": "ACC-2001",
+      "source_type": "slack",
+      "source_file": "synthetic_data/slack/account_team_updates.tsv",
+      "source_id": "SLACK-1001-01",
+      "access_level": "standard",
+      "event_date": "2026-04-19",
+      "text": "Reinforces known fact: Northstar accepted the renewal business case, but the weekly migration dashboard is still expected before signature.",
+      "metadata": {
+        "synthetic_notice": "SYNTHETIC - generated for MVP demo",
+        "channel": "#synthetic-northstar-deal"
+      }
+    },
+    {
+      "evidence_id": "salesforce:opportunities.tsv:OPP-1001",
+      "opportunity_id": "OPP-1001",
+      "account_id": "ACC-2001",
+      "source_type": "salesforce",
+      "source_file": "synthetic_data/salesforce/opportunities.tsv",
+      "source_id": "OPP-1001",
+      "access_level": "standard",
+      "event_date": "2026-05-17",
+      "text": "opportunity_id=OPP-1001; opportunity_name=Northstar Foods Cooperative - Global Access Renewal; account_id=ACC-2001; account_name=Northstar Foods Cooperative; stage=6.0 Order Review; type=Renewal; region=EMEA; country=Ireland; industry=Food and beverage operations; owner=Maya Levin; close_date=2026-05-17; acv=4217500; tcv=12652500; renewal_term_months=36; probability=78; forecast_category=Commit; next_step=Send revised order form and migration success plan by 2026-04-28; primary_competitor=LegacyNet Shield; risk_level=medium; approval_required=false; restricted_access=false",
+      "metadata": {}
+    },
+    {
+      "evidence_id": "salesforce:contacts.tsv:CON-3001",
+      "opportunity_id": "OPP-1001",
+      "account_id": "ACC-2001",
+      "source_type": "salesforce",
+      "source_file": "synthetic_data/salesforce/contacts.tsv",
+      "source_id": "CON-3001",
+      "access_level": "standard",
+      "event_date": "2026-04-18",
+      "text": "contact_id=CON-3001; account_id=ACC-2001; full_name=Elena Voss; title=Chief Information Security Officer; role_in_deal=Economic buyer; email=elena.voss@northstar-foods.example; phone=+000-0100-3001; location=Dublin; influence_level=high; sentiment=cautiously_positive; last_interaction_date=2026-04-18; notes=Wants a clean renewal path but will not support expansion unless regional exception handling is reduced.",
+      "metadata": {}
+    },
+    {
+      "evidence_id": "salesforce:contacts.tsv:CON-3003",
+      "opportunity_id": "OPP-1001",
+      "account_id": "ACC-2001",
+      "source_type": "salesforce",
+      "source_file": "synthetic_data/salesforce/contacts.tsv",
+      "source_id": "CON-3003",
+      "access_level": "standard",
+      "event_date": "2026-04-15",
+      "text": "contact_id=CON-3003; account_id=ACC-2001; full_name=Iris Calder; title=Procurement Director; role_in_deal=Commercial approver; email=iris.calder@northstar-foods.example; phone=+000-0100-3003; location=Cork; influence_level=medium; sentiment=neutral; last_interaction_date=2026-04-15; notes=Focused on renewal uplift, payment schedule, and keeping final order form simple.",
+      "metadata": {}
+    }
+  ],
+  "confidence_and_review_warnings": [
+    "There is a noted conflict regarding the acceptance of the dashboard, as one team indicates it is accepted while another call lists it as still open (evidence ID: slack:SLACK-1001-03).",
+    "Legal language and payment terms may push the order review later if not resolved promptly (evidence ID: gong:summary:CALL-004)."
+  ],
+  "cost_summary": {
+    "budget_usd": 1.0,
+    "spent_usd": 0.356443,
+    "run_spent_usd": 0.003341,
+    "remaining_usd": 0.643557,
+    "prompt_tokens": 16956,
+    "completion_tokens": 1330,
+    "call_count": 3,
+    "models": [
+      "gpt-4o-mini"
+    ],
+    "period_key": "2026-09"
+  }
+}

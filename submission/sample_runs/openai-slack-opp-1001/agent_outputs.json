@@ -1,0 +1,172 @@
+{
+  "conversation": {
+    "findings": [
+      {
+        "text": "The renewal opportunity for Northstar Foods Cooperative is valued at an Annual Contract Value (ACV) of 4,217,500 and a Total Contract Value (TCV) of 12,652,500, with a renewal term of 36 months.",
+        "evidence_ids": [
+          "salesforce:opportunities.tsv:OPP-1001"
+        ],
+        "confidence": 1.0,
+        "uncertainty": null
+      },
+      {
+        "text": "The opportunity is currently in the 'Order Review' stage, with a close date set for May 17, 2026.",
+        "evidence_ids": [
+          "salesforce:opportunities.tsv:OPP-1001"
+        ],
+        "confidence": 1.0,
+        "uncertainty": null
+      },
+      {
+        "text": "The primary competitor for this renewal is LegacyNet Shield.",
+        "evidence_ids": [
+          "salesforce:opportunities.tsv:OPP-1001"
+        ],
+        "confidence": 1.0,
+        "uncertainty": null
+      },
+      {
+        "text": "The CISO, Elena Voss, supports the renewal but has specific requirements for success metrics and documentation, indicating a cautious but positive sentiment towards the deal.",
+        "evidence_ids": [
+          "gong:transcript:CALL-008",
+          "salesforce:contacts.tsv:CON-3001"
+        ],
+        "confidence": 1.0,
+        "uncertainty": null
+      },
+      {
+        "text": "Procurement has requested a payment schedule in writing and is concerned about the clarity of the uplift explanation and legal language.",
+        "evidence_ids": [
+          "gong:summary:CALL-004",
+          "gong:transcript:CALL-004"
+        ],
+        "confidence": 1.0,
+        "uncertainty": null
+      },
+      {
+        "text": "There are risks associated with the legal language and payment terms that may delay the order review process.",
+        "evidence_ids": [
+          "gong:summary:CALL-004"
+        ],
+        "confidence": 1.0,
+        "uncertainty": null
+      },
+      {
+        "text": "The next step is to send a revised order form and migration success plan by April 28, 2026.",
+        "evidence_ids": [
+          "salesforce:opportunities.tsv:OPP-1001"
+        ],
+        "confidence": 1.0,
+        "uncertainty": null
+      },
+      {
+        "text": "There is a noted conflict regarding the acceptance of the dashboard, as one team indicates it is accepted while another call lists it as still open.",
+        "evidence_ids": [
+          "slack:SLACK-1001-03"
+        ],
+        "confidence": 1.0,
+        "uncertainty": null
+      }
+    ],
+    "missing_information": [
+      "What specific success metrics are required by the CISO for the renewal?",
+      "What are the exact terms of the payment schedule being proposed?"
+    ]
+  },
+  "stakeholders": {
+    "findings": [
+      {
+        "text": "The renewal opportunity for Northstar Foods Cooperative is projected to close on May 17, 2026, with a total contract value (TCV) of 12,652,500 and an annual contract value (ACV) of 4,217,500.",
+        "evidence_ids": [
+          "gong:summary:CALL-008",
+          "gong:summary:CALL-009",
+          "gong:summary:CALL-004"
+        ],
+        "confidence": 0.9,
+        "uncertainty": null
+      },
+      {
+        "text": "The primary competitor for this renewal is LegacyNet Shield.",
+        "evidence_ids": [
+          "gong:summary:CALL-003"
+        ],
+        "confidence": 0.8,
+        "uncertainty": null
+      },
+      {
+        "text": "The Chief Information Security Officer (CISO), Elena Voss, supports the renewal but has specific requirements for success metrics and documentation, indicating a cautious but positive sentiment towards the deal.",
+        "evidence_ids": [
+          "salesforce:contacts.tsv:CON-3001",
+          "gong:summary:CALL-008"
+        ],
+        "confidence": 0.85,
+        "uncertainty": null
+      },
+      {
+        "text": "Procurement Director Iris Calder is focused on the renewal uplift and payment schedule, indicating a neutral sentiment towards the deal.",
+        "evidence_ids": [
+          "salesforce:contacts.tsv:CON-3003",
+          "gong:summary:CALL-004"
+        ],
+        "confidence": 0.8,
+        "uncertainty": null
+      },
+      {
+        "text": "There are risks associated with the renewal, including the need for accurate legal language and a clear payment schedule, which could delay the order review process.",
+        "evidence_ids": [
+          "gong:summary:CALL-004",
+          "gong:summary:CALL-009"
+        ],
+        "confidence": 0.75,
+        "uncertainty": null
+      },
+      {
+        "text": "The negotiation is described as a documentation-heavy renewal with governance dependencies, indicating a structured approach to finalizing the deal.",
+        "evidence_ids": [
+          "gong:transcript:CALL-008"
+        ],
+        "confidence": 0.9,
+        "uncertainty": null
+      }
+    ],
+    "missing_information": [
+      "What specific metrics are required for the success metrics as per the CISO's request?",
+      "What are the final legal language requirements that need to be addressed before closing the deal?",
+      "Is there any additional feedback from the legal team that could impact the renewal process?"
+    ]
+  },
+  "strategy": {
+    "summary": "The renewal opportunity for Northstar Foods Cooperative is valued at an ACV of 4,217,500 and a TCV of 12,652,500, with a renewal term of 36 months. The deal is currently in the 'Order Review' stage, with a close date set for May 17, 2026. Key stakeholders, including the CISO and Procurement Director, have specific requirements regarding success metrics and payment schedules, which need to be addressed to avoid delays. There are risks associated with legal language and payment terms that could impact the timeline.",
+    "summary_evidence_ids": [
+      "salesforce:opportunities.tsv:OPP-1001",
+      "gong:transcript:CALL-008",
+      "gong:summary:CALL-004",
+      "gong:summary:CALL-009"
+    ],
+    "actions": [
+      {
+        "action": "Send revised order form and migration success plan by April 28, 2026.",
+        "owner": "Maya Levin",
+        "rationale": "This step is necessary to address the outstanding requirements from procurement and legal, ensuring the deal progresses towards signature.",
+        "evidence_ids": [
+          "salesforce:opportunities.tsv:OPP-1001"
+        ],
+        "requires_approval": false
+      },
+      {
+        "action": "Clarify success metrics required by the CISO and finalize the payment schedule terms.",
+        "owner": "Maya Levin",
+        "rationale": "Addressing these requirements is critical to securing stakeholder support and avoiding potential blockers in the renewal process.",
+        "evidence_ids": [
+          "gong:transcript:CALL-008",
+          "gong:summary:CALL-004"
+        ],
+        "requires_approval": false
+      }
+    ],
+    "warnings": [
+      "There is a noted conflict regarding the acceptance of the dashboard, as one team indicates it is accepted while another call lists it as still open (evidence ID: slack:SLACK-1001-03).",
+      "Legal language and payment terms may push the order review later if not resolved promptly (evidence ID: gong:summary:CALL-004)."
+    ]
+  }
+}
