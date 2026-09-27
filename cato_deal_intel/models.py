@@ -112,6 +112,7 @@ class RecommendedAction(StrictModel):
 
 class StrategyOutput(StrictModel):
     summary: str
+    summary_evidence_ids: list[str] = Field(default_factory=list)
     actions: list[RecommendedAction]
     warnings: list[str] = Field(default_factory=list)
 
@@ -136,11 +137,27 @@ class ApprovalRecord(StrictModel):
     timestamp: datetime
 
 
+class ApprovalRequest(StrictModel):
+    run_id: str
+    opportunity_id: str
+    requester_user_id: str
+    requester_name: str
+    eligible_approver_user_ids: list[str]
+    status: Literal["pending", "approved", "rejected"] = "pending"
+    requested_actions: list[str] = Field(default_factory=list)
+    requested_at: datetime
+    reviewer_user_id: str | None = None
+    comment: str | None = None
+    decided_at: datetime | None = None
+
+
 class Brief(StrictModel):
     run_id: str
     opportunity_id: str
+    run_status: Literal["completed", "awaiting_approval", "rejected"] = "completed"
     deal_snapshot: DealSnapshot
     executive_summary: str
+    executive_summary_evidence_ids: list[str] = Field(default_factory=list)
     buyer_goals: list[Finding]
     stakeholder_map: list[Finding]
     negotiation_state: list[Finding]

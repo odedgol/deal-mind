@@ -1,0 +1,37 @@
+[
+  {
+    "recommendation": "Prepare internal-only scenarios for negotiation",
+    "reason": "Sensitive opportunity recommendation requires human review.",
+    "decision": "approved",
+    "comment": null,
+    "timestamp": "2026-09-25T14:59:40.431756Z"
+  },
+  {
+    "recommendation": "Route discount request to Deal Desk for approval",
+    "reason": "Sensitive opportunity recommendation requires human review.",
+    "decision": "approved",
+    "comment": null,
+    "timestamp": "2026-09-25T14:59:40.431764Z"
+  },
+  {
+    "recommendation": "Route liability language changes to legal for approval",
+    "reason": "Sensitive opportunity recommendation requires human review.",
+    "decision": "approved",
+    "comment": null,
+    "timestamp": "2026-09-25T14:59:40.431767Z"
+  },
+  {
+    "recommendation": "Confirm the approval list for restricted evidence reviewers",
+    "reason": "Sensitive opportunity recommendation requires human review.",
+    "decision": "approved",
+    "comment": null,
+    "timestamp": "2026-09-25T14:59:40.431769Z"
+  },
+  {
+    "recommendation": "Gather current number of temporary access requests by project",
+    "reason": "Sensitive opportunity recommendation requires human review.",
+    "decision": "approved",
+    "comment": null,
+    "timestamp": "2026-09-25T14:59:40.431773Z"
+  }
+]

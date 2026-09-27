@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from cato_deal_intel.client_factory import QdrantClientFactory
+from cato_deal_intel.storage.client_factory import QdrantClientFactory
 
 
 def test_qdrant_client_factory_reuses_and_closes_client(tmp_path: Path) -> None:

@@ -1,0 +1,214 @@
+[
+  {
+    "trace_id": "c889c4cb81814e8ea7a4d95c253a40e8",
+    "run_id": "ce577faa9a90494dbd5aade699c0a157",
+    "event_type": "retrieval",
+    "name": "qdrant.retrieve",
+    "prompt_version": "v1",
+    "status": "completed",
+    "started_at": "2026-09-25T15:46:40.235346Z",
+    "completed_at": "2026-09-25T15:46:40.251972Z",
+    "error": null,
+    "metadata": {
+      "opportunity_id": "OPP-1001",
+      "result_limit": "8"
+    }
+  },
+  {
+    "trace_id": "f1feb3f62a3b4caf837569450dbb4b12",
+    "run_id": "ce577faa9a90494dbd5aade699c0a157",
+    "event_type": "tool",
+    "name": "get_opportunity_snapshot",
+    "prompt_version": "v1",
+    "status": "completed",
+    "started_at": "2026-09-25T15:46:40.266946Z",
+    "completed_at": "2026-09-25T15:46:40.266960Z",
+    "error": null,
+    "metadata": {}
+  },
+  {
+    "trace_id": "0cc268c12bb5423c9f745b3b3f45bdd0",
+    "run_id": "ce577faa9a90494dbd5aade699c0a157",
+    "event_type": "agent",
+    "name": "Deal Context Agent",
+    "prompt_version": "v1",
+    "status": "completed",
+    "started_at": "2026-09-25T15:46:40.266939Z",
+    "completed_at": "2026-09-25T15:46:40.266968Z",
+    "error": null,
+    "metadata": {}
+  },
+  {
+    "trace_id": "ca6e60abc2744737a824676cddf22e7a",
+    "run_id": "ce577faa9a90494dbd5aade699c0a157",
+    "event_type": "retrieval",
+    "name": "qdrant.retrieve",
+    "prompt_version": "v1",
+    "status": "completed",
+    "started_at": "2026-09-25T15:46:40.267355Z",
+    "completed_at": "2026-09-25T15:46:40.297051Z",
+    "error": null,
+    "metadata": {
+      "opportunity_id": "OPP-1001",
+      "result_limit": "8"
+    }
+  },
+  {
+    "trace_id": "14155b153c32412bacad90c3f8e8ed34",
+    "run_id": "ce577faa9a90494dbd5aade699c0a157",
+    "event_type": "tool",
+    "name": "search_authorized_evidence",
+    "prompt_version": "v1",
+    "status": "completed",
+    "started_at": "2026-09-25T15:46:40.267342Z",
+    "completed_at": "2026-09-25T15:46:40.297073Z",
+    "error": null,
+    "metadata": {}
+  },
+  {
+    "trace_id": "cba7113f2e33493186a907160eb4a55a",
+    "run_id": "ce577faa9a90494dbd5aade699c0a157",
+    "event_type": "agent",
+    "name": "Conversation Intelligence Agent",
+    "prompt_version": "v1",
+    "status": "completed",
+    "started_at": "2026-09-25T15:46:40.267329Z",
+    "completed_at": "2026-09-25T15:46:40.297375Z",
+    "error": null,
+    "metadata": {}
+  },
+  {
+    "trace_id": "0af3af1003814453b33875b67b2cee27",
+    "run_id": "ce577faa9a90494dbd5aade699c0a157",
+    "event_type": "retrieval",
+    "name": "qdrant.retrieve",
+    "prompt_version": "v1",
+    "status": "completed",
+    "started_at": "2026-09-25T15:46:40.280079Z",
+    "completed_at": "2026-09-25T15:46:40.300701Z",
+    "error": null,
+    "metadata": {
+      "opportunity_id": "OPP-1001",
+      "result_limit": "8"
+    }
+  },
+  {
+    "trace_id": "daabdfd165e44f9ea8dc3c076343cecb",
+    "run_id": "ce577faa9a90494dbd5aade699c0a157",
+    "event_type": "tool",
+    "name": "search_authorized_evidence",
+    "prompt_version": "v1",
+    "status": "completed",
+    "started_at": "2026-09-25T15:46:40.280024Z",
+    "completed_at": "2026-09-25T15:46:40.300712Z",
+    "error": null,
+    "metadata": {}
+  },
+  {
+    "trace_id": "de41013e532f4fcab04c204519dd28c2",
+    "run_id": "ce577faa9a90494dbd5aade699c0a157",
+    "event_type": "agent",
+    "name": "Stakeholder Map Agent",
+    "prompt_version": "v1",
+    "status": "completed",
+    "started_at": "2026-09-25T15:46:40.280015Z",
+    "completed_at": "2026-09-25T15:46:40.300884Z",
+    "error": null,
+    "metadata": {}
+  },
+  {
+    "trace_id": "61ef9191218a4936a82c211f1858fe65",
+    "run_id": "ce577faa9a90494dbd5aade699c0a157",
+    "event_type": "retrieval",
+    "name": "qdrant.retrieve",
+    "prompt_version": "v1",
+    "status": "completed",
+    "started_at": "2026-09-25T15:46:40.301238Z",
+    "completed_at": "2026-09-25T15:46:40.315326Z",
+    "error": null,
+    "metadata": {
+      "opportunity_id": "OPP-1001",
+      "result_limit": "4"
+    }
+  },
+  {
+    "trace_id": "820f8d31541649eb9410d94516e206cf",
+    "run_id": "ce577faa9a90494dbd5aade699c0a157",
+    "event_type": "tool",
+    "name": "get_deal_desk_policy",
+    "prompt_version": "v1",
+    "status": "completed",
+    "started_at": "2026-09-25T15:46:40.301233Z",
+    "completed_at": "2026-09-25T15:46:40.315335Z",
+    "error": null,
+    "metadata": {}
+  },
+  {
+    "trace_id": "b374c46c51984832a27f1aa438865831",
+    "run_id": "ce577faa9a90494dbd5aade699c0a157",
+    "event_type": "tool",
+    "name": "request_approval",
+    "prompt_version": "v1",
+    "status": "completed",
+    "started_at": "2026-09-25T15:46:40.315595Z",
+    "completed_at": "2026-09-25T15:46:40.315598Z",
+    "error": null,
+    "metadata": {
+      "action_count": "1"
+    }
+  },
+  {
+    "trace_id": "a160666db0014fa285a66b7f705677ce",
+    "run_id": "ce577faa9a90494dbd5aade699c0a157",
+    "event_type": "tool",
+    "name": "validate_recommendation",
+    "prompt_version": "v1",
+    "status": "completed",
+    "started_at": "2026-09-25T15:46:40.315616Z",
+    "completed_at": "2026-09-25T15:46:40.315619Z",
+    "error": null,
+    "metadata": {
+      "citation_count": "3"
+    }
+  },
+  {
+    "trace_id": "8963753685054b6c9a8ba0d3e0519a6c",
+    "run_id": "ce577faa9a90494dbd5aade699c0a157",
+    "event_type": "agent",
+    "name": "Negotiation Strategy Agent",
+    "prompt_version": "v1",
+    "status": "completed",
+    "started_at": "2026-09-25T15:46:40.301228Z",
+    "completed_at": "2026-09-25T15:46:40.315623Z",
+    "error": null,
+    "metadata": {}
+  },
+  {
+    "trace_id": "a818abde197241e295ade99b56fbec7f",
+    "run_id": "ce577faa9a90494dbd5aade699c0a157",
+    "event_type": "recommendation",
+    "name": "strategy.recommendations",
+    "prompt_version": "v1",
+    "status": "completed",
+    "started_at": "2026-09-25T15:46:40.315630Z",
+    "completed_at": "2026-09-25T15:46:40.315631Z",
+    "error": null,
+    "metadata": {
+      "action_count": "1"
+    }
+  },
+  {
+    "trace_id": "f41bc334d996412d9c6800cfbdf0291b",
+    "run_id": "ce577faa9a90494dbd5aade699c0a157",
+    "event_type": "approval",
+    "name": "approval.prepare",
+    "prompt_version": "v1",
+    "status": "completed",
+    "started_at": "2026-09-25T15:46:40.315838Z",
+    "completed_at": "2026-09-25T15:46:40.315840Z",
+    "error": null,
+    "metadata": {
+      "action_count": "1"
+    }
+  }
+]

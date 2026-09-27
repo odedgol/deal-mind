@@ -1,7 +1,7 @@
 from pathlib import Path
 
-from cato_deal_intel.authorization import authorize
-from cato_deal_intel.data import SourceData
+from cato_deal_intel.retrieval.sources.data import SourceData
+from cato_deal_intel.security.authorization import authorize
 
 ROOT = Path(__file__).parents[1] / "synthetic_data"
 
@@ -17,6 +17,15 @@ def test_source_data_loads_all_opportunities_and_generated_updates() -> None:
     slack = [item for item in source.evidence() if item.source_type == "slack"]
     assert len(slack) >= 2 * 3
     assert all("SYNTHETIC" in item.metadata["synthetic_notice"] for item in slack)
+
+
+def test_source_data_indexes_opportunities_and_permissions() -> None:
+    source = SourceData(ROOT)
+
+    assert source.opportunity("OPP-1001").account_id == "ACC-2001"
+    assert source.opportunity("OPP-404") is None
+    assert source.permission_profile("USR-5003").role == "Restricted Account Owner"
+    assert source.permission_profile("USR-404") is None
 
 
 def test_authorized_user_gets_source_and_access_filters() -> None:

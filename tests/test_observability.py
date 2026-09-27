@@ -2,7 +2,7 @@ import logging
 
 from pytest import LogCaptureFixture, MonkeyPatch
 
-from cato_deal_intel.observability import observed
+from cato_deal_intel.observability.tracing import observed
 
 
 def test_observability_can_be_disabled(monkeypatch: MonkeyPatch, caplog: LogCaptureFixture) -> None:

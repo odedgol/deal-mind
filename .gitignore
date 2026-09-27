@@ -2,7 +2,6 @@
 
 !.gitignore
 !README.md
-!Cato_GTM_AI_Engineer_Home_Task.md
 !synthetic_data/
 !synthetic_data/**
 !synthetic_data/slack/
@@ -13,6 +12,20 @@
 !tests/**
 !pyproject.toml
 !uv.lock
+!docs/
+docs/*
+!docs/*.md
+!docs/deal-intelligence-system-map.png
+!docs/deal-intelligence-system-map.svg
+!docs/slack-demo-preview.svg
+!docs/slack-chat-mockup.html
+!docs/requirements/
+docs/requirements/*
+!docs/requirements/*.md
+!evals/
+!evals/**
+!submission/
+!submission/**
 
 .DS_Store
 **/.DS_Store

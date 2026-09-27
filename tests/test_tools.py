@@ -1,14 +1,14 @@
 from pathlib import Path
 
-from cato_deal_intel.authorization import authorize
-from cato_deal_intel.data import SourceData
-from cato_deal_intel.retrieval import EvidenceRetriever
-from cato_deal_intel.services import EvidenceService
-from cato_deal_intel.tools import (
+from cato_deal_intel.agents.tools import (
     AuthorizedEvidenceSearchTool,
     DealContextTool,
     EvidenceSearchRequest,
 )
+from cato_deal_intel.orchestration.services import EvidenceService
+from cato_deal_intel.retrieval.index import EvidenceRetriever
+from cato_deal_intel.retrieval.sources.data import SourceData
+from cato_deal_intel.security.authorization import authorize
 
 ROOT = Path(__file__).parents[1] / "synthetic_data"
 

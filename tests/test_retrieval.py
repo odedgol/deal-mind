@@ -1,15 +1,15 @@
 from datetime import date
 from pathlib import Path
 
-from cato_deal_intel.authorization import authorize
-from cato_deal_intel.data import SourceData
 from cato_deal_intel.models import EvidenceItem
-from cato_deal_intel.retrieval import (
+from cato_deal_intel.retrieval.index import (
     EvidenceRetriever,
     RetrievalRequest,
     _recency_score,
     _source_reliability,
 )
+from cato_deal_intel.retrieval.sources.data import SourceData
+from cato_deal_intel.security.authorization import authorize
 
 ROOT = Path(__file__).parents[1] / "synthetic_data"
 

@@ -1,0 +1,195 @@
+{
+  "conversation": {
+    "findings": [
+      {
+        "text": "The opportunity for Eclipse BioMaterials Ltd is at stage 5.0 Negotiate, with a high risk level and requires approval for discounts and liability language.",
+        "evidence_ids": [
+          "salesforce:opportunities.tsv:OPP-1003"
+        ],
+        "confidence": 0.9,
+        "uncertainty": null
+      },
+      {
+        "text": "Priya Sato, the Chief Digital Officer, is pushing for renewal certainty but is under board pressure to reduce run-rate spend, indicating a mixed sentiment towards the negotiation.",
+        "evidence_ids": [
+          "salesforce:contacts.tsv:CON-3011"
+        ],
+        "confidence": 0.85,
+        "uncertainty": null
+      },
+      {
+        "text": "Darin Holt, the Procurement Lead, is pressing for an aggressive discount and shorter renewal term, which adds pressure to the negotiation.",
+        "evidence_ids": [
+          "salesforce:contacts.tsv:CON-3014"
+        ],
+        "confidence": 0.8,
+        "uncertainty": null
+      },
+      {
+        "text": "The negotiation involves multiple stakeholders with conflicting priorities: procurement wants cost reduction, security wants stronger evidence, and legal wants cleaner language, which complicates the renewal process.",
+        "evidence_ids": [
+          "gong:transcript:CALL-023"
+        ],
+        "confidence": 0.75,
+        "uncertainty": null
+      },
+      {
+        "text": "The approval path for discounts greater than 10% requires Deal Desk approval, and any negative renewal uplift also requires Deal Desk approval, indicating strict internal controls on pricing.",
+        "evidence_ids": [
+          "policy:deal-desk"
+        ],
+        "confidence": 0.9,
+        "uncertainty": null
+      },
+      {
+        "text": "The negotiation strategy includes preparing internal-only scenarios and marking approval gates, which reflects a cautious approach to avoid unapproved concessions.",
+        "evidence_ids": [
+          "gong:transcript:CALL-019"
+        ],
+        "confidence": 0.8,
+        "uncertainty": null
+      },
+      {
+        "text": "The missing information includes the current number of temporary access requests and the approval list for restricted evidence reviewers, which are critical for the negotiation.",
+        "evidence_ids": [
+          "gong:transcript:CALL-019"
+        ],
+        "confidence": 0.7,
+        "uncertainty": null
+      }
+    ],
+    "missing_information": [
+      "Current number of temporary access requests by project",
+      "Approval list for restricted evidence reviewers"
+    ]
+  },
+  "stakeholders": {
+    "findings": [
+      {
+        "text": "The Chief Digital Officer, Priya Sato, is pushing for renewal certainty but is under board pressure to reduce run-rate spend, indicating a mixed sentiment towards the renewal process.",
+        "evidence_ids": [
+          "salesforce:contacts.tsv:CON-3011"
+        ],
+        "confidence": 0.8,
+        "uncertainty": null
+      },
+      {
+        "text": "Mateo Ruan, the Head of Security, values the platform but has flagged sensitive research access controls as non-negotiable, indicating a strong stance on security requirements.",
+        "evidence_ids": [
+          "salesforce:contacts.tsv:CON-3012"
+        ],
+        "confidence": 0.9,
+        "uncertainty": null
+      },
+      {
+        "text": "Darin Holt, the Procurement Lead, is pressing for an aggressive discount and shorter renewal term, which indicates a strong push from procurement for cost reduction.",
+        "evidence_ids": [
+          "salesforce:contacts.tsv:CON-3014"
+        ],
+        "confidence": 0.85,
+        "uncertainty": null
+      },
+      {
+        "text": "The negotiation discussions reveal conflicting priorities among stakeholders: procurement wants cost reduction, security wants stronger evidence, and legal wants clearer language, highlighting the complexity of the negotiation.",
+        "evidence_ids": [
+          "gong:transcript:CALL-023"
+        ],
+        "confidence": 0.9,
+        "uncertainty": null
+      },
+      {
+        "text": "Leah Tan, the General Counsel, has not approved liability language and emphasizes the need for strict review before any customer-facing concessions, indicating high legal sensitivity in the negotiation.",
+        "evidence_ids": [
+          "salesforce:contacts.tsv:CON-3013"
+        ],
+        "confidence": 0.9,
+        "uncertainty": null
+      },
+      {
+        "text": "The procurement team has requested a material concession and shorter term, but approval is required before recommending this position, indicating a pending decision that could impact the negotiation.",
+        "evidence_ids": [
+          "pricing:PN-4004"
+        ],
+        "confidence": 0.8,
+        "uncertainty": null
+      },
+      {
+        "text": "The discussions indicate that the renewal is still viable, but the board expects cost discipline, which could affect the final terms of the agreement.",
+        "evidence_ids": [
+          "gong:transcript:CALL-027"
+        ],
+        "confidence": 0.85,
+        "uncertainty": null
+      },
+      {
+        "text": "The need for a credible plan before signature is emphasized, with procurement expected to push hard for concessions, indicating a high-stakes negotiation environment.",
+        "evidence_ids": [
+          "gong:transcript:CALL-019"
+        ],
+        "confidence": 0.8,
+        "uncertainty": null
+      }
+    ],
+    "missing_information": [
+      "Approval status for liability language",
+      "Confirmation of the expiration owner for the audit export",
+      "Current number of temporary access requests by project",
+      "Approval list for restricted evidence reviewers",
+      "What concession level is actually approvable"
+    ]
+  },
+  "strategy": {
+    "summary": "The negotiation with Eclipse BioMaterials Ltd is complex due to conflicting priorities among stakeholders, high pressure for cost reductions, and strict approval requirements for discounts and liability language. A cautious approach is necessary to navigate these challenges effectively.",
+    "actions": [
+      {
+        "action": "Prepare internal-only scenarios for negotiation",
+        "owner": "Nora Chen",
+        "rationale": "To clarify options and mark approval gates before presenting to the customer, ensuring compliance with internal policies.",
+        "evidence_ids": [
+          "gong:transcript:CALL-019"
+        ],
+        "requires_approval": true
+      },
+      {
+        "action": "Route discount request to Deal Desk for approval",
+        "owner": "Nora Chen",
+        "rationale": "Discounts greater than 10% require Deal Desk approval, and this is critical to avoid unapproved concessions.",
+        "evidence_ids": [
+          "policy:deal-desk"
+        ],
+        "requires_approval": true
+      },
+      {
+        "action": "Route liability language changes to legal for approval",
+        "owner": "Nora Chen",
+        "rationale": "Legal approval is necessary before any customer-facing language is generated, ensuring compliance and reducing legal risk.",
+        "evidence_ids": [
+          "policy:deal-desk"
+        ],
+        "requires_approval": true
+      },
+      {
+        "action": "Confirm the approval list for restricted evidence reviewers",
+        "owner": "Nora Chen",
+        "rationale": "This is essential to ensure that sensitive information is only shared with authorized personnel, maintaining compliance with internal policies.",
+        "evidence_ids": [
+          "gong:transcript:CALL-019"
+        ],
+        "requires_approval": true
+      },
+      {
+        "action": "Gather current number of temporary access requests by project",
+        "owner": "Nora Chen",
+        "rationale": "This information is critical for understanding the operational impact of the renewal and for negotiating effectively with procurement.",
+        "evidence_ids": [
+          "gong:transcript:CALL-019"
+        ],
+        "requires_approval": true
+      }
+    ],
+    "warnings": [
+      "Ensure all customer-facing language is approved before sharing to avoid legal exposure.",
+      "Be cautious of procurement's push for aggressive discounts; ensure any proposals are compliant with internal approval processes."
+    ]
+  }
+}
