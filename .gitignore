@@ -19,7 +19,6 @@
 docs/*
 !docs/*.md
 !docs/deal-intelligence-system-map.png
-!docs/deal-intelligence-system-map.svg
 !docs/slack-demo-preview.svg
 !docs/slack-chat-mockup.html
 !docs/requirements/
