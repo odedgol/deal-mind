@@ -190,26 +190,26 @@ retried. A retry must not create a second business side effect.
 The prototype is intentionally runnable on one laptop. The following boundaries are explicit so
 that the local implementation is not mistaken for a production deployment:
 
-| MVP behavior | What breaks in production | Production replacement |
+| Current MVP | Why it is not enough for production | Production direction |
 | --- | --- | --- |
-| User sends `user_id` in the request | A caller can impersonate another user | Authenticate at the API edge and derive identity from a verified session or token; keep authorization in the workflow |
-| Local permission files | Permissions become stale or differ between workers | Use a governed CRM/authorization service or replicated policy store with cache invalidation |
-| Application-scoped `SourceData` cache | Live source updates are invisible until process restart; stale permissions could authorize or deny incorrectly | Add source-version checks, event-driven invalidation, or bounded TTL refresh; use a shared authoritative permission service in production |
-| Permission cache without revocation handling | A revoked user can retain access until a long TTL expires | Use cache-aside with risk-based TTL, event-driven invalidation, background refresh, and fail-closed behavior for sensitive requests |
-| One local Qdrant client and file storage | Multiple workers cannot share the folder | Managed/clustered Qdrant or OpenSearch behind a service URL |
-| `ingest` deletes and rebuilds one collection | Reads can see a missing or partial index during rebuild | Build a versioned collection, validate it, then atomically switch an alias |
-| Local `artifacts/runs` directory | Containers are ephemeral; artifacts are not shared or durable | Object storage plus a metadata database, with retention, encryption, and access control |
-| Synchronous workflow inside a FastAPI route | Long LLM calls consume worker capacity and requests can time out | Async provider clients or a durable job queue with status polling and cancellation |
-| Synchronous Slack interaction handler | Slack expects an acknowledgement within three seconds, while retrieval and LLM work can take longer | Acknowledge immediately, enqueue the workflow, then post the completed answer through the interaction response URL or Slack Web API |
-| Local file-backed approval state and process lock | Filesystem updates are not a transactional multi-worker queue, and caller-supplied demo IDs are not authenticated | Replace with authenticated identity, transactional shared persistence/checkpointing, durable job execution, and concurrency-safe decision handling |
-| Local JSON traces and stdout | No central search, alerting, or cross-service correlation | Central logs, metrics, distributed traces, redaction, retention, and a `run_id` propagated everywhere |
-| `.env` for `OPENAI_API_KEY` | Secrets leak through files, logs, images, or developer machines | Secret manager, key rotation, least privilege, and secret scanning in CI |
-| One model provider and one model configuration | Provider outage, model drift, runaway cost, or rate limits affect all runs | Model gateway with budgets, quotas, fallback policy, model pinning, and evaluation gates |
-| Full live golden set on every code change | Token cost, latency, and model variance make feedback slow and noisy | Versioned record/replay fixtures by default, plus a small live smoke suite and explicit re-recording gates |
-| Local CORS and no API authentication | The endpoint is publicly callable if deployed as-is | SSO/OIDC, API scopes, CSRF strategy where applicable, rate limiting, and network policy |
-| React dev server | No hardened static delivery or browser security policy | Build once and serve through a CDN/reverse proxy with CSP, TLS, security headers, and frontend auth |
-| Basic `/health` response | Process can be healthy while Qdrant, model gateway, or source data is unavailable | Separate liveness/readiness checks and dependency-aware monitoring |
-| Read-only tools with retries | Future writes may be duplicated by retries or replay | Idempotency keys, durable operation records, and retry classification for every write tool |
+| Caller sends `user_id` | A caller could pretend to be someone else | Authenticate the request and derive the user ID from the session or token |
+| Permissions come from local files | Permissions can become stale | Use a hybrid model: authoritative permission service as the source of truth, cache-aside for speed, TTL as a safety limit, and event-driven invalidation for revocations |
+| `SourceData` is cached in the process | Live updates are not seen by running workers | Add version checks, TTL refresh, or event-driven invalidation |
+| Permission cache has no revocation event | A revoked user may keep access too long | Use short, risk-based TTLs and immediate invalidation for revocations |
+| Qdrant uses one local file-backed client | Multiple workers cannot safely share the folder | Use managed Qdrant or another shared search service |
+| `ingest` rebuilds one collection | Readers may see a missing or partial index | Build a new version, validate it, then switch to it atomically |
+| Run artifacts are local files | Containers are temporary and files are not shared | Store artifacts in object storage and metadata in a database |
+| FastAPI waits for the full workflow | Long LLM calls can block workers or time out | Use a job queue and return a job status for long-running requests |
+| Slack waits for the full answer | Slack requires a fast acknowledgement | Acknowledge first, process in the background, then post the result |
+| Approval state uses local files and a process lock | It is not a shared transactional workflow | Use durable shared state and concurrency-safe approval updates |
+| Traces are JSON files and stdout | Operators cannot search or alert across workers | Send logs, metrics, and traces to a central platform |
+| API keys live in `.env` | Secrets can leak from files or images | Use a secret manager, rotation, least privilege, and CI secret scanning |
+| One provider and one model configuration | An outage or cost spike affects every request | Add a model gateway with quotas, budgets, fallback, and pinned versions |
+| Full live golden set runs on every change | Testing is slow, expensive, and noisy | Use replay fixtures by default and a small live smoke suite |
+| CORS is local and the API has no authentication | A deployed endpoint could be called by anyone | Add SSO/OIDC, API scopes, rate limits, and network controls |
+| React runs through the development server | It is not hardened for public delivery | Serve a production build through a CDN or reverse proxy with security headers |
+| `/health` checks only the process | The process may be up while dependencies are down | Add separate liveness and readiness checks |
+| Retried tools are currently read-only | Future writes could happen twice | Add idempotency keys and retry rules to every write operation |
 
 ### Recommended production migration order
 
