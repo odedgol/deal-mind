@@ -30,6 +30,28 @@ sensitive recommendations through a human approval step.
 Detailed responsibilities and the production deployment view are in
 [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
 
+### LangGraph workflow
+
+The request runs through one compiled LangGraph workflow. Authorization happens before
+retrieval, the two specialist agents run in parallel, and the strategy agent waits for both.
+
+```mermaid
+flowchart TD
+    START([Request]) --> AUTH[Authorize]
+    AUTH -->|Denied| DENY[Safe denial]
+    DENY --> END1([End])
+    AUTH -->|Authorized| RETRIEVE[Governed retrieval]
+    RETRIEVE --> CONTEXT[Deal Context Agent]
+    CONTEXT --> CONVERSATION[Conversation Intelligence]
+    CONTEXT --> STAKEHOLDERS[Stakeholder Map]
+    CONVERSATION --> STRATEGY[Negotiation Strategy]
+    STAKEHOLDERS --> STRATEGY
+    STRATEGY --> APPROVAL[Approval routing]
+    APPROVAL --> BRIEF[Build brief]
+    BRIEF --> PERSIST[Persist artifacts]
+    PERSIST --> END2([End])
+```
+
 ## Requirements
 
 Choose one of the two launch modes below:
