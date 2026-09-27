@@ -78,20 +78,15 @@ The main configuration options are:
 
 Never commit `.env`, API keys, or unredacted production data.
 
-## Quick start: deterministic local demo
+## Run the project
 
-This path uses no provider calls and no API key:
+Choose one run mode. Docker is the recommended interviewer path because it starts the API, local
+Qdrant index, and React UI together. Manual mode is useful when you want to inspect or run the CLI
+directly.
 
-```bash
-CATO_FAKE_LLM=1 uv run deal-intel demo
-```
+Do not run Docker and the manual API at the same time because both use ports `8000` and `5173`.
 
-The command ingests the supplied synthetic evidence, runs an authorized example, and writes
-inspectable artifacts under `artifacts/runs/<run_id>/`.
-
-## Quick start: Docker
-
-**Recommended interviewer path: Docker runs the API, Qdrant local index, and React UI together.**
+## Run mode A — Docker (recommended)
 
 ### Docker live mode
 
@@ -143,7 +138,7 @@ Expected results are `api` **healthy**, `frontend` **Up**, and:
 
 Open <http://localhost:5173> for the UI or <http://localhost:8000/docs> for Swagger.
 
-## Manual setup
+## Run mode B — Manual
 
 Use the manual setup below when you want to run the CLI, API, tests, or live-provider mode directly
 on the host machine. Do not run the manual API and Docker API on the same ports at the same time.
@@ -173,7 +168,7 @@ uv run deal-intel brief --opportunity OPP-1001 --user USR-5001 --approval pendin
 The CLI is separate from the UI. It prints results directly to the terminal and writes run
 artifacts under `artifacts/runs/<run_id>/`.
 
-## CLI
+## CLI — manual mode
 
 Show all commands:
 
