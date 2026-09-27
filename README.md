@@ -304,6 +304,9 @@ Start the API in one terminal, then the UI in another:
 ```bash
 # Terminal 1
 CATO_FAKE_LLM=1 uv run deal-intel-api
+OR
+# Terminal 1 Live
+uv run deal-intel-api
 
 # Terminal 2
 cd frontend
