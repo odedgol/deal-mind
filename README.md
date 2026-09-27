@@ -267,6 +267,16 @@ cd frontend
 npm run build
 ```
 
+GitHub Actions runs the same verification on every push and pull request through
+[`Test Verification`](.github/workflows/ci.yml): Ruff, Mypy, the complete fake-LLM test suite, a
+full API E2E journey, and the frontend production build.
+
+Run only the E2E journey locally:
+
+```bash
+CATO_FAKE_LLM=1 uv run pytest -q tests/e2e -m e2e
+```
+
 Current verification baseline:
 
 - Python tests: **50 passed**

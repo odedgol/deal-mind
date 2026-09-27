@@ -36,6 +36,7 @@ deal-intel-api = "cato_deal_intel.api:main"
 testpaths = ["tests"]
 markers = [
     "live_llm: requires a configured live LLM provider",
+    "e2e: exercises a complete local API user journey",
 ]
 
 [tool.ruff]

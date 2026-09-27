@@ -2,6 +2,9 @@
 
 !.gitignore
 !README.md
+!.github/
+!.github/workflows/
+!.github/workflows/ci.yml
 !synthetic_data/
 !synthetic_data/**
 !synthetic_data/slack/
