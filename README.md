@@ -25,24 +25,6 @@ sensitive recommendations through a human approval step.
 
 ## Architecture
 
-```mermaid
-flowchart LR
-    U[Sales user] --> I[CLI / API / Slack-style UI]
-    I --> A[Authorization gate]
-    A -->|allowed| R[Hybrid retrieval]
-    A -->|denied| D[Safe denial]
-    R --> C[Deal Context]
-    R --> CI[Conversation Intelligence]
-    R --> S[Stakeholder Map]
-    C --> N[Negotiation Strategy]
-    CI --> N
-    S --> N
-    N --> V[Citation + output validation]
-    V --> H[Human approval]
-    H --> B[Brief + artifacts]
-    B --> T[Traces / usage / audit]
-```
-
 ![System architecture](docs/architecture-overview.png)
 
 Detailed responsibilities and the production deployment view are in
