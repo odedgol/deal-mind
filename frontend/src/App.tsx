@@ -108,14 +108,24 @@ function App() {
   const [detailsOpen, setDetailsOpen] = useState(true);
   const [directMessage, setDirectMessage] = useState<"channel" | "deal-desk">("channel");
   const [reviewerUnreadCount, setReviewerUnreadCount] = useState(0);
+  const messageScrollRef = useRef<HTMLDivElement>(null);
   const endOfMessages = useRef<HTMLDivElement>(null);
   const composerRef = useRef<HTMLTextAreaElement>(null);
   const conversations = useRef<Record<string, ChatMessage[]>>({});
+  const shouldStickToBottom = useRef(true);
   const user = personas.find((persona) => persona.userId === userId) ?? personas[2]!;
 
   useEffect(() => {
+    if (!shouldStickToBottom.current) return;
     endOfMessages.current?.scrollIntoView({ behavior: "smooth", block: "end" });
   }, [messages, loading]);
+
+  const handleMessageScroll = () => {
+    const container = messageScrollRef.current;
+    if (!container) return;
+    const distanceFromBottom = container.scrollHeight - container.scrollTop - container.clientHeight;
+    shouldStickToBottom.current = distanceFromBottom < 48;
+  };
 
   useEffect(() => {
     const composer = composerRef.current;
@@ -386,7 +396,7 @@ function App() {
           </div>
         </header>
 
-        <div className="message-scroll" aria-live="polite">
+        <div ref={messageScrollRef} className="message-scroll" aria-live="polite" onScroll={handleMessageScroll}>
           <div className="day-divider"><span>Today</span></div>
           {visibleMessages.map((message) => (
             <MessageRow
