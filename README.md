@@ -84,9 +84,11 @@ inspectable artifacts under `artifacts/runs/<run_id>/`.
 
 ## Quick start: Docker
 
-**Recommended for reviewers who want to run the complete demo with one command:**
+**Recommended for reviewers who want to run the complete live demo with one command:**
 
 ```bash
+cp .env.example .env
+# Set OPENAI_API_KEY in .env
 docker compose up --build
 ```
 
@@ -96,8 +98,14 @@ Then open:
 - Swagger UI: <http://localhost:8000/docs>
 - API health: <http://localhost:8000/health>
 
-The Docker demo uses the deterministic fake LLM and persists generated artifacts in the local
+The Docker demo uses the configured live LLM and persists generated artifacts in the local
 `artifacts/` directory. Stop it with `Ctrl+C`, or run `docker compose down`.
+
+For an offline, deterministic run without provider calls:
+
+```bash
+CATO_FAKE_LLM=1 docker compose up --build
+```
 
 ## Manual setup
 

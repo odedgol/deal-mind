@@ -9,7 +9,6 @@ COPY synthetic_data ./synthetic_data
 RUN pip install --no-cache-dir uv \
     && uv sync --frozen --no-dev
 
-ENV CATO_FAKE_LLM=1
 ENV CATO_QDRANT_PATH=/app/artifacts/qdrant
 
 EXPOSE 8000
