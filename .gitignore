@@ -2,6 +2,11 @@
 
 !.gitignore
 !README.md
+!Dockerfile
+!docker-compose.yml
+!.dockerignore
+!frontend/
+!frontend/Dockerfile
 !.github/
 !.github/workflows/
 !.github/workflows/ci.yml

@@ -82,6 +82,28 @@ CATO_FAKE_LLM=1 uv run deal-intel demo
 The command ingests the supplied synthetic evidence, runs an authorized example, and writes
 inspectable artifacts under `artifacts/runs/<run_id>/`.
 
+## Quick start: Docker
+
+**Recommended for reviewers who want to run the complete demo with one command:**
+
+```bash
+docker compose up --build
+```
+
+Then open:
+
+- Demo UI: <http://localhost:5173>
+- Swagger UI: <http://localhost:8000/docs>
+- API health: <http://localhost:8000/health>
+
+The Docker demo uses the deterministic fake LLM and persists generated artifacts in the local
+`artifacts/` directory. Stop it with `Ctrl+C`, or run `docker compose down`.
+
+## Manual setup
+
+Use the manual setup below when you want to run the CLI, API, tests, or live-provider mode directly
+on the host machine.
+
 ## CLI
 
 Show all commands:
