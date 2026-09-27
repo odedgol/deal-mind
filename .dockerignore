@@ -13,3 +13,4 @@ frontend/dist
 tests
 docs
 evals
+!docker-entrypoint.sh

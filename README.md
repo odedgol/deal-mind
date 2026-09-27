@@ -101,6 +101,9 @@ Then open:
 The Docker demo uses the configured live LLM and persists generated artifacts in the local
 `artifacts/` directory. Stop it with `Ctrl+C`, or run `docker compose down`.
 
+On startup, the API automatically indexes the supplied synthetic evidence using the configured
+embedding provider. Set `CATO_AUTO_INGEST=0` if the mounted Qdrant index is already prepared.
+
 For an offline, deterministic run without provider calls:
 
 ```bash
