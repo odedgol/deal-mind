@@ -32,6 +32,13 @@ Detailed responsibilities and the production deployment view are in
 
 ## Requirements
 
+Choose one of the two launch modes below:
+
+- **Docker** — recommended for an interviewer; requires Docker Desktop only.
+- **Manual** — requires Python/`uv`, and Node.js/npm only if you want the React UI.
+
+Manual setup requires:
+
 - Python 3.13+
 - [`uv`](https://docs.astral.sh/uv/)
 - Node.js 18+ and npm for the web UI
@@ -84,11 +91,13 @@ inspectable artifacts under `artifacts/runs/<run_id>/`.
 
 ## Quick start: Docker
 
-**Recommended for reviewers who want to run the complete live demo with one command:**
+**Recommended interviewer path: Docker runs the API, Qdrant local index, and React UI together.**
+
+### Docker live mode
 
 ```bash
 cp .env.example .env
-# Set OPENAI_API_KEY in .env
+# Set OPENAI_API_KEY in .env and review the model/budget settings.
 docker compose up --build
 ```
 
@@ -102,7 +111,10 @@ The Docker demo uses the configured live LLM and persists generated artifacts in
 `artifacts/` directory. Stop it with `Ctrl+C`, or run `docker compose down`.
 
 On startup, the API automatically indexes the supplied synthetic evidence using the configured
-embedding provider. Set `CATO_AUTO_INGEST=0` if the mounted Qdrant index is already prepared.
+embedding provider. The first live startup uses the OpenAI embedding model and may incur a small
+embedding cost. Set `CATO_AUTO_INGEST=0` only if the mounted Qdrant index is already prepared.
+
+### Docker offline mode
 
 For an offline, deterministic run without provider calls:
 
@@ -110,10 +122,56 @@ For an offline, deterministic run without provider calls:
 CATO_FAKE_LLM=1 docker compose up --build
 ```
 
+Use this mode for a free, repeatable walkthrough. It uses deterministic hash embeddings and the
+`FakeLLMProvider`; it still exercises authorization, retrieval, agents, approvals, persistence,
+the API, and the UI.
+
+### Docker verification
+
+In a second terminal:
+
+```bash
+docker compose ps
+curl http://localhost:8000/health
+```
+
+Expected results are `api` **healthy**, `frontend` **Up**, and:
+
+```json
+{"status":"ok"}
+```
+
+Open <http://localhost:5173> for the UI or <http://localhost:8000/docs> for Swagger.
+
 ## Manual setup
 
 Use the manual setup below when you want to run the CLI, API, tests, or live-provider mode directly
-on the host machine.
+on the host machine. Do not run the manual API and Docker API on the same ports at the same time.
+
+Install dependencies once:
+
+```bash
+uv sync
+```
+
+For a deterministic manual run, ingest first and then run the CLI:
+
+```bash
+CATO_FAKE_LLM=1 uv run deal-intel ingest
+CATO_FAKE_LLM=1 uv run deal-intel demo
+```
+
+For a live manual run:
+
+```bash
+cp .env.example .env
+# Set OPENAI_API_KEY in .env.
+uv run deal-intel ingest
+uv run deal-intel brief --opportunity OPP-1001 --user USR-5001 --approval pending
+```
+
+The CLI is separate from the UI. It prints results directly to the terminal and writes run
+artifacts under `artifacts/runs/<run_id>/`.
 
 ## CLI
 
