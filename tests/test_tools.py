@@ -19,7 +19,7 @@ def test_evidence_tool_uses_bound_authorization() -> None:
     opportunity = next(item for item in source.opportunities() if item.opportunity_id == "OPP-1003")
     requester = next(item for item in source.permissions() if item.user_id == "USR-5007")
     decision = authorize(opportunity, requester)
-    tool = AuthorizedEvidenceSearchTool(EvidenceService(source, EvidenceRetriever()), decision)
+    tool = AuthorizedEvidenceSearchTool(EvidenceService(EvidenceRetriever()), decision)
 
     result = tool.run(EvidenceSearchRequest("OPP-1003", "restricted pricing"))
 
@@ -43,7 +43,7 @@ def test_policy_tool_explicitly_retrieves_shared_policy() -> None:
     decision = authorize(opportunity, requester)
     retriever = EvidenceRetriever()
     retriever.index(source.evidence())
-    tool = DealDeskPolicyTool(EvidenceService(source, retriever), decision)
+    tool = DealDeskPolicyTool(EvidenceService(retriever), decision)
 
     result = tool.run()
 

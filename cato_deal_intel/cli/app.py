@@ -9,7 +9,7 @@ from ..llm.fake_provider import FakeLLMProvider
 from ..llm.providers import OpenAIProvider
 from ..llm.settings import configured_llm
 from ..models import Brief, CostSummary, RecommendedAction
-from ..orchestration.services import RunArtifactService
+from ..orchestration.services import DealService, EvidenceServiceFactory, RunArtifactService
 from ..orchestration.workflow import create_brief
 from ..retrieval.embeddings import configured_embedding_provider
 from ..retrieval.evidence_retriever import EvidenceRetriever, RetrievalRequest
@@ -29,6 +29,8 @@ EVIDENCE_REPOSITORY = EvidenceRetriever(
     require_existing=True,
     embedding_provider=configured_embedding_provider(),
 )
+DEAL_SERVICE = DealService(DEAL_REPOSITORY)
+EVIDENCE_SERVICE_FACTORY = EvidenceServiceFactory(EVIDENCE_REPOSITORY)
 
 
 @app.command()
@@ -82,9 +84,9 @@ def brief(
 ) -> None:
     """Run the four-agent workflow and save JSON and Markdown artifacts."""
     result = create_brief(
-        deal_repository=DEAL_REPOSITORY,
+        deal_service=DEAL_SERVICE,
         run_artifact_service=RUN_ARTIFACT_SERVICE,
-        evidence_repository=EVIDENCE_REPOSITORY,
+        evidence_service_factory=EVIDENCE_SERVICE_FACTORY,
         opportunity_id=opportunity,
         user_id=user,
         llm=configured_llm(),
@@ -189,9 +191,9 @@ def demo() -> None:
     scenarios = [("OPP-1001", "USR-5001"), ("OPP-1003", "USR-5003")]
     for opportunity, user in scenarios:
         result = create_brief(
-            deal_repository=DEAL_REPOSITORY,
+            deal_service=DEAL_SERVICE,
             run_artifact_service=RUN_ARTIFACT_SERVICE,
-            evidence_repository=EVIDENCE_REPOSITORY,
+            evidence_service_factory=EVIDENCE_SERVICE_FACTORY,
             opportunity_id=opportunity,
             user_id=user,
             llm=configured_llm(),
@@ -205,9 +207,9 @@ def demo() -> None:
             continue
         typer.echo(f"{opportunity} denied: {result.message}")
     denied = create_brief(
-        deal_repository=DEAL_REPOSITORY,
+        deal_service=DEAL_SERVICE,
         run_artifact_service=RUN_ARTIFACT_SERVICE,
-        evidence_repository=EVIDENCE_REPOSITORY,
+        evidence_service_factory=EVIDENCE_SERVICE_FACTORY,
         opportunity_id="OPP-1003",
         user_id="USR-5007",
         llm=configured_llm(),

@@ -32,13 +32,13 @@ def generate_brief(request: BriefRequest) -> Brief | DeniedResult:
             detail="This approval-required request needs another Deal Desk Approver.",
         )
     result = create_brief(
-        deal_repository=deps.DEAL_REPOSITORY,
+        deal_service=deps.DEAL_SERVICE,
         run_artifact_service=deps.RUN_ARTIFACT_SERVICE,
         opportunity_id=request.opportunity_id,
         user_id=request.user_id,
         llm=configured_llm(),
         approval_decision="pending",
-        evidence_repository=deps.EVIDENCE_REPOSITORY,
+        evidence_service_factory=deps.EVIDENCE_SERVICE_FACTORY,
     )
     if isinstance(result, Brief) and result.run_status == "awaiting_approval":
         approval_request = _new_approval_request(result, request.user_id)
@@ -52,9 +52,9 @@ def generate_brief(request: BriefRequest) -> Brief | DeniedResult:
 
 
 def _new_approval_request(brief: Brief, requester_user_id: str) -> ApprovalRequest:
-    profiles = deps.DEAL_REPOSITORY.permissions()
-    requester = deps.DEAL_REPOSITORY.permission_profile(requester_user_id)
-    opportunity = deps.DEAL_REPOSITORY.opportunity(brief.opportunity_id)
+    profiles = deps.DEAL_SERVICE.permissions()
+    requester = deps.DEAL_SERVICE.permission_profile(requester_user_id)
+    opportunity = deps.DEAL_SERVICE.opportunity(brief.opportunity_id)
     approvers = deps.eligible_approvers(opportunity, profiles, requester_user_id)
     return ApprovalRequest(
         run_id=brief.run_id,

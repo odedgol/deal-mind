@@ -5,7 +5,6 @@ from typing import Literal, cast
 from ..llm.protocols import LLMProvider
 from ..models import RecommendedAction, WorkflowResult
 from ..observability.tracing import AgentTraceCollector
-from ..repositories.contracts import DealRepository, EvidenceRepository
 from .graph import InitialDealState, build_deal_graph
 from .services import (
     ApprovalService,
@@ -19,12 +18,12 @@ DEAL_GRAPH = build_deal_graph()
 
 def create_brief(
     *,
-    deal_repository: DealRepository,
+    deal_service: DealService,
     opportunity_id: str,
     user_id: str,
     llm: LLMProvider,
     run_artifact_service: RunArtifactService,
-    evidence_repository: EvidenceRepository,
+    evidence_service_factory: EvidenceServiceFactory,
     approval_decision: Literal["ask", "approved", "rejected", "pending"] = "pending",
     approval_prompt: (
         Callable[[list[RecommendedAction]], Literal["approved", "rejected"]] | None
@@ -32,10 +31,8 @@ def create_brief(
 ) -> WorkflowResult:
     """Run the LangGraph flow and return either a brief or a safe denial."""
     initial_state: InitialDealState = {
-        "deal_service": DealService(deal_repository),
-        "evidence_service_factory": EvidenceServiceFactory(
-            deal_repository, evidence_repository
-        ),
+        "deal_service": deal_service,
+        "evidence_service_factory": evidence_service_factory,
         "approval_service": ApprovalService(),
         "run_artifact_service": run_artifact_service,
         "opportunity_id": opportunity_id,

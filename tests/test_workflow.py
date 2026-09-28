@@ -6,7 +6,11 @@ import pytest
 
 from cato_deal_intel.llm.fake_provider import FakeLLMProvider
 from cato_deal_intel.models import Brief, RecommendedAction
-from cato_deal_intel.orchestration.services import RunArtifactService
+from cato_deal_intel.orchestration.services import (
+    DealService,
+    EvidenceServiceFactory,
+    RunArtifactService,
+)
 from cato_deal_intel.orchestration.workflow import create_brief
 from cato_deal_intel.retrieval.evidence_retriever import EvidenceRetriever
 from cato_deal_intel.retrieval.sources.data import SourceData
@@ -25,12 +29,12 @@ def _prepare_index(path: Path) -> EvidenceRetriever:
 def test_fake_workflow_persists_required_brief_artifacts(tmp_path: Path) -> None:
     evidence_repository = _prepare_index(tmp_path)
     brief = create_brief(
-        deal_repository=SourceData(ROOT),
+        deal_service=DealService(SourceData(ROOT)),
         run_artifact_service=RunArtifactService(ArtifactStore(tmp_path)),
         opportunity_id="OPP-1001",
         user_id="USR-5001",
         llm=FakeLLMProvider(),
-        evidence_repository=evidence_repository,
+        evidence_service_factory=EvidenceServiceFactory(evidence_repository),
     )
     assert isinstance(brief, Brief)
     run_dir = tmp_path / brief.run_id
@@ -64,12 +68,12 @@ def test_fake_workflow_persists_required_brief_artifacts(tmp_path: Path) -> None
 def test_restricted_workflow_routes_approval(tmp_path: Path) -> None:
     evidence_repository = _prepare_index(tmp_path)
     brief = create_brief(
-        deal_repository=SourceData(ROOT),
+        deal_service=DealService(SourceData(ROOT)),
         run_artifact_service=RunArtifactService(ArtifactStore(tmp_path)),
         opportunity_id="OPP-1003",
         user_id="USR-5003",
         llm=FakeLLMProvider(),
-        evidence_repository=evidence_repository,
+        evidence_service_factory=EvidenceServiceFactory(evidence_repository),
     )
 
     assert isinstance(brief, Brief)
@@ -85,14 +89,14 @@ def test_interactive_approval_callback_controls_approval_status(tmp_path: Path) 
         return "approved"
 
     brief = create_brief(
-        deal_repository=SourceData(ROOT),
+        deal_service=DealService(SourceData(ROOT)),
         run_artifact_service=RunArtifactService(ArtifactStore(tmp_path)),
         opportunity_id="OPP-1003",
         user_id="USR-5003",
         llm=FakeLLMProvider(),
         approval_decision="ask",
         approval_prompt=approve,
-        evidence_repository=evidence_repository,
+        evidence_service_factory=EvidenceServiceFactory(evidence_repository),
     )
 
     assert isinstance(brief, Brief)
@@ -103,9 +107,9 @@ def test_interactive_approval_callback_controls_approval_status(tmp_path: Path) 
 
 def test_denied_workflow_does_not_create_artifact(tmp_path: Path) -> None:
     result = create_brief(
-        deal_repository=SourceData(ROOT),
+        deal_service=DealService(SourceData(ROOT)),
         run_artifact_service=RunArtifactService(ArtifactStore(tmp_path)),
-        evidence_repository=EvidenceRetriever(),
+        evidence_service_factory=EvidenceServiceFactory(EvidenceRetriever()),
         opportunity_id="OPP-1003",
         user_id="USR-5007",
         llm=FakeLLMProvider(),
@@ -126,12 +130,12 @@ def test_failed_agent_persists_failed_trace(tmp_path: Path) -> None:
 
     with pytest.raises(RuntimeError, match="simulated agent failure"):
         create_brief(
-            deal_repository=SourceData(ROOT),
+            deal_service=DealService(SourceData(ROOT)),
             run_artifact_service=RunArtifactService(ArtifactStore(tmp_path)),
             opportunity_id="OPP-1001",
             user_id="USR-5001",
             llm=FailingLLM(),  # type: ignore[arg-type]
-            evidence_repository=evidence_repository,
+            evidence_service_factory=EvidenceServiceFactory(evidence_repository),
         )
 
     run_dir = next(path for path in tmp_path.iterdir() if path.name != "qdrant")
@@ -139,3 +143,30 @@ def test_failed_agent_persists_failed_trace(tmp_path: Path) -> None:
     assert any(trace["status"] == "failed" for trace in traces)
     assert (run_dir / "error.json").exists()
     assert not (run_dir / "brief.json").exists()
+
+
+def test_shared_services_keep_workflow_evidence_and_traces_isolated(tmp_path: Path) -> None:
+    deal_service = DealService(SourceData(ROOT))
+    evidence_factory = EvidenceServiceFactory(_prepare_index(tmp_path))
+    artifacts = RunArtifactService(ArtifactStore(tmp_path))
+    run_ids: set[str] = set()
+
+    for opportunity_id, user_id in [("OPP-1001", "USR-5001"), ("OPP-1003", "USR-5003")]:
+        brief = create_brief(
+            deal_service=deal_service,
+            evidence_service_factory=evidence_factory,
+            run_artifact_service=artifacts,
+            opportunity_id=opportunity_id,
+            user_id=user_id,
+            llm=FakeLLMProvider(),
+        )
+
+        assert isinstance(brief, Brief)
+        assert brief.run_id not in run_ids
+        run_ids.add(brief.run_id)
+        assert brief.retrieval_debug
+        assert all(item.opportunity_id == opportunity_id for item in brief.retrieval_debug)
+        assert all(item.opportunity_id in {opportunity_id, "*"} for item in brief.source_evidence)
+        traces = json.loads((tmp_path / brief.run_id / "trace.json").read_text())
+        assert traces
+        assert all(trace["run_id"] == brief.run_id for trace in traces)

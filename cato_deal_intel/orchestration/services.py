@@ -123,18 +123,24 @@ class DealService:
         self, opportunity_id: str, user_id: str
     ) -> tuple[Opportunity, AuthorizationDecision]:
         opportunity = self._find_opportunity(opportunity_id)
-        requester = self._find_requester(user_id)
+        requester = self.permission_profile(user_id)
         decision = authorize(opportunity, requester)
         return opportunity, decision
 
     def _find_opportunity(self, opportunity_id: str) -> Opportunity:
-        match = self.deal_repository.opportunity(opportunity_id)
+        match = self.opportunity(opportunity_id)
         if match is None:
             raise ValueError("Opportunity was not found.")
         return match
 
-    def _find_requester(self, user_id: str) -> PermissionProfile | None:
+    def opportunity(self, opportunity_id: str) -> Opportunity | None:
+        return self.deal_repository.opportunity(opportunity_id)
+
+    def permission_profile(self, user_id: str) -> PermissionProfile | None:
         return self.deal_repository.permission_profile(user_id)
+
+    def permissions(self) -> list[PermissionProfile]:
+        return self.deal_repository.permissions()
 
 
 class EvidenceService:
@@ -143,13 +149,11 @@ class EvidenceService:
 
     def __init__(
         self,
-        deal_repository: DealRepository,
         retriever: EvidenceRepository,
         collector: AgentTraceCollector | None = None,
         run_id: str | None = None,
         retrieval_debug: list[RetrievalDebug] | None = None,
     ) -> None:
-        self.deal_repository = deal_repository
         self.retriever = retriever
         self.collector = collector
         self.run_id = run_id
@@ -246,15 +250,12 @@ class EvidenceServiceFactory:
 
     def __init__(
         self,
-        deal_repository: DealRepository,
         evidence_repository: EvidenceRepository,
     ) -> None:
-        self.deal_repository = deal_repository
         self.evidence_repository = evidence_repository
 
     def for_run(self, collector: AgentTraceCollector, run_id: str) -> EvidenceService:
         return EvidenceService(
-            self.deal_repository,
             self.evidence_repository,
             collector,
             run_id,

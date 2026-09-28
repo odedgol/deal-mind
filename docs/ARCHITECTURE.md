@@ -61,6 +61,15 @@ The shared contracts and observability helpers are used across these layers. Age
 application services, while orchestration wires the tools into the graph. This keeps permission
 decisions in code and prevents the LLM from choosing its own data-access filters.
 
+`create_brief` receives a `DealService`, an `EvidenceServiceFactory`, and a
+`RunArtifactService`. API dependencies, CLI initialization, and evaluation setup construct these
+services around the repositories. The workflow entry point and graph do not accept repositories.
+API routes also read opportunity and permission data through `DealService`.
+
+The evidence factory shares the retrieval repository but creates a fresh `EvidenceService` for
+each graph node. Each service has its own retrieval-debug list and the current run's trace
+collector. This prevents parallel branches and separate requests from mixing diagnostics.
+
 ### Workflow graph lifecycle
 
 The LangGraph structure is compiled once when `orchestration/workflow.py` is imported and reused
@@ -77,15 +86,11 @@ shared local Qdrant client.
 lookups. Its `cached_property` values are instance-local: the first lookup builds the records or
 dictionary index, and later lookups on the same object reuse the in-memory result.
 
-For one brief workflow, the application creates one `SourceData` instance and places it in the
-shared graph state. The authorization, retrieval, conversation, stakeholder, and strategy nodes
-therefore reuse the same parsed records and indexes. The evidence text itself is not loaded from
-the source files during every brief request; it is retrieved from the already-built Qdrant index.
-
-The local API now keeps one application-scoped `SourceData` instance and passes it into each brief
-workflow. The opportunity and permission files are therefore parsed and indexed once per API
-process, then reused by later requests and approval endpoints. Direct CLI workflows and tests can
-still provide their own instance, which keeps those entry points isolated.
+The local API keeps one application-scoped `SourceData` instance behind `DealService` and injects
+that service into each brief workflow. Opportunity and permission records are cached on this
+shared source instance, then reused by later requests and approval endpoints. Evidence services
+retrieve text from the already-built Qdrant index; they do not need the source repository.
+CLI initialization, evaluation setup, and tests construct their own services and repositories.
 
 If source files become live or mutable, the shared instance must gain an explicit
 refresh/invalidation policy (for example a reload after ingestion, a file-version check, or a

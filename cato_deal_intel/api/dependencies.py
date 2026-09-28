@@ -2,7 +2,12 @@ from pathlib import Path
 from threading import Lock
 
 from ..models import Opportunity, PermissionProfile
-from ..orchestration.services import ApprovalRequestService, RunArtifactService
+from ..orchestration.services import (
+    ApprovalRequestService,
+    DealService,
+    EvidenceServiceFactory,
+    RunArtifactService,
+)
 from ..repositories.contracts import EvidenceRepository
 from ..retrieval.embeddings import configured_embedding_provider
 from ..retrieval.evidence_retriever import EvidenceRetriever
@@ -26,11 +31,13 @@ EVIDENCE_REPOSITORY: EvidenceRepository = EvidenceRetriever(
     require_existing=True,
     embedding_provider=configured_embedding_provider(),
 )
+DEAL_SERVICE = DealService(DEAL_REPOSITORY)
+EVIDENCE_SERVICE_FACTORY = EvidenceServiceFactory(EVIDENCE_REPOSITORY)
 APPROVAL_LOCK = Lock()
 
 
 def permission_profile(user_id: str) -> PermissionProfile | None:
-    return DEAL_REPOSITORY.permission_profile(user_id)
+    return DEAL_SERVICE.permission_profile(user_id)
 
 
 def is_deal_desk_approver(profile: PermissionProfile | None) -> bool:
@@ -57,18 +64,18 @@ def requester_is_only_eligible_approver(
     opportunity_id: str,
     requester_user_id: str,
 ) -> bool:
-    opportunity = DEAL_REPOSITORY.opportunity(opportunity_id)
+    opportunity = DEAL_SERVICE.opportunity(opportunity_id)
 
     if opportunity is None or not opportunity.approval_required:
         return False
 
-    requester = DEAL_REPOSITORY.permission_profile(requester_user_id)
+    requester = DEAL_SERVICE.permission_profile(requester_user_id)
     if not authorize(opportunity, requester).allowed:
         return False
 
     other_approvers = eligible_approvers(
         opportunity=opportunity,
-        profiles=DEAL_REPOSITORY.permissions(),
+        profiles=DEAL_SERVICE.permissions(),
         requester_user_id=requester_user_id,
     )
 

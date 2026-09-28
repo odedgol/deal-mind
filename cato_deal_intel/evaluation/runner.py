@@ -12,9 +12,8 @@ from ..llm.fake_provider import FakeLLMProvider
 from ..llm.protocols import LLMProvider
 from ..llm.settings import evidence_payload
 from ..models import AgentOutput, Brief, DeniedResult, EvidenceItem, RecommendedAction
-from ..orchestration.services import RunArtifactService
+from ..orchestration.services import DealService, EvidenceServiceFactory, RunArtifactService
 from ..orchestration.workflow import create_brief
-from ..repositories.contracts import DealRepository, EvidenceRepository
 from ..retrieval.evidence_retriever import EvidenceRetriever
 from ..retrieval.sources.data import SourceData
 from ..storage.artifact_store import ArtifactStore
@@ -95,6 +94,8 @@ def run_golden_evaluation(
             require_existing=False,
         )
         evidence_repository.rebuild(source.evidence())
+        deal_service = DealService(source)
+        evidence_service_factory = EvidenceServiceFactory(evidence_repository)
         cases = load_golden_set(golden_path)
         results: list[CaseResult] = []
         for repeat in range(1, repeats + 1):
@@ -102,9 +103,9 @@ def run_golden_evaluation(
             results.extend(
                 _evaluate_case(
                     case,
-                    source,
+                    deal_service,
                     run_artifact_service,
-                    evidence_repository,
+                    evidence_service_factory,
                     llm,
                     repeat,
                 )
@@ -276,21 +277,21 @@ def _forbidden_facts_are_absent(facts: list[str], output: AgentOutput) -> bool:
 
 def _evaluate_case(
     case: GoldenCase,
-    deal_repository: DealRepository,
+    deal_service: DealService,
     run_artifact_service: RunArtifactService,
-    evidence_repository: EvidenceRepository,
+    evidence_service_factory: EvidenceServiceFactory,
     llm: LLMProvider,
     repeat: int,
 ) -> CaseResult:
     try:
         result = create_brief(
-            deal_repository=deal_repository,
+            deal_service=deal_service,
             run_artifact_service=run_artifact_service,
             opportunity_id=case.opportunity_id,
             user_id=case.user_id,
             llm=llm,
             approval_decision="pending",
-            evidence_repository=evidence_repository,
+            evidence_service_factory=evidence_service_factory,
         )
     except Exception as error:
         checks = {

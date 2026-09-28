@@ -5,7 +5,11 @@ import pytest
 from fastapi.testclient import TestClient
 
 from cato_deal_intel.llm.fake_provider import FakeLLMProvider
-from cato_deal_intel.orchestration.services import ApprovalRequestService, RunArtifactService
+from cato_deal_intel.orchestration.services import (
+    ApprovalRequestService,
+    EvidenceServiceFactory,
+    RunArtifactService,
+)
 from cato_deal_intel.retrieval.evidence_retriever import EvidenceRetriever
 from cato_deal_intel.retrieval.sources.data import SourceData
 from cato_deal_intel.storage.approval_store import ApprovalStore
@@ -30,7 +34,9 @@ def e2e_client(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> TestClient:
     monkeypatch.setattr(brief_routes, "configured_llm", lambda: FakeLLMProvider())
     monkeypatch.setattr(deps, "DEFAULT_QDRANT_PATH", qdrant_path)
     monkeypatch.setattr(deps, "QDRANT_CLIENTS", QdrantClientFactory(qdrant_path))
-    monkeypatch.setattr(deps, "EVIDENCE_REPOSITORY", evidence_repository)
+    monkeypatch.setattr(
+        deps, "EVIDENCE_SERVICE_FACTORY", EvidenceServiceFactory(evidence_repository)
+    )
     return TestClient(api.app)
 
 

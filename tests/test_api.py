@@ -7,7 +7,11 @@ import pytest
 from fastapi.testclient import TestClient
 
 from cato_deal_intel.llm.fake_provider import FakeLLMProvider
-from cato_deal_intel.orchestration.services import ApprovalRequestService, RunArtifactService
+from cato_deal_intel.orchestration.services import (
+    ApprovalRequestService,
+    EvidenceServiceFactory,
+    RunArtifactService,
+)
 from cato_deal_intel.retrieval.evidence_retriever import EvidenceRetriever
 from cato_deal_intel.retrieval.sources.data import SourceData
 from cato_deal_intel.storage.approval_store import ApprovalStore
@@ -74,7 +78,9 @@ def test_brief_endpoint_reuses_workflow(monkeypatch: pytest.MonkeyPatch, tmp_pat
     monkeypatch.setattr(brief_routes, "configured_llm", lambda: FakeLLMProvider())
     monkeypatch.setattr(deps, "DEFAULT_QDRANT_PATH", qdrant_path)
     monkeypatch.setattr(deps, "QDRANT_CLIENTS", QdrantClientFactory(qdrant_path))
-    monkeypatch.setattr(deps, "EVIDENCE_REPOSITORY", evidence_repository)
+    monkeypatch.setattr(
+        deps, "EVIDENCE_SERVICE_FACTORY", EvidenceServiceFactory(evidence_repository)
+    )
 
     response = TestClient(api.app).post(
         "/brief",
@@ -107,7 +113,9 @@ def test_authorized_read_requests_can_run_concurrently(
     monkeypatch.setattr(brief_routes, "configured_llm", lambda: FakeLLMProvider())
     monkeypatch.setattr(deps, "DEFAULT_QDRANT_PATH", qdrant_path)
     monkeypatch.setattr(deps, "QDRANT_CLIENTS", QdrantClientFactory(qdrant_path))
-    monkeypatch.setattr(deps, "EVIDENCE_REPOSITORY", evidence_repository)
+    monkeypatch.setattr(
+        deps, "EVIDENCE_SERVICE_FACTORY", EvidenceServiceFactory(evidence_repository)
+    )
     client = TestClient(api.app)
 
     def request_brief(_: int) -> tuple[int, str]:
@@ -156,7 +164,9 @@ def test_approval_decision_updates_existing_run(
     monkeypatch.setattr(brief_routes, "configured_llm", lambda: FakeLLMProvider())
     monkeypatch.setattr(deps, "DEFAULT_QDRANT_PATH", qdrant_path)
     monkeypatch.setattr(deps, "QDRANT_CLIENTS", QdrantClientFactory(qdrant_path))
-    monkeypatch.setattr(deps, "EVIDENCE_REPOSITORY", evidence_repository)
+    monkeypatch.setattr(
+        deps, "EVIDENCE_SERVICE_FACTORY", EvidenceServiceFactory(evidence_repository)
+    )
     client = TestClient(api.app)
 
     generated = client.post("/brief", json={"opportunity_id": "OPP-1003", "user_id": "USR-5003"})
