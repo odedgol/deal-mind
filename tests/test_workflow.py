@@ -34,7 +34,7 @@ def test_fake_workflow_persists_required_brief_artifacts(tmp_path: Path) -> None
         opportunity_id="OPP-1001",
         user_id="USR-5001",
         llm=FakeLLMProvider(),
-        evidence_service_factory=EvidenceServiceFactory(evidence_repository),
+        evidence_service_factory=EvidenceServiceFactory(lambda: evidence_repository),
     )
     assert isinstance(brief, Brief)
     run_dir = tmp_path / brief.run_id
@@ -73,7 +73,7 @@ def test_restricted_workflow_routes_approval(tmp_path: Path) -> None:
         opportunity_id="OPP-1003",
         user_id="USR-5003",
         llm=FakeLLMProvider(),
-        evidence_service_factory=EvidenceServiceFactory(evidence_repository),
+        evidence_service_factory=EvidenceServiceFactory(lambda: evidence_repository),
     )
 
     assert isinstance(brief, Brief)
@@ -96,7 +96,7 @@ def test_interactive_approval_callback_controls_approval_status(tmp_path: Path) 
         llm=FakeLLMProvider(),
         approval_decision="ask",
         approval_prompt=approve,
-        evidence_service_factory=EvidenceServiceFactory(evidence_repository),
+        evidence_service_factory=EvidenceServiceFactory(lambda: evidence_repository),
     )
 
     assert isinstance(brief, Brief)
@@ -106,10 +106,13 @@ def test_interactive_approval_callback_controls_approval_status(tmp_path: Path) 
 
 
 def test_denied_workflow_does_not_create_artifact(tmp_path: Path) -> None:
+    def unexpected_repository_access() -> EvidenceRetriever:
+        raise AssertionError("A denied request must not open the evidence repository")
+
     result = create_brief(
         deal_service=DealService(SourceData(ROOT)),
         run_artifact_service=RunArtifactService(ArtifactStore(tmp_path)),
-        evidence_service_factory=EvidenceServiceFactory(EvidenceRetriever()),
+        evidence_service_factory=EvidenceServiceFactory(unexpected_repository_access),
         opportunity_id="OPP-1003",
         user_id="USR-5007",
         llm=FakeLLMProvider(),
@@ -135,7 +138,7 @@ def test_failed_agent_persists_failed_trace(tmp_path: Path) -> None:
             opportunity_id="OPP-1001",
             user_id="USR-5001",
             llm=FailingLLM(),  # type: ignore[arg-type]
-            evidence_service_factory=EvidenceServiceFactory(evidence_repository),
+            evidence_service_factory=EvidenceServiceFactory(lambda: evidence_repository),
         )
 
     run_dir = next(path for path in tmp_path.iterdir() if path.name != "qdrant")
@@ -147,7 +150,8 @@ def test_failed_agent_persists_failed_trace(tmp_path: Path) -> None:
 
 def test_shared_services_keep_workflow_evidence_and_traces_isolated(tmp_path: Path) -> None:
     deal_service = DealService(SourceData(ROOT))
-    evidence_factory = EvidenceServiceFactory(_prepare_index(tmp_path))
+    evidence_repository = _prepare_index(tmp_path)
+    evidence_factory = EvidenceServiceFactory(lambda: evidence_repository)
     artifacts = RunArtifactService(ArtifactStore(tmp_path))
     run_ids: set[str] = set()
 

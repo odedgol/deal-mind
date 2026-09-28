@@ -1,3 +1,4 @@
+from collections.abc import Callable
 from datetime import UTC, datetime
 from typing import Literal, cast
 
@@ -246,17 +247,17 @@ class EvidenceService:
 
 
 class EvidenceServiceFactory:
-    """Create request-scoped evidence services from the configured repositories."""
+    """Resolve retrieval lazily and give each node its own diagnostics."""
 
     def __init__(
         self,
-        evidence_repository: EvidenceRepository,
+        repository_provider: Callable[[], EvidenceRepository],
     ) -> None:
-        self.evidence_repository = evidence_repository
+        self.repository_provider = repository_provider
 
     def for_run(self, collector: AgentTraceCollector, run_id: str) -> EvidenceService:
         return EvidenceService(
-            self.evidence_repository,
+            self.repository_provider(),
             collector,
             run_id,
         )

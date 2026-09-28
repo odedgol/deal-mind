@@ -1,4 +1,5 @@
 import os
+from functools import cache
 from pathlib import Path
 from typing import Literal
 
@@ -24,13 +25,20 @@ ARTIFACTS_ROOT = RUN_ARTIFACTS_PATH
 RUN_ARTIFACT_SERVICE = RunArtifactService(ArtifactStore(ARTIFACTS_ROOT))
 DEFAULT_QDRANT_PATH = QDRANT_PATH
 DEAL_REPOSITORY = SourceData(SOURCE_DATA_ROOT)
-EVIDENCE_REPOSITORY = EvidenceRetriever(
-    path=DEFAULT_QDRANT_PATH,
-    require_existing=True,
-    embedding_provider=configured_embedding_provider(),
-)
 DEAL_SERVICE = DealService(DEAL_REPOSITORY)
-EVIDENCE_SERVICE_FACTORY = EvidenceServiceFactory(EVIDENCE_REPOSITORY)
+
+
+@cache
+def _get_evidence_repository() -> EvidenceRetriever:
+    """Do not require an index just to import the CLI or run ingest."""
+    return EvidenceRetriever(
+        path=DEFAULT_QDRANT_PATH,
+        require_existing=True,
+        embedding_provider=configured_embedding_provider(),
+    )
+
+
+EVIDENCE_SERVICE_FACTORY = EvidenceServiceFactory(_get_evidence_repository)
 
 
 @app.command()

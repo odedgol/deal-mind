@@ -66,7 +66,13 @@ decisions in code and prevents the LLM from choosing its own data-access filters
 services around the repositories. The workflow entry point and graph do not accept repositories.
 API routes also read opportunity and permission data through `DealService`.
 
-The evidence factory shares the retrieval repository but creates a fresh `EvidenceService` for
+The evidence factory receives a repository-provider function. API and CLI setup cache that
+function's result, opening Qdrant only when the first authorized retrieval begins. Importing the
+application, checking health, denying an unauthorized request, and running CLI help or ingestion
+do not require an existing index. Authorized retrieval still requires ingestion first and reports
+an explicit error when the index is absent.
+
+The factory shares the resolved retrieval repository but creates a fresh `EvidenceService` for
 each graph node. Each service has its own retrieval-debug list and the current run's trace
 collector. This prevents parallel branches and separate requests from mixing diagnostics.
 

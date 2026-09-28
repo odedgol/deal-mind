@@ -1,3 +1,4 @@
+from functools import cache
 from pathlib import Path
 from threading import Lock
 
@@ -25,15 +26,22 @@ DEFAULT_QDRANT_PATH = QDRANT_PATH
 DEAL_REPOSITORY = SourceData(SOURCE_DATA_ROOT)
 APPROVAL_SERVICE = ApprovalRequestService(ApprovalStore(Path(ARTIFACTS_ROOT)))
 QDRANT_CLIENTS = QdrantClientFactory(DEFAULT_QDRANT_PATH)
-EVIDENCE_REPOSITORY: EvidenceRepository = EvidenceRetriever(
-    client=QDRANT_CLIENTS(),
-    path=DEFAULT_QDRANT_PATH,
-    require_existing=True,
-    embedding_provider=configured_embedding_provider(),
-)
 DEAL_SERVICE = DealService(DEAL_REPOSITORY)
-EVIDENCE_SERVICE_FACTORY = EvidenceServiceFactory(EVIDENCE_REPOSITORY)
 APPROVAL_LOCK = Lock()
+
+
+@cache
+def _get_evidence_repository() -> EvidenceRepository:
+    """Open the shared index on first authorized retrieval, never during import."""
+    return EvidenceRetriever(
+        client=QDRANT_CLIENTS(),
+        path=DEFAULT_QDRANT_PATH,
+        require_existing=True,
+        embedding_provider=configured_embedding_provider(),
+    )
+
+
+EVIDENCE_SERVICE_FACTORY = EvidenceServiceFactory(_get_evidence_repository)
 
 
 def permission_profile(user_id: str) -> PermissionProfile | None:

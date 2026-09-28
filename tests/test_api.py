@@ -79,7 +79,7 @@ def test_brief_endpoint_reuses_workflow(monkeypatch: pytest.MonkeyPatch, tmp_pat
     monkeypatch.setattr(deps, "DEFAULT_QDRANT_PATH", qdrant_path)
     monkeypatch.setattr(deps, "QDRANT_CLIENTS", QdrantClientFactory(qdrant_path))
     monkeypatch.setattr(
-        deps, "EVIDENCE_SERVICE_FACTORY", EvidenceServiceFactory(evidence_repository)
+        deps, "EVIDENCE_SERVICE_FACTORY", EvidenceServiceFactory(lambda: evidence_repository)
     )
 
     response = TestClient(api.app).post(
@@ -114,7 +114,7 @@ def test_authorized_read_requests_can_run_concurrently(
     monkeypatch.setattr(deps, "DEFAULT_QDRANT_PATH", qdrant_path)
     monkeypatch.setattr(deps, "QDRANT_CLIENTS", QdrantClientFactory(qdrant_path))
     monkeypatch.setattr(
-        deps, "EVIDENCE_SERVICE_FACTORY", EvidenceServiceFactory(evidence_repository)
+        deps, "EVIDENCE_SERVICE_FACTORY", EvidenceServiceFactory(lambda: evidence_repository)
     )
     client = TestClient(api.app)
 
@@ -165,7 +165,7 @@ def test_approval_decision_updates_existing_run(
     monkeypatch.setattr(deps, "DEFAULT_QDRANT_PATH", qdrant_path)
     monkeypatch.setattr(deps, "QDRANT_CLIENTS", QdrantClientFactory(qdrant_path))
     monkeypatch.setattr(
-        deps, "EVIDENCE_SERVICE_FACTORY", EvidenceServiceFactory(evidence_repository)
+        deps, "EVIDENCE_SERVICE_FACTORY", EvidenceServiceFactory(lambda: evidence_repository)
     )
     client = TestClient(api.app)
 

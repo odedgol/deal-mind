@@ -35,7 +35,7 @@ def e2e_client(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> TestClient:
     monkeypatch.setattr(deps, "DEFAULT_QDRANT_PATH", qdrant_path)
     monkeypatch.setattr(deps, "QDRANT_CLIENTS", QdrantClientFactory(qdrant_path))
     monkeypatch.setattr(
-        deps, "EVIDENCE_SERVICE_FACTORY", EvidenceServiceFactory(evidence_repository)
+        deps, "EVIDENCE_SERVICE_FACTORY", EvidenceServiceFactory(lambda: evidence_repository)
     )
     return TestClient(api.app)
 

@@ -95,7 +95,7 @@ def run_golden_evaluation(
         )
         evidence_repository.rebuild(source.evidence())
         deal_service = DealService(source)
-        evidence_service_factory = EvidenceServiceFactory(evidence_repository)
+        evidence_service_factory = EvidenceServiceFactory(lambda: evidence_repository)
         cases = load_golden_set(golden_path)
         results: list[CaseResult] = []
         for repeat in range(1, repeats + 1):
