@@ -1,37 +1,23 @@
 [
   {
-    "recommendation": "Prepare internal-only scenarios for negotiation",
+    "recommendation": "Route discount, liability language, and restricted data access request for approval",
     "reason": "Sensitive opportunity recommendation requires human review.",
     "decision": "approved",
     "comment": null,
-    "timestamp": "2026-09-25T14:59:40.431756Z"
+    "timestamp": "2026-09-28T00:13:13.586655Z"
   },
   {
-    "recommendation": "Route discount request to Deal Desk for approval",
+    "recommendation": "Consult Legal for specific liability language changes requested",
     "reason": "Sensitive opportunity recommendation requires human review.",
     "decision": "approved",
     "comment": null,
-    "timestamp": "2026-09-25T14:59:40.431764Z"
+    "timestamp": "2026-09-28T00:13:13.586659Z"
   },
   {
-    "recommendation": "Route liability language changes to legal for approval",
+    "recommendation": "Align internal stakeholders on negotiation strategy",
     "reason": "Sensitive opportunity recommendation requires human review.",
     "decision": "approved",
     "comment": null,
-    "timestamp": "2026-09-25T14:59:40.431767Z"
-  },
-  {
-    "recommendation": "Confirm the approval list for restricted evidence reviewers",
-    "reason": "Sensitive opportunity recommendation requires human review.",
-    "decision": "approved",
-    "comment": null,
-    "timestamp": "2026-09-25T14:59:40.431769Z"
-  },
-  {
-    "recommendation": "Gather current number of temporary access requests by project",
-    "reason": "Sensitive opportunity recommendation requires human review.",
-    "decision": "approved",
-    "comment": null,
-    "timestamp": "2026-09-25T14:59:40.431773Z"
+    "timestamp": "2026-09-28T00:13:13.586660Z"
   }
 ]

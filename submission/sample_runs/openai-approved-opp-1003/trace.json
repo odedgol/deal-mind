@@ -1,13 +1,13 @@
 [
   {
-    "trace_id": "3f0070cf4e3243488bcac7cfbbdee3c8",
-    "run_id": "5869d5bd3a854fc38bfe6b1d01c610ba",
+    "trace_id": "e474689fc4cf4aad88ff5dd51fac903f",
+    "run_id": "c3082e6a6c17464daf9f962e0a3f39df",
     "event_type": "retrieval",
     "name": "qdrant.retrieve",
     "prompt_version": "v1",
     "status": "completed",
-    "started_at": "2026-09-25T14:59:32.189463Z",
-    "completed_at": "2026-09-25T14:59:32.415088Z",
+    "started_at": "2026-09-28T00:13:01.812669Z",
+    "completed_at": "2026-09-28T00:13:02.027495Z",
     "error": null,
     "metadata": {
       "opportunity_id": "OPP-1003",
@@ -15,38 +15,53 @@
     }
   },
   {
-    "trace_id": "8be16dc295344dec8e97cdb69ca3d52c",
-    "run_id": "5869d5bd3a854fc38bfe6b1d01c610ba",
+    "trace_id": "84f9fe5a4ea444809130a4f46144795a",
+    "run_id": "c3082e6a6c17464daf9f962e0a3f39df",
+    "event_type": "retrieval",
+    "name": "qdrant.retrieve",
+    "prompt_version": "v1",
+    "status": "completed",
+    "started_at": "2026-09-28T00:13:02.027531Z",
+    "completed_at": "2026-09-28T00:13:02.202478Z",
+    "error": null,
+    "metadata": {
+      "opportunity_id": "OPP-1003",
+      "result_limit": "20"
+    }
+  },
+  {
+    "trace_id": "933c9f21dba64274a9559121b0ca18a6",
+    "run_id": "c3082e6a6c17464daf9f962e0a3f39df",
     "event_type": "tool",
     "name": "get_opportunity_snapshot",
     "prompt_version": "v1",
     "status": "completed",
-    "started_at": "2026-09-25T14:59:32.587233Z",
-    "completed_at": "2026-09-25T14:59:32.587246Z",
+    "started_at": "2026-09-28T00:13:02.203083Z",
+    "completed_at": "2026-09-28T00:13:02.203105Z",
     "error": null,
     "metadata": {}
   },
   {
-    "trace_id": "7ffe46b763a94fb3869d4884b90f3ec8",
-    "run_id": "5869d5bd3a854fc38bfe6b1d01c610ba",
+    "trace_id": "f2334e9f43eb4e20a308c43d0bc1ea15",
+    "run_id": "c3082e6a6c17464daf9f962e0a3f39df",
     "event_type": "agent",
     "name": "Deal Context Agent",
     "prompt_version": "v1",
     "status": "completed",
-    "started_at": "2026-09-25T14:59:32.587228Z",
-    "completed_at": "2026-09-25T14:59:32.587255Z",
+    "started_at": "2026-09-28T00:13:02.203069Z",
+    "completed_at": "2026-09-28T00:13:02.203116Z",
     "error": null,
     "metadata": {}
   },
   {
-    "trace_id": "1c56387c39914a8a873f5723f1270ab1",
-    "run_id": "5869d5bd3a854fc38bfe6b1d01c610ba",
+    "trace_id": "9dfb158a091441ddbfc3f5072dd01b82",
+    "run_id": "c3082e6a6c17464daf9f962e0a3f39df",
     "event_type": "retrieval",
     "name": "qdrant.retrieve",
     "prompt_version": "v1",
     "status": "completed",
-    "started_at": "2026-09-25T14:59:32.587619Z",
-    "completed_at": "2026-09-25T14:59:32.746770Z",
+    "started_at": "2026-09-28T00:13:02.204835Z",
+    "completed_at": "2026-09-28T00:13:02.383179Z",
     "error": null,
     "metadata": {
       "opportunity_id": "OPP-1003",
@@ -54,26 +69,26 @@
     }
   },
   {
-    "trace_id": "a313f789a2f045d59150ab0642805d84",
-    "run_id": "5869d5bd3a854fc38bfe6b1d01c610ba",
+    "trace_id": "66ca431ab447456c98f24191c26ef6e9",
+    "run_id": "c3082e6a6c17464daf9f962e0a3f39df",
     "event_type": "tool",
     "name": "search_authorized_evidence",
     "prompt_version": "v1",
     "status": "completed",
-    "started_at": "2026-09-25T14:59:32.587608Z",
-    "completed_at": "2026-09-25T14:59:32.746789Z",
+    "started_at": "2026-09-28T00:13:02.204829Z",
+    "completed_at": "2026-09-28T00:13:02.383192Z",
     "error": null,
     "metadata": {}
   },
   {
-    "trace_id": "a7bd83c0a1cd443ab3c0728a80226837",
-    "run_id": "5869d5bd3a854fc38bfe6b1d01c610ba",
+    "trace_id": "e291259a54104fc8b1fd308ca805d89c",
+    "run_id": "c3082e6a6c17464daf9f962e0a3f39df",
     "event_type": "retrieval",
     "name": "qdrant.retrieve",
     "prompt_version": "v1",
     "status": "completed",
-    "started_at": "2026-09-25T14:59:32.588236Z",
-    "completed_at": "2026-09-25T14:59:32.829886Z",
+    "started_at": "2026-09-28T00:13:02.203685Z",
+    "completed_at": "2026-09-28T00:13:02.391862Z",
     "error": null,
     "metadata": {
       "opportunity_id": "OPP-1003",
@@ -81,50 +96,50 @@
     }
   },
   {
-    "trace_id": "123c74d8e8b34872b76025044a3462ed",
-    "run_id": "5869d5bd3a854fc38bfe6b1d01c610ba",
+    "trace_id": "e9abeeea8e374963a981af7b6849d079",
+    "run_id": "c3082e6a6c17464daf9f962e0a3f39df",
     "event_type": "tool",
     "name": "search_authorized_evidence",
     "prompt_version": "v1",
     "status": "completed",
-    "started_at": "2026-09-25T14:59:32.588228Z",
-    "completed_at": "2026-09-25T14:59:32.829903Z",
+    "started_at": "2026-09-28T00:13:02.203677Z",
+    "completed_at": "2026-09-28T00:13:02.391874Z",
     "error": null,
     "metadata": {}
   },
   {
-    "trace_id": "d303638ec4eb41508533cb082888ac4a",
-    "run_id": "5869d5bd3a854fc38bfe6b1d01c610ba",
+    "trace_id": "11fe405929374fdb866d57f61ca7abff",
+    "run_id": "c3082e6a6c17464daf9f962e0a3f39df",
     "event_type": "agent",
     "name": "Conversation Intelligence Agent",
     "prompt_version": "v1",
     "status": "completed",
-    "started_at": "2026-09-25T14:59:32.587594Z",
-    "completed_at": "2026-09-25T14:59:36.505107Z",
+    "started_at": "2026-09-28T00:13:02.203662Z",
+    "completed_at": "2026-09-28T00:13:07.986107Z",
     "error": null,
     "metadata": {}
   },
   {
-    "trace_id": "a9ecacc4ff5a4b60b1e9d9e384b3cb85",
-    "run_id": "5869d5bd3a854fc38bfe6b1d01c610ba",
+    "trace_id": "ebf187173c324af683f652d6d9211a65",
+    "run_id": "c3082e6a6c17464daf9f962e0a3f39df",
     "event_type": "agent",
     "name": "Stakeholder Map Agent",
     "prompt_version": "v1",
     "status": "completed",
-    "started_at": "2026-09-25T14:59:32.588219Z",
-    "completed_at": "2026-09-25T14:59:36.625708Z",
+    "started_at": "2026-09-28T00:13:02.204819Z",
+    "completed_at": "2026-09-28T00:13:08.507437Z",
     "error": null,
     "metadata": {}
   },
   {
-    "trace_id": "2daf6ab6c5584301820eb619a77a8121",
-    "run_id": "5869d5bd3a854fc38bfe6b1d01c610ba",
+    "trace_id": "10bcef3440c54a3fba0b304ec5b8a8dc",
+    "run_id": "c3082e6a6c17464daf9f962e0a3f39df",
     "event_type": "retrieval",
     "name": "qdrant.retrieve",
     "prompt_version": "v1",
     "status": "completed",
-    "started_at": "2026-09-25T14:59:36.626545Z",
-    "completed_at": "2026-09-25T14:59:36.797157Z",
+    "started_at": "2026-09-28T00:13:08.507828Z",
+    "completed_at": "2026-09-28T00:13:08.825964Z",
     "error": null,
     "metadata": {
       "opportunity_id": "OPP-1003",
@@ -132,83 +147,83 @@
     }
   },
   {
-    "trace_id": "6eb9958ae7ec408b9322bff584363931",
-    "run_id": "5869d5bd3a854fc38bfe6b1d01c610ba",
+    "trace_id": "1c6822a94cc249e29aef431ffc5ce084",
+    "run_id": "c3082e6a6c17464daf9f962e0a3f39df",
     "event_type": "tool",
     "name": "get_deal_desk_policy",
     "prompt_version": "v1",
     "status": "completed",
-    "started_at": "2026-09-25T14:59:36.626528Z",
-    "completed_at": "2026-09-25T14:59:36.797178Z",
+    "started_at": "2026-09-28T00:13:08.507820Z",
+    "completed_at": "2026-09-28T00:13:08.825990Z",
     "error": null,
     "metadata": {}
   },
   {
-    "trace_id": "f193d84a12d8414fa0d73a1bd09b2cf4",
-    "run_id": "5869d5bd3a854fc38bfe6b1d01c610ba",
+    "trace_id": "558680207b6b4c15a0eb57a527171fd6",
+    "run_id": "c3082e6a6c17464daf9f962e0a3f39df",
     "event_type": "tool",
     "name": "request_approval",
     "prompt_version": "v1",
     "status": "completed",
-    "started_at": "2026-09-25T14:59:40.430970Z",
-    "completed_at": "2026-09-25T14:59:40.431046Z",
+    "started_at": "2026-09-28T00:13:13.586250Z",
+    "completed_at": "2026-09-28T00:13:13.586284Z",
     "error": null,
     "metadata": {
-      "action_count": "5"
+      "action_count": "3"
     }
   },
   {
-    "trace_id": "7eeb99f40bcc42dd836b47b0bf439294",
-    "run_id": "5869d5bd3a854fc38bfe6b1d01c610ba",
+    "trace_id": "f0c4f54a7027453b8c8aca214490e8f8",
+    "run_id": "c3082e6a6c17464daf9f962e0a3f39df",
     "event_type": "tool",
     "name": "validate_recommendation",
     "prompt_version": "v1",
     "status": "completed",
-    "started_at": "2026-09-25T14:59:40.431089Z",
-    "completed_at": "2026-09-25T14:59:40.431103Z",
+    "started_at": "2026-09-28T00:13:13.586328Z",
+    "completed_at": "2026-09-28T00:13:13.586336Z",
     "error": null,
     "metadata": {
       "citation_count": "5"
     }
   },
   {
-    "trace_id": "3e5d4981b8e44db8b3522a00d3a8bf45",
-    "run_id": "5869d5bd3a854fc38bfe6b1d01c610ba",
+    "trace_id": "72c60b07707c48da9bd42acb35925bb5",
+    "run_id": "c3082e6a6c17464daf9f962e0a3f39df",
     "event_type": "agent",
     "name": "Negotiation Strategy Agent",
     "prompt_version": "v1",
     "status": "completed",
-    "started_at": "2026-09-25T14:59:36.626516Z",
-    "completed_at": "2026-09-25T14:59:40.431113Z",
+    "started_at": "2026-09-28T00:13:08.507814Z",
+    "completed_at": "2026-09-28T00:13:13.586347Z",
     "error": null,
     "metadata": {}
   },
   {
-    "trace_id": "f38379ad3db74c91b274cfd6a9e86460",
-    "run_id": "5869d5bd3a854fc38bfe6b1d01c610ba",
+    "trace_id": "61e11c4b12c14a39b9675b40a491d7c8",
+    "run_id": "c3082e6a6c17464daf9f962e0a3f39df",
     "event_type": "recommendation",
     "name": "strategy.recommendations",
     "prompt_version": "v1",
     "status": "completed",
-    "started_at": "2026-09-25T14:59:40.431132Z",
-    "completed_at": "2026-09-25T14:59:40.431132Z",
+    "started_at": "2026-09-28T00:13:13.586361Z",
+    "completed_at": "2026-09-28T00:13:13.586361Z",
     "error": null,
     "metadata": {
-      "action_count": "5"
+      "action_count": "3"
     }
   },
   {
-    "trace_id": "cd5fe2d03a824b0192b205406c4a3056",
-    "run_id": "5869d5bd3a854fc38bfe6b1d01c610ba",
+    "trace_id": "497c041eeb6e46b48cf68471f38296da",
+    "run_id": "c3082e6a6c17464daf9f962e0a3f39df",
     "event_type": "approval",
     "name": "approval.prepare",
     "prompt_version": "v1",
     "status": "completed",
-    "started_at": "2026-09-25T14:59:40.431732Z",
-    "completed_at": "2026-09-25T14:59:40.431776Z",
+    "started_at": "2026-09-28T00:13:13.586647Z",
+    "completed_at": "2026-09-28T00:13:13.586661Z",
     "error": null,
     "metadata": {
-      "action_count": "5"
+      "action_count": "3"
     }
   }
 ]

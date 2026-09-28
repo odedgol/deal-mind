@@ -5,14 +5,15 @@
   "user_id": "USR-5003",
   "account_id": "ACC-2003",
   "allowed_source_types": [
-    "policies",
-    "salesforce",
     "gong",
     "pricing",
-    "slack"
+    "slack",
+    "policies",
+    "salesforce"
   ],
   "allowed_access_levels": [
     "standard",
+    "restricted",
     "sensitive"
   ]
 }

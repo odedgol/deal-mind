@@ -1,5 +1,7 @@
 # Strategic Deal Intelligence Brief — OPP-1001
 
+**Workflow status:** completed
+
 ## Deal Snapshot
 
 - {
@@ -15,23 +17,23 @@
 
 ## Executive Summary
 
-- The deal is actionable but requires owners for open buyer and approval dependencies.
+- The deal is actionable but requires owners for open buyer and approval dependencies. [Evidence: gong:summary:CALL-008, gong:summary:CALL-009, gong:summary:CALL-005]
 
 ## Buyer Goals and Business Drivers
 
-- The retrieved evidence shows an active negotiation dependency.
+- The retrieved evidence shows an active negotiation dependency. [Evidence: slack:SLACK-1001-03, gong:summary:CALL-008, gong:summary:CALL-009]
 
 ## Stakeholder Map
 
-- The retrieved evidence shows an active negotiation dependency.
+- The retrieved evidence shows an active negotiation dependency. [Evidence: gong:summary:CALL-008, gong:summary:CALL-009, gong:summary:CALL-005]
 
 ## Negotiation State
 
-- The retrieved evidence shows an active negotiation dependency.
+- The retrieved evidence shows an active negotiation dependency. [Evidence: slack:SLACK-1001-03, gong:summary:CALL-008, gong:summary:CALL-009]
 
 ## Recommended Next Actions
 
-- Confirm open dependencies and document the negotiation path.
+- Confirm open dependencies and document the negotiation path. [Evidence: gong:summary:CALL-008, gong:summary:CALL-009, gong:summary:CALL-005]
 
 ## Missing Information
 
@@ -40,24 +42,21 @@
 
 ## Source Evidence
 
+- gong:summary:CALL-008: synthetic_data/gong/gong_call_summaries.tsv (CALL-008)
 - gong:summary:CALL-009: synthetic_data/gong/gong_call_summaries.tsv (CALL-009)
-- policy:deal-desk: synthetic_data/policies/deal_desk_policy.md (deal-desk-policy)
-- gong:transcript:CALL-008: synthetic_data/gong/transcripts/OPP-1001_CALL-008.md (CALL-008)
-- gong:summary:CALL-007: synthetic_data/gong/gong_call_summaries.tsv (CALL-007)
 - gong:summary:CALL-005: synthetic_data/gong/gong_call_summaries.tsv (CALL-005)
-- pricing:PN-4002: synthetic_data/pricing/pricing_notes.tsv (PN-4002)
-- gong:summary:CALL-002: synthetic_data/gong/gong_call_summaries.tsv (CALL-002)
+- gong:summary:CALL-004: synthetic_data/gong/gong_call_summaries.tsv (CALL-004)
+- gong:summary:CALL-007: synthetic_data/gong/gong_call_summaries.tsv (CALL-007)
+- salesforce:contacts.tsv:CON-3001: synthetic_data/salesforce/contacts.tsv (CON-3001)
+- gong:summary:CALL-003: synthetic_data/gong/gong_call_summaries.tsv (CALL-003)
 - salesforce:contacts.tsv:CON-3005: synthetic_data/salesforce/contacts.tsv (CON-3005)
 - slack:SLACK-1001-03: synthetic_data/slack/account_team_updates.tsv (SLACK-1001-03)
 - slack:SLACK-1001-02: synthetic_data/slack/account_team_updates.tsv (SLACK-1001-02)
 - slack:SLACK-1001-01: synthetic_data/slack/account_team_updates.tsv (SLACK-1001-01)
-- gong:transcript:CALL-004: synthetic_data/gong/transcripts/OPP-1001_CALL-004.md (CALL-004)
-- gong:summary:CALL-003: synthetic_data/gong/gong_call_summaries.tsv (CALL-003)
-- gong:transcript:CALL-001: synthetic_data/gong/transcripts/OPP-1001_CALL-001.md (CALL-001)
 - salesforce:opportunities.tsv:OPP-1001: synthetic_data/salesforce/opportunities.tsv (OPP-1001)
-- gong:summary:CALL-006: synthetic_data/gong/gong_call_summaries.tsv (CALL-006)
-- gong:summary:CALL-004: synthetic_data/gong/gong_call_summaries.tsv (CALL-004)
-- salesforce:contacts.tsv:CON-3001: synthetic_data/salesforce/contacts.tsv (CON-3001)
+- salesforce:contacts.tsv:CON-3004: synthetic_data/salesforce/contacts.tsv (CON-3004)
+- salesforce:contacts.tsv:CON-3003: synthetic_data/salesforce/contacts.tsv (CON-3003)
+- policy:deal-desk: synthetic_data/policies/deal_desk_policy.md (deal-desk-policy)
 
 ## Confidence and Review Warnings
 
