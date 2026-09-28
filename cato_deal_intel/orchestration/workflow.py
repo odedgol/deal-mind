@@ -7,7 +7,12 @@ from ..models import RecommendedAction, WorkflowResult
 from ..observability.tracing import AgentTraceCollector
 from ..repositories.contracts import DealRepository, EvidenceRepository
 from .graph import InitialDealState, build_deal_graph
-from .services import RunArtifactService
+from .services import (
+    ApprovalService,
+    DealService,
+    EvidenceServiceFactory,
+    RunArtifactService,
+)
 
 DEAL_GRAPH = build_deal_graph()
 
@@ -27,8 +32,11 @@ def create_brief(
 ) -> WorkflowResult:
     """Run the LangGraph flow and return either a brief or a safe denial."""
     initial_state: InitialDealState = {
-        "deal_repository": deal_repository,
-        "evidence_repository": evidence_repository,
+        "deal_service": DealService(deal_repository),
+        "evidence_service_factory": EvidenceServiceFactory(
+            deal_repository, evidence_repository
+        ),
+        "approval_service": ApprovalService(),
         "run_artifact_service": run_artifact_service,
         "opportunity_id": opportunity_id,
         "user_id": user_id,

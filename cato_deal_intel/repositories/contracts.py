@@ -13,7 +13,7 @@ from ..models import (
     RetrievalDebug,
     StrategyOutput,
 )
-from ..retrieval.index import RetrievalRequest
+from ..retrieval.evidence_retriever import RetrievalRequest
 
 
 class DealRepository(Protocol):

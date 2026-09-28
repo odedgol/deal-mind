@@ -108,7 +108,7 @@ class NegotiationStrategyAgent:
 
     def run(self, context: AgentContext, specialists: list[AgentOutput]) -> StrategyOutput:
         if self.policy_tool is not None:
-            policy = self.policy_tool.run(context.opportunity.opportunity_id)
+            policy = self.policy_tool.run()
             if policy is not None:
                 context = AgentContext(context.opportunity, [*context.evidence, policy])
         output = run_strategy(context, specialists, self.llm)
@@ -199,17 +199,25 @@ def _complete_with_citation_repair[OutputT: (AgentOutput, StrategyOutput)](
         user=protected_payload(prompt),
         output_type=output_type,
     )
-    try:
-        validate_citations([output], context.evidence)
-    except ValueError:
+    for repair_attempt in range(2):
+        try:
+            _validate_grounded_output(output, context.evidence)
+            return output
+        except ValueError as error:
+            if repair_attempt == 1:
+                raise
+            validation_error = str(error)
         repair_prompt = {
             "task": prompt,
             "previous_output": output.model_dump(mode="json"),
             "allowed_evidence_ids": [item.evidence_id for item in context.evidence],
+            "validation_error": validation_error,
             "instruction": (
-                "Regenerate the same typed answer. Cite only allowed evidence IDs. "
-                "Keep a factual claim only when allowed evidence supports it; otherwise "
-                "put the question in missing_information."
+                "Regenerate the same typed answer and fix the citation validation error. "
+                "Every finding and action must cite at least one exact allowed evidence ID; "
+                "the strategy summary must also cite supporting IDs. Never reuse an invalid ID. "
+                "Keep a claim only when allowed evidence supports it; otherwise remove it or "
+                "put the unanswered question in missing_information."
             ),
         }
         output = llm.complete(
@@ -220,8 +228,22 @@ def _complete_with_citation_repair[OutputT: (AgentOutput, StrategyOutput)](
             user=protected_payload(repair_prompt),
             output_type=output_type,
         )
-        validate_citations([output], context.evidence)
-    return output
+    raise RuntimeError("Citation repair did not produce a validated answer.")
+
+
+def _validate_grounded_output(
+    output: AgentOutput | StrategyOutput,
+    evidence: list[EvidenceItem],
+) -> None:
+    validate_citations([output], evidence)
+    if isinstance(output, AgentOutput):
+        uncited_claims = [finding.text for finding in output.findings if not finding.evidence_ids]
+    else:
+        uncited_claims = [action.action for action in output.actions if not action.evidence_ids]
+        if output.summary and not output.summary_evidence_ids:
+            uncited_claims.append("strategy summary")
+    if uncited_claims:
+        raise ValueError(f"Agent returned claims without citations: {uncited_claims}")
 
 
 def _context_with_search_results(

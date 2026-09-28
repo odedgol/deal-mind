@@ -5,19 +5,18 @@ from ..reader import TsvReader
 class PricingEvidenceLoader:
     """Load pricing notes and apply their sensitivity classification."""
 
-    def __init__(self, reader: TsvReader) -> None:
+    def __init__(self, reader: TsvReader, account_by_opportunity: dict[str, str]) -> None:
         self.reader = reader
+        self.account_by_opportunity = account_by_opportunity
 
     def load(self) -> list[EvidenceItem]:
-        return [
-            self._to_evidence(row)
-            for row in self.reader.read("pricing/pricing_notes.tsv")
-        ]
+        return [self._to_evidence(row) for row in self.reader.read("pricing/pricing_notes.tsv")]
 
     def _to_evidence(self, row: dict[str, str]) -> EvidenceItem:
         return EvidenceItem(
             evidence_id=f"pricing:{row['pricing_note_id']}",
             opportunity_id=row["opportunity_id"],
+            account_id=self.account_by_opportunity[row["opportunity_id"]],
             source_type="pricing",
             source_file="synthetic_data/pricing/pricing_notes.tsv",
             source_id=row["pricing_note_id"],

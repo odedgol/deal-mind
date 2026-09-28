@@ -8,7 +8,7 @@ from fastapi.testclient import TestClient
 
 from cato_deal_intel.llm.fake_provider import FakeLLMProvider
 from cato_deal_intel.orchestration.services import ApprovalRequestService, RunArtifactService
-from cato_deal_intel.retrieval.index import EvidenceRetriever
+from cato_deal_intel.retrieval.evidence_retriever import EvidenceRetriever
 from cato_deal_intel.retrieval.sources.data import SourceData
 from cato_deal_intel.storage.approval_store import ApprovalStore
 from cato_deal_intel.storage.artifact_store import ArtifactStore

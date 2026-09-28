@@ -33,7 +33,7 @@ cato_deal_intel/
 │   │   ├── reader.py
 │   │   └── internal/       # Source-specific evidence loaders
 │   ├── embeddings.py
-│   └── index.py
+│   └── evidence_retriever.py
 ├── security/               # Deterministic access control and citation validation
 │   ├── authorization.py
 │   └── validation.py

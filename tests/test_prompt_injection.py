@@ -1,6 +1,12 @@
 from datetime import date
 
-from cato_deal_intel.agents.core import AgentContext, run_conversation_intelligence
+import pytest
+
+from cato_deal_intel.agents.core import (
+    AgentContext,
+    _validate_grounded_output,
+    run_conversation_intelligence,
+)
 from cato_deal_intel.agents.prompts import grounded_system
 from cato_deal_intel.models import AgentOutput, EvidenceItem, Opportunity
 
@@ -76,6 +82,32 @@ def test_grounding_prompt_defines_abstention_conflict_and_quote_rules() -> None:
     assert "does not establish the answer" in system_prompt
     assert "state the conflict, cite both sides" in system_prompt
     assert "match the cited evidence verbatim" in system_prompt
+
+
+def test_grounded_output_rejects_uncited_finding() -> None:
+    evidence = EvidenceItem(
+        evidence_id="source:1",
+        opportunity_id="OPP-1001",
+        source_type="gong",
+        source_file="fixture",
+        source_id="source-1",
+        access_level="standard",
+        text="The buyer requested a follow-up.",
+    )
+    output = AgentOutput.model_validate(
+        {
+            "findings": [
+                {
+                    "text": "The buyer requested a follow-up.",
+                    "evidence_ids": [],
+                    "confidence": 0.8,
+                }
+            ]
+        }
+    )
+
+    with pytest.raises(ValueError, match="claims without citations"):
+        _validate_grounded_output(output, [evidence])
 
 
 def test_invalid_citation_is_repaired_once_before_failing() -> None:

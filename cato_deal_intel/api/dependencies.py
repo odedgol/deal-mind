@@ -5,7 +5,7 @@ from ..models import Opportunity, PermissionProfile
 from ..orchestration.services import ApprovalRequestService, RunArtifactService
 from ..repositories.contracts import EvidenceRepository
 from ..retrieval.embeddings import configured_embedding_provider
-from ..retrieval.index import EvidenceRetriever
+from ..retrieval.evidence_retriever import EvidenceRetriever
 from ..retrieval.sources.data import SourceData
 from ..security.authorization import authorize
 from ..storage.approval_store import ApprovalStore

@@ -24,7 +24,7 @@ from ..repositories.contracts import (
     DealRepository,
     EvidenceRepository,
 )
-from ..retrieval.index import RetrievalRequest
+from ..retrieval.evidence_retriever import RetrievalRequest
 from ..security.authorization import authorize
 
 
@@ -171,6 +171,7 @@ class EvidenceService:
         query: str,
         decision: AuthorizationDecision,
         limit: int = 8,
+        shared_policy_only: bool = False,
     ) -> list[EvidenceItem]:
         request = RetrievalRequest(
             query=query,
@@ -178,6 +179,7 @@ class EvidenceService:
             allowed_source_types=decision.allowed_source_types,
             allowed_access_levels=decision.allowed_access_levels,
             limit=limit,
+            shared_policy_only=shared_policy_only,
         )
 
         def retrieve() -> tuple[list[EvidenceItem], RetrievalDebug | None]:
@@ -206,6 +208,22 @@ class EvidenceService:
             self.retrieval_debug.append(debug)
         return results
 
+    def search_shared_policy(
+        self,
+        *,
+        query: str,
+        decision: AuthorizationDecision,
+        limit: int = 4,
+    ) -> list[EvidenceItem]:
+        """Search shared policy evidence explicitly, using the same permission filters."""
+        return self.search(
+            opportunity_id=decision.opportunity_id,
+            query=query,
+            decision=decision,
+            limit=limit,
+            shared_policy_only=True,
+        )
+
     def _include_slack_context(
         self,
         evidence: list[EvidenceItem],
@@ -221,6 +239,26 @@ class EvidenceService:
             limit=20,
         )
         return evidence + [item for item in updates if item.source_type == "slack"]
+
+
+class EvidenceServiceFactory:
+    """Create request-scoped evidence services from the configured repositories."""
+
+    def __init__(
+        self,
+        deal_repository: DealRepository,
+        evidence_repository: EvidenceRepository,
+    ) -> None:
+        self.deal_repository = deal_repository
+        self.evidence_repository = evidence_repository
+
+    def for_run(self, collector: AgentTraceCollector, run_id: str) -> EvidenceService:
+        return EvidenceService(
+            self.deal_repository,
+            self.evidence_repository,
+            collector,
+            run_id,
+        )
 
 
 class ApprovalService:

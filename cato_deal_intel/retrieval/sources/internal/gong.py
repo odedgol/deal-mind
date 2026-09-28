@@ -8,9 +8,15 @@ from ..reader import TsvReader
 class GongEvidenceLoader:
     """Load Gong call summaries and transcript files as evidence."""
 
-    def __init__(self, root: Path, reader: TsvReader) -> None:
+    def __init__(
+        self,
+        root: Path,
+        reader: TsvReader,
+        account_by_opportunity: dict[str, str],
+    ) -> None:
         self.root = root
         self.reader = reader
+        self.account_by_opportunity = account_by_opportunity
 
     def load(self) -> list[EvidenceItem]:
         return self._summary_evidence() + self._transcript_evidence()
@@ -37,12 +43,12 @@ class GongEvidenceLoader:
         transcripts = sorted((self.root / "gong/transcripts").glob("*.md"))
         return [self._transcript_to_evidence(transcript) for transcript in transcripts]
 
-    @staticmethod
-    def _transcript_to_evidence(transcript: Path) -> EvidenceItem:
+    def _transcript_to_evidence(self, transcript: Path) -> EvidenceItem:
         opportunity_id, call_id = transcript.stem.split("_", maxsplit=1)
         return EvidenceItem(
             evidence_id=f"gong:transcript:{call_id}",
             opportunity_id=opportunity_id,
+            account_id=self.account_by_opportunity[opportunity_id],
             source_type="gong",
             source_file=f"synthetic_data/gong/transcripts/{transcript.name}",
             source_id=call_id,

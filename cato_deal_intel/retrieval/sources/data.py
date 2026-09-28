@@ -17,9 +17,9 @@ class SourceData:
     def __init__(self, root: Path) -> None:
         self.root = root
         self.reader = TsvReader(root)
-        self.gong_loader = GongEvidenceLoader(root, self.reader)
+        self.gong_loader = GongEvidenceLoader(root, self.reader, self._account_by_opportunity)
         self.policy_loader = PolicyEvidenceLoader(root)
-        self.pricing_loader = PricingEvidenceLoader(self.reader)
+        self.pricing_loader = PricingEvidenceLoader(self.reader, self._account_by_opportunity)
         self.salesforce_loader = SalesforceEvidenceLoader(
             self.reader,
             self._opportunity_by_account,
@@ -83,7 +83,8 @@ class SourceData:
 
     @cached_property
     def _opportunity_by_account(self) -> dict[str, str]:
-        return {
-            item.account_id: item.opportunity_id
-            for item in self._opportunity_records
-        }
+        return {item.account_id: item.opportunity_id for item in self._opportunity_records}
+
+    @cached_property
+    def _account_by_opportunity(self) -> dict[str, str]:
+        return {item.opportunity_id: item.account_id for item in self._opportunity_records}

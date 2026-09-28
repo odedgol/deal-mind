@@ -35,11 +35,10 @@ from ..models import (
     StrategyOutput,
 )
 from ..observability.tracing import AgentTraceCollector, trace_operation
-from ..repositories.contracts import DealRepository, EvidenceRepository
 from .services import (
     ApprovalService,
     DealService,
-    EvidenceService,
+    EvidenceServiceFactory,
     RunArtifactService,
     build_brief,
 )
@@ -66,13 +65,14 @@ def _merge_retrieval_debug(
 
 
 class InitialDealState(TypedDict):
-    deal_repository: DealRepository
+    deal_service: DealService
+    evidence_service_factory: EvidenceServiceFactory
+    approval_service: ApprovalService
     opportunity_id: str
     user_id: str
     llm: LLMProvider
     approval_decision: Literal["ask", "approved", "rejected", "pending"]
     run_id: str
-    evidence_repository: EvidenceRepository
     retrieval_debug: Annotated[list[RetrievalDebug], _merge_retrieval_debug]
     trace_collector: AgentTraceCollector
     run_artifact_service: RunArtifactService
@@ -130,7 +130,7 @@ def build_deal_graph() -> CompiledStateGraph[Any, Any, Any, Any]:
 
 
 def authorize_node(state: DealState) -> dict[str, object]:
-    opportunity, decision = DealService(state["deal_repository"]).authorize(
+    opportunity, decision = state["deal_service"].authorize(
         state["opportunity_id"], state["user_id"]
     )
     authorized_state = {"opportunity": opportunity} if decision.allowed else {}
@@ -154,12 +154,8 @@ def safe_denial_node(state: DealState) -> dict[str, object]:
 
 
 def retrieve_node(state: DealState) -> dict[str, object]:
-    service = EvidenceService(
-        state["deal_repository"],
-        state["evidence_repository"],
-        state["trace_collector"],
-        state["run_id"],
-        [],
+    service = state["evidence_service_factory"].for_run(
+        state["trace_collector"], state["run_id"]
     )
     evidence = service.retrieve(state["opportunity_id"], state["authorization"])
     return {
@@ -182,12 +178,8 @@ def deal_context_node(state: DealState) -> dict[str, object]:
 
 
 def conversation_node(state: DealState) -> dict[str, object]:
-    service = EvidenceService(
-        state["deal_repository"],
-        state["evidence_repository"],
-        state["trace_collector"],
-        state["run_id"],
-        [],
+    service = state["evidence_service_factory"].for_run(
+        state["trace_collector"], state["run_id"]
     )
     search = AuthorizedEvidenceSearchTool(
         service, state["authorization"], state["trace_collector"], state["run_id"]
@@ -208,12 +200,8 @@ def conversation_node(state: DealState) -> dict[str, object]:
 
 
 def stakeholders_node(state: DealState) -> dict[str, object]:
-    service = EvidenceService(
-        state["deal_repository"],
-        state["evidence_repository"],
-        state["trace_collector"],
-        state["run_id"],
-        [],
+    service = state["evidence_service_factory"].for_run(
+        state["trace_collector"], state["run_id"]
     )
     search = AuthorizedEvidenceSearchTool(
         service, state["authorization"], state["trace_collector"], state["run_id"]
@@ -234,12 +222,8 @@ def stakeholders_node(state: DealState) -> dict[str, object]:
 
 
 def strategy_node(state: DealState) -> dict[str, object]:
-    service = EvidenceService(
-        state["deal_repository"],
-        state["evidence_repository"],
-        state["trace_collector"],
-        state["run_id"],
-        [],
+    service = state["evidence_service_factory"].for_run(
+        state["trace_collector"], state["run_id"]
     )
     policy = DealDeskPolicyTool(
         service, state["authorization"], state["trace_collector"], state["run_id"]
@@ -248,7 +232,9 @@ def strategy_node(state: DealState) -> dict[str, object]:
         state["llm"],
         RecommendationValidationTool(state["trace_collector"], state["run_id"]),
         policy,
-        ApprovalRequestTool(ApprovalService(), state["trace_collector"], state["run_id"]),
+        ApprovalRequestTool(
+            state["approval_service"], state["trace_collector"], state["run_id"]
+        ),
     )
     context = AgentContext(state["opportunity"], state["evidence"])
     output, trace = _run_traced_agent(
@@ -288,7 +274,7 @@ def approval_node(state: DealState) -> dict[str, object]:
         run_id=state["run_id"],
         event_type="approval",
         name="approval.prepare",
-        operation=lambda: ApprovalService().prepare(
+        operation=lambda: state["approval_service"].prepare(
             state["opportunity"],
             state["strategy"].actions,
             decision,

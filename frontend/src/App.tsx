@@ -32,6 +32,7 @@ import type {
   BriefResponse,
   BriefResult,
   DeniedResponse,
+  EvidenceItem,
   Finding,
   RecommendedAction,
   RetrievalDebug,
@@ -646,7 +647,7 @@ function BriefCard({
           {brief.missing_information.length ? <ul className="missing-list">{brief.missing_information.map((item) => <li key={item}>{item}</li>)}</ul> : <p>No material information gaps identified.</p>}
         </BriefSection>
         <BriefSection sectionKey="sourceEvidence" title="Source Evidence" expanded={expandedSections.sourceEvidence} onToggle={setSectionExpanded}>
-          <div className="evidence-chips">{brief.source_evidence.map((item) => <span className="evidence-chip" key={item.evidence_id}><FileText size={12} /> {item.source_type} · {item.source_id}</span>)}</div>
+          <div className="evidence-chips">{brief.source_evidence.map((item) => <span className="evidence-chip" key={item.evidence_id}><FileText size={12} /> {sourceEvidenceLabel(item)}</span>)}</div>
         </BriefSection>
         <BriefSection sectionKey="reviewWarnings" title="Confidence and Review Warnings" expanded={expandedSections.reviewWarnings} onToggle={setSectionExpanded}>
           {brief.confidence_and_review_warnings.length ? <ul className="warning-list">{brief.confidence_and_review_warnings.map((warning) => <li key={warning}>{warning}</li>)}</ul> : <p>No additional review warnings.</p>}
@@ -728,6 +729,16 @@ function DetailRow({ icon, title, subtitle }: { icon: ReactNode; title: string; 
 
 function currentTime() {
   return new Intl.DateTimeFormat("en-US", { hour: "numeric", minute: "2-digit" }).format(new Date());
+}
+
+function sourceEvidenceLabel(item: EvidenceItem) {
+  if (item.evidence_id.startsWith("gong:summary:")) {
+    return `gong summary · ${item.source_id}`;
+  }
+  if (item.evidence_id.startsWith("gong:transcript:")) {
+    return `gong transcript · ${item.source_id}`;
+  }
+  return `${item.source_type} · ${item.source_id}`;
 }
 
 function findOpportunityId(text: string) {

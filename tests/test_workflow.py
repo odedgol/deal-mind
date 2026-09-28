@@ -8,7 +8,7 @@ from cato_deal_intel.llm.fake_provider import FakeLLMProvider
 from cato_deal_intel.models import Brief, RecommendedAction
 from cato_deal_intel.orchestration.services import RunArtifactService
 from cato_deal_intel.orchestration.workflow import create_brief
-from cato_deal_intel.retrieval.index import EvidenceRetriever
+from cato_deal_intel.retrieval.evidence_retriever import EvidenceRetriever
 from cato_deal_intel.retrieval.sources.data import SourceData
 from cato_deal_intel.storage.artifact_store import ArtifactStore
 

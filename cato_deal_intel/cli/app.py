@@ -12,7 +12,7 @@ from ..models import Brief, CostSummary, RecommendedAction
 from ..orchestration.services import RunArtifactService
 from ..orchestration.workflow import create_brief
 from ..retrieval.embeddings import configured_embedding_provider
-from ..retrieval.index import EvidenceRetriever, RetrievalRequest
+from ..retrieval.evidence_retriever import EvidenceRetriever, RetrievalRequest
 from ..retrieval.sources.data import SourceData
 from ..security.authorization import authorize
 from ..storage.artifact_store import ArtifactStore

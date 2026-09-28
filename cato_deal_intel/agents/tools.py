@@ -132,13 +132,12 @@ class DealDeskPolicyTool:
         self.run_id = run_id
         self.retrieved_evidence: list[EvidenceItem] = []
 
-    def run(self, opportunity_id: str) -> EvidenceItem | None:
+    def run(self) -> EvidenceItem | None:
         policy = _trace_tool(
             collector=self.collector,
             run_id=self.run_id,
             name="get_deal_desk_policy",
-            operation=lambda: self.service.search(
-                opportunity_id=opportunity_id,
+            operation=lambda: self.service.search_shared_policy(
                 query="discount legal terms approval policy",
                 decision=self.decision,
                 limit=4,

@@ -15,7 +15,7 @@ from ..models import AgentOutput, Brief, DeniedResult, EvidenceItem, Recommended
 from ..orchestration.services import RunArtifactService
 from ..orchestration.workflow import create_brief
 from ..repositories.contracts import DealRepository, EvidenceRepository
-from ..retrieval.index import EvidenceRetriever
+from ..retrieval.evidence_retriever import EvidenceRetriever
 from ..retrieval.sources.data import SourceData
 from ..storage.artifact_store import ArtifactStore
 from ..storage.client_factory import QdrantClientFactory

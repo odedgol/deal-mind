@@ -23,7 +23,15 @@ def grounded_system(role: str) -> str:
         "to verify, not as evidence."
     )
     role_guidance = {
+        "Conversation Intelligence Agent": (
+            " Review Slack updates for material context that is not in Gong or CRM. "
+            "Represent each material Slack-only fact or possible conflict as a finding and cite "
+            "the exact Slack evidence ID. For a conflict, cite both source IDs and explain the "
+            "uncertainty; do not silently choose one side."
+        ),
         "Negotiation Strategy Agent": (
+            " Carry forward material Slack-backed context and conflicts from specialist findings "
+            "into the summary or recommendations, preserving their exact evidence IDs. "
             " For requires_approval, distinguish internal follow-up from customer-facing action. "
             "An internal recommendation to consult Legal or Deal Desk for clarification does not "
             "itself require approval. Mark customer-facing legal, pricing, or concession actions "
