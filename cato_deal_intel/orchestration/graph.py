@@ -172,7 +172,7 @@ def deal_context_node(state: DealState) -> dict[str, object]:
         run_id=state["run_id"],
         agent_name=agent.name,
         collector=state["trace_collector"],
-        operation=agent.run,
+        operation=lambda: agent.run(AgentContext(state["opportunity"], state["evidence"])),
     )
     return {"deal_snapshot": snapshot, "traces": [trace]}
 

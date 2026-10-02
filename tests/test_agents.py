@@ -1,9 +1,9 @@
 from datetime import date
 
 from cato_deal_intel.agents.core import (
+    AgentContext,
     ConversationIntelligenceAgent,
     DealContextAgent,
-    DealContextTool,
     NegotiationStrategyAgent,
     StakeholderMapAgent,
 )
@@ -12,7 +12,7 @@ from cato_deal_intel.models import Opportunity
 
 
 def test_each_agent_exposes_only_its_declared_tools() -> None:
-    deal_context = DealContextAgent(DealContextTool(sample_opportunity()))
+    deal_context = DealContextAgent()
     conversation = ConversationIntelligenceAgent(FakeLLMProvider())
     stakeholders = StakeholderMapAgent(FakeLLMProvider())
     strategy = NegotiationStrategyAgent(FakeLLMProvider())
@@ -29,6 +29,9 @@ def test_each_agent_exposes_only_its_declared_tools() -> None:
         "validate_recommendation",
         "request_approval",
     ]
+
+    snapshot = deal_context.run(AgentContext(sample_opportunity(), []))
+    assert snapshot.opportunity_id == "OPP-TEST"
 
 def sample_opportunity() -> Opportunity:
     return Opportunity(

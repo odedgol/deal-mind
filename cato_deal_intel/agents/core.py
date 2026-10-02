@@ -37,11 +37,13 @@ class DealContextAgent:
     name = "Deal Context Agent"
     tools: tuple[ToolSpec, ...] = DEAL_CONTEXT_TOOLS
 
-    def __init__(self, tool: DealContextTool) -> None:
+    def __init__(self, tool: DealContextTool | None = None) -> None:
         self.tool = tool
 
-    def run(self) -> DealSnapshot:
-        return self.tool.run()
+    def run(self, context: AgentContext) -> DealSnapshot:
+        if self.tool is not None:
+            return self.tool.run()
+        return run_deal_context(context)
 
 
 class ConversationIntelligenceAgent:
