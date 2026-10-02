@@ -2,6 +2,8 @@
 
 _Strategic Deal Intelligence Assistant - Cato Networks Candidate Assignment Brief_
 
+> Up-to-date versions of this document and the synthetic data files are available at [danaabramov/Cato-IS-AI-Engineer-Exam](https://github.com/danaabramov/Cato-IS-AI-Engineer-Exam).
+
 ## 1. Business Story
 
 Cato wants to build a set of agents that support the Sales team during strategic customer negotiations. The assistant will help the account owner understand the current state of the deal before a negotiation meeting.

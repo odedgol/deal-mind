@@ -1,0 +1,17 @@
+{
+  "allowed": true,
+  "reason": "Authorized.",
+  "opportunity_id": "OPP-1001",
+  "user_id": "USR-5001",
+  "account_id": "ACC-2001",
+  "allowed_source_types": [
+    "slack",
+    "pricing",
+    "gong",
+    "salesforce",
+    "policies"
+  ],
+  "allowed_access_levels": [
+    "standard"
+  ]
+}

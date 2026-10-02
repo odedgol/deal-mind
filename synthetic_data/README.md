@@ -89,3 +89,17 @@ The file is tab-separated and contains:
 - `update_text`
 
 Each row is clearly marked synthetic. The updates add account-team context, reinforce known facts, and introduce ambiguity or possible conflicts that the prototype must surface in the brief.
+
+### How the updates were authored and ingested
+
+These are curated fictional scenario notes, not exported Slack messages and not generated from
+real customer records. For each opportunity, the authoring pass used the supplied synthetic deal
+context to write at least two short updates: one that reinforces a known signal, one that adds
+account-team context, and where useful one that conflicts with an earlier signal. Dates follow
+the related calls and precede the listed close dates. Names and contact details are omitted.
+
+Every row carries an explicit synthetic notice, opportunity/account IDs, date, source type
+(`slack`), and access level. `SourceData.evidence()` loads these TSV rows alongside Salesforce,
+Gong, pricing, and policy evidence. Run `uv run deal-intel ingest` after changing the TSV to rebuild
+the persistent local Qdrant index. The golden evaluation checks that Slack is both retrieved and
+cited in at least one finding for each standard authorized opportunity.

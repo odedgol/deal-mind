@@ -1,0 +1,479 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Deal Intel · Slack-style demo mockup</title>
+    <style>
+      :root {
+        color-scheme: light;
+        font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        color: #1d1c1d;
+        background: #f7f7f8;
+        font-synthesis: none;
+        text-rendering: optimizeLegibility;
+        --purple: #541554;
+        --purple-bright: #6f2da8;
+        --ink: #1d1c1d;
+        --muted: #696969;
+        --line: #e8e7e8;
+        --green: #16804a;
+      }
+
+      * { box-sizing: border-box; }
+      body { margin: 0; min-width: 360px; height: 100vh; overflow: hidden; }
+      button, input { font: inherit; }
+      button { cursor: pointer; }
+
+      .app { display: grid; grid-template-columns: 68px 250px minmax(460px, 1fr) 290px; height: 100vh; }
+      .rail { display: flex; flex-direction: column; align-items: center; gap: 15px; padding: 17px 0; color: #fff; background: #350d36; }
+      .workspace-mark { display: grid; place-items: center; width: 39px; height: 39px; border: 1px solid #ffffff5e; border-radius: 12px; background: #ffffff1a; font-size: 20px; font-weight: 800; }
+      .rail-button { display: grid; place-items: center; width: 42px; height: 42px; border: 0; border-radius: 12px; color: #f6eaf6; background: transparent; font-size: 20px; }
+      .rail-button.active, .rail-button:hover { background: #ffffff24; }
+      .rail-spacer { flex: 1; }
+      .user-avatar { display: grid; place-items: center; width: 34px; height: 34px; border: 2px solid #350d36; border-radius: 10px; color: #fff; background: #197c74; font-size: 12px; font-weight: 750; }
+
+      .sidebar { display: flex; min-height: 0; flex-direction: column; color: #f3eaf3; background: var(--purple); }
+      .workspace-head { padding: 19px 17px 16px; border-bottom: 1px solid #ffffff20; }
+      .workspace-title { display: flex; align-items: center; justify-content: space-between; font-size: 16px; font-weight: 750; letter-spacing: -.2px; }
+      .workspace-subtitle { margin-top: 4px; color: #ddcddd; font-size: 11px; }
+      .sidebar-scroll { overflow: auto; padding: 13px 10px; }
+      .nav-label { display: flex; align-items: center; gap: 7px; margin: 12px 8px 6px; color: #e3cfe3; font-size: 12px; font-weight: 650; }
+      .nav-item { display: flex; align-items: center; gap: 9px; min-height: 31px; padding: 5px 9px; border-radius: 6px; color: #f5ecf5; font-size: 13px; }
+      .nav-item.current { color: #fff; background: #ffffff2a; font-weight: 680; }
+      .nav-item.dim { color: #dfcddd; }
+      .nav-item .count { margin-left: auto; font-size: 11px; opacity: .8; }
+      .channel-hash { width: 12px; color: #d8bfd8; font-size: 15px; text-align: center; }
+      .online-dot { width: 8px; height: 8px; border: 1px solid #f4d8f4; border-radius: 50%; background: #2bac76; }
+      .sidebar-footer { margin-top: auto; padding: 12px 14px; border-top: 1px solid #ffffff20; color: #e7d7e7; font-size: 11px; }
+      .demo-indicator { display: inline-flex; align-items: center; gap: 6px; margin-top: 8px; color: #f8e8a7; }
+      .demo-indicator::before { width: 7px; height: 7px; border-radius: 50%; background: #f3c969; content: ""; }
+
+      .main { display: flex; min-width: 0; flex-direction: column; background: #fff; }
+      .channel-head { display: flex; height: 65px; flex: 0 0 65px; align-items: center; justify-content: space-between; padding: 0 23px; border-bottom: 1px solid var(--line); }
+      .channel-title-wrap { min-width: 0; }
+      .channel-title { display: flex; align-items: center; gap: 8px; font-size: 16px; font-weight: 750; }
+      .channel-title .hash { color: #696969; font-size: 19px; }
+      .channel-description { overflow: hidden; margin-top: 3px; color: #777; font-size: 11px; text-overflow: ellipsis; white-space: nowrap; }
+      .channel-actions { display: flex; align-items: center; gap: 15px; color: #5c5a5c; }
+      .member-stack { display: flex; align-items: center; }
+      .member-stack .mini-avatar { margin-left: -5px; border: 2px solid white; }
+      .mini-avatar { display: grid; place-items: center; width: 25px; height: 25px; border-radius: 8px; color: white; background: #4070a0; font-size: 9px; font-weight: 750; }
+      .mini-avatar.a2 { background: #bf664b; }
+      .mini-avatar.a3 { background: #8963a7; }
+      .member-count { margin-left: 7px; color: #686568; font-size: 11px; }
+      .icon-button { display: grid; place-items: center; width: 31px; height: 31px; border: 0; border-radius: 6px; color: #5f5d5f; background: transparent; font-size: 17px; }
+      .icon-button:hover { background: #f2f1f2; }
+
+      .messages { flex: 1; overflow: auto; padding: 20px 26px 18px; scroll-behavior: smooth; }
+      .date-divider { display: flex; align-items: center; gap: 13px; margin: 6px 0 19px; color: #575557; font-size: 11px; font-weight: 700; }
+      .date-divider::before, .date-divider::after { height: 1px; flex: 1; background: #e9e8e9; content: ""; }
+      .message { display: grid; grid-template-columns: 38px minmax(0, 1fr); gap: 11px; margin: 0 0 17px; }
+      .avatar { display: grid; place-items: center; width: 36px; height: 36px; border-radius: 10px; color: #fff; background: #197c74; font-size: 11px; font-weight: 750; }
+      .avatar.bot { border-radius: 11px; background: linear-gradient(145deg, #5b2e81, #8d54a8); font-size: 18px; }
+      .avatar.system { color: #5b5165; background: #eeeaf2; font-size: 17px; }
+      .message-top { display: flex; align-items: baseline; gap: 8px; min-height: 19px; }
+      .sender { color: #1d1c1d; font-size: 13px; font-weight: 750; }
+      .bot-label { padding: 2px 5px; border-radius: 3px; color: #fff; background: #65408b; font-size: 9px; font-weight: 700; }
+      .timestamp { color: #888588; font-size: 10px; }
+      .message-text { color: #333133; font-size: 13px; line-height: 1.55; }
+      .message-text p { margin: 2px 0 7px; }
+      .message-text p:last-child { margin-bottom: 0; }
+      .mention { color: #1264a3; background: #e8f4fa; }
+      .system-event { display: flex; align-items: center; gap: 8px; margin: 14px 0 18px 49px; color: #777; font-size: 11px; }
+      .system-event .check { color: var(--green); font-weight: 800; }
+      .typing { display: flex; align-items: center; gap: 8px; min-height: 22px; margin: 0 0 16px 49px; color: #777; font-size: 11px; }
+      .typing-dots { display: inline-flex; gap: 3px; }
+      .typing-dots i { width: 4px; height: 4px; border-radius: 50%; background: #888; animation: blink 1s infinite ease-in-out; }
+      .typing-dots i:nth-child(2) { animation-delay: .15s; }
+      .typing-dots i:nth-child(3) { animation-delay: .3s; }
+      @keyframes blink { 0%, 70%, 100% { opacity: .3; transform: translateY(0); } 35% { opacity: 1; transform: translateY(-3px); } }
+
+      .brief-card { max-width: 760px; margin: 10px 0 12px; overflow: hidden; border: 1px solid #e1dce5; border-radius: 10px; box-shadow: 0 2px 7px #24152b0a; }
+      .brief-card-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; padding: 15px 16px 13px; border-bottom: 1px solid #eeeaf0; background: #fbf9fc; }
+      .brief-kicker { color: #7a568d; font-size: 9px; font-weight: 800; letter-spacing: 1.15px; text-transform: uppercase; }
+      .brief-title { margin-top: 5px; color: #28242a; font-size: 16px; font-weight: 750; }
+      .brief-subtitle { margin-top: 4px; color: #706c71; font-size: 11px; }
+      .risk-pill { padding: 5px 8px; border: 1px solid #f1d79b; border-radius: 999px; color: #895a00; background: #fff8e7; font-size: 10px; font-weight: 700; white-space: nowrap; }
+      .brief-body { padding: 14px 16px; }
+      .brief-section { margin-bottom: 13px; }
+      .brief-section:last-child { margin-bottom: 0; }
+      .brief-section-title { margin-bottom: 5px; color: #4c4750; font-size: 10px; font-weight: 800; letter-spacing: .55px; text-transform: uppercase; }
+      .brief-section p, .brief-section li { color: #444047; font-size: 11px; line-height: 1.5; }
+      .brief-section p { margin: 0; }
+      .brief-section ul, .brief-section ol { margin: 4px 0 0; padding-left: 17px; }
+      .evidence-list { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 7px; }
+      .evidence-chip { padding: 4px 7px; border: 1px solid #dfd5e5; border-radius: 5px; color: #65447a; background: #faf7fc; font-size: 9px; }
+      .missing { padding: 9px 10px; border-left: 3px solid #d3a83d; border-radius: 0 5px 5px 0; background: #fffaf0; }
+      .brief-card-foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; padding: 10px 16px; border-top: 1px solid #eeeaf0; background: #fbf9fc; color: #777; font-size: 10px; }
+      .review-tag { display: inline-flex; align-items: center; gap: 5px; color: #855700; font-weight: 700; }
+      .approval-card { max-width: 760px; margin: 10px 0 6px; padding: 13px 15px; border: 1px solid #ead79e; border-left: 4px solid #dcae3e; border-radius: 8px; background: #fffcf3; }
+      .approval-title { display: flex; align-items: center; gap: 7px; color: #624a12; font-size: 12px; font-weight: 750; }
+      .approval-copy { margin: 6px 0 11px; color: #6f6240; font-size: 11px; line-height: 1.45; }
+      .approval-actions { display: flex; gap: 8px; }
+      .approve, .reject { min-height: 31px; padding: 6px 11px; border-radius: 6px; font-size: 11px; font-weight: 750; }
+      .approve { border: 1px solid #16734c; color: #fff; background: #16804a; }
+      .approve:hover { background: #116c3e; }
+      .reject { border: 1px solid #d7d4d7; color: #444; background: #fff; }
+      .reject:hover { background: #f5f4f5; }
+      .message-reactions { display: flex; gap: 5px; margin-top: 8px; }
+      .reaction { padding: 3px 7px; border: 1px solid #dedade; border-radius: 12px; color: #625d62; background: #fff; font-size: 10px; }
+
+      .composer-wrap { padding: 9px 24px 18px; }
+      .composer { overflow: hidden; border: 1px solid #aaa6aa; border-radius: 9px; box-shadow: 0 1px 2px #00000008; }
+      .composer:focus-within { border-color: #7b4a91; box-shadow: 0 0 0 1px #7b4a91; }
+      .composer-input { width: 100%; min-height: 51px; padding: 15px 15px 8px; border: 0; outline: 0; color: #272427; background: #fff; font-size: 12px; }
+      .composer-input::placeholder { color: #929092; }
+      .composer-tools { display: flex; align-items: center; justify-content: space-between; padding: 0 9px 8px; }
+      .tool-group { display: flex; gap: 4px; }
+      .tool { display: grid; place-items: center; width: 27px; height: 26px; border: 0; border-radius: 5px; color: #686468; background: transparent; font-size: 14px; }
+      .tool:hover { background: #f1eff1; }
+      .send-group { display: flex; align-items: center; gap: 8px; color: #888; font-size: 10px; }
+      .send-button { display: grid; place-items: center; width: 29px; height: 27px; border: 0; border-radius: 5px; color: #fff; background: #16804a; font-size: 15px; }
+      .composer-hint { margin: 6px 3px 0; color: #929092; font-size: 9px; }
+
+      .details { min-height: 0; border-left: 1px solid var(--line); background: #fbfafb; }
+      .details-head { display: flex; height: 65px; align-items: center; justify-content: space-between; padding: 0 17px; border-bottom: 1px solid var(--line); font-size: 13px; font-weight: 750; }
+      .details-body { padding: 17px; }
+      .profile-card { padding: 14px; border: 1px solid #e7e4e7; border-radius: 9px; background: #fff; }
+      .profile-top { display: flex; align-items: center; gap: 10px; }
+      .profile-avatar { display: grid; place-items: center; width: 37px; height: 37px; border-radius: 10px; color: #fff; background: #197c74; font-size: 11px; font-weight: 800; }
+      .profile-name { font-size: 12px; font-weight: 750; }
+      .profile-role { margin-top: 3px; color: #777; font-size: 10px; }
+      .presence { display: flex; align-items: center; gap: 6px; margin-top: 12px; color: #5b5a5b; font-size: 10px; }
+      .presence .online-dot { border-color: #fff; }
+      .detail-divider { height: 1px; margin: 16px 0; background: #e9e7e9; }
+      .detail-section-title { margin-bottom: 9px; color: #777; font-size: 9px; font-weight: 800; letter-spacing: .8px; text-transform: uppercase; }
+      .detail-row { display: flex; align-items: flex-start; gap: 9px; margin: 10px 0; color: #565256; font-size: 10px; line-height: 1.4; }
+      .detail-icon { width: 17px; color: #777; text-align: center; }
+      .context-select { width: 100%; padding: 9px 10px; border: 1px solid #ddd9dd; border-radius: 6px; color: #333; background: white; font-size: 11px; }
+      .context-note { margin-top: 7px; color: #858185; font-size: 9px; line-height: 1.45; }
+      .safe-note { padding: 10px; border: 1px solid #cde7db; border-radius: 7px; color: #31654c; background: #f2fbf6; font-size: 9px; line-height: 1.45; }
+      .toast { position: fixed; right: 316px; bottom: 18px; z-index: 3; padding: 10px 14px; border-radius: 8px; color: #fff; background: #272327; box-shadow: 0 7px 24px #0003; font-size: 11px; opacity: 0; pointer-events: none; transform: translateY(8px); transition: .2s ease; }
+      .toast.show { opacity: 1; transform: translateY(0); }
+
+      @media (max-width: 1100px) {
+        .app { grid-template-columns: 58px 210px minmax(420px, 1fr); }
+        .details { display: none; }
+        .toast { right: 18px; }
+      }
+      @media (max-width: 760px) {
+        body { overflow: auto; }
+        .app { grid-template-columns: 52px minmax(0, 1fr); min-height: 100vh; height: auto; }
+        .sidebar { display: none; }
+        .main { min-height: 100vh; }
+        .channel-head { padding: 0 13px; }
+        .channel-actions .member-stack, .channel-actions .icon-button:nth-last-child(-n+2) { display: none; }
+        .messages { min-height: 65vh; padding: 17px 12px; }
+        .composer-wrap { padding: 8px 11px 16px; }
+        .brief-card { margin-left: -48px; }
+        .approval-card { margin-left: -48px; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app">
+      <aside class="rail" aria-label="Workspace navigation">
+        <div class="workspace-mark" title="Cato GTM Lab">C</div>
+        <button class="rail-button active" title="Messages">⌂</button>
+        <button class="rail-button" title="Activity">◷</button>
+        <button class="rail-button" title="Later">▱</button>
+        <button class="rail-button" title="More">•••</button>
+        <div class="rail-spacer"></div>
+        <button class="rail-button" title="Add workspace">＋</button>
+        <div class="user-avatar" title="Nora Chen">NC</div>
+      </aside>
+
+      <aside class="sidebar" aria-label="Workspace channels">
+        <div class="workspace-head">
+          <div class="workspace-title"><span>Cato GTM Lab</span><span aria-hidden="true">⌄</span></div>
+          <div class="workspace-subtitle">Local demo workspace</div>
+        </div>
+        <div class="sidebar-scroll">
+          <div class="nav-item dim"><span>✉</span> Direct messages</div>
+          <div class="nav-item dim"><span>◷</span> Activity</div>
+          <div class="nav-item dim"><span>▱</span> Later</div>
+          <div class="nav-label"><span>⌄</span> Channels <span class="count">＋</span></div>
+          <div class="nav-item dim"><span class="channel-hash">#</span> general</div>
+          <div class="nav-item dim"><span class="channel-hash">#</span> sales-team</div>
+          <div class="nav-item current"><span class="channel-hash">#</span> deal-intel-demo</div>
+          <div class="nav-item dim"><span class="channel-hash">#</span> deal-desk</div>
+          <div class="nav-label"><span>⌄</span> Direct messages <span class="count">＋</span></div>
+          <div class="nav-item"><span class="online-dot"></span> Deal Intel Bot</div>
+          <div class="nav-item dim"><span class="online-dot" style="background:#aaa;border-color:#d9c9d9"></span> Nora Chen</div>
+          <div class="nav-item dim"><span class="online-dot" style="background:#aaa;border-color:#d9c9d9"></span> Deal Desk</div>
+          <div class="nav-label"><span>⌄</span> Apps</div>
+          <div class="nav-item dim"><span>✦</span> Deal Intel</div>
+        </div>
+        <div class="sidebar-footer">
+          <div>Workspace demo · Synthetic data only</div>
+          <div class="demo-indicator">Local simulator</div>
+        </div>
+      </aside>
+
+      <main class="main">
+        <header class="channel-head">
+          <div class="channel-title-wrap">
+            <div class="channel-title"><span class="hash">#</span> deal-intel-demo <span style="color:#8a878a;font-size:12px">⌄</span></div>
+            <div class="channel-description">Prepare and review grounded deal briefs with Deal Intel</div>
+          </div>
+          <div class="channel-actions">
+            <div class="member-stack" aria-label="3 members"><span class="mini-avatar a2">DI</span><span class="mini-avatar a3">NC</span><span class="mini-avatar">ML</span><span class="member-count">3</span></div>
+            <button class="icon-button" title="Search">⌕</button>
+            <button class="icon-button" title="Channel details">ⓘ</button>
+            <button class="icon-button" title="More">•••</button>
+          </div>
+        </header>
+
+        <section class="messages" id="messages" aria-label="Conversation">
+          <div class="date-divider"><span>Today</span></div>
+
+          <article class="message">
+            <div class="avatar" style="background:#8963a7">NC</div>
+            <div>
+              <div class="message-top"><span class="sender">Nora Chen</span><time class="timestamp">10:42 AM</time></div>
+              <div class="message-text"><p>Can you prepare a negotiation brief for me?</p></div>
+            </div>
+          </article>
+
+          <article class="message">
+            <div class="avatar bot">✦</div>
+            <div>
+              <div class="message-top"><span class="sender">Deal Intel</span><span class="bot-label">APP</span><time class="timestamp">10:42 AM</time></div>
+              <div class="message-text"><p>Sure. Which opportunity should I use?</p><p>You can send an opportunity ID, for example <strong>OPP-1003</strong>.</p></div>
+            </div>
+          </article>
+
+          <article class="message">
+            <div class="avatar" style="background:#8963a7">NC</div>
+            <div>
+              <div class="message-top"><span class="sender">Nora Chen</span><time class="timestamp">10:43 AM</time></div>
+              <div class="message-text"><p>OPP-1003</p></div>
+            </div>
+          </article>
+
+          <div class="system-event"><span class="check">✓</span> Nora Chen requested a brief for <strong>OPP-1003</strong></div>
+          <div class="system-event"><span class="check">✓</span> Access verified <span style="color:#999">·</span> Evidence retrieved from 3 authorized sources</div>
+
+          <article class="message">
+            <div class="avatar bot">✦</div>
+            <div>
+              <div class="message-top"><span class="sender">Deal Intel</span><span class="bot-label">APP</span><time class="timestamp">10:43 AM</time></div>
+              <div class="message-text"><p>Here’s the brief for <strong>Eclipse Networks</strong>. I found a restricted renewal with commercial and legal review requirements.</p></div>
+
+              <section class="brief-card" aria-label="Deal brief preview">
+                <div class="brief-card-head">
+                  <div><div class="brief-kicker">Strategic deal brief · OPP-1003</div><div class="brief-title">Eclipse Networks renewal</div><div class="brief-subtitle">Renewal · EMEA · Close date 30 Jun 2026</div></div>
+                  <span class="risk-pill">High review</span>
+                </div>
+                <div class="brief-body">
+                  <div class="brief-section"><div class="brief-section-title">Executive summary</div><p>The renewal remains actionable, but term alignment and approval dependencies need resolution before commercial commitments are made.</p></div>
+                  <div class="brief-section"><div class="brief-section-title">Negotiation state</div><p>Procurement may prefer a shorter term while the account plan assumes a three-year renewal. Any discount recommendation requires Deal Desk and legal review.</p></div>
+                  <div class="brief-section"><div class="brief-section-title">Recommended next actions</div><ol><li>Confirm the renewal term with procurement.</li><li>Route any discount proposal to Deal Desk and legal.</li></ol></div>
+                  <div class="brief-section missing"><div class="brief-section-title">Missing information</div><p>Confirm the final decision date with the buying committee.</p></div>
+                  <div class="brief-section"><div class="brief-section-title">Source evidence</div><div class="evidence-list"><span class="evidence-chip">Gong · CALL-023</span><span class="evidence-chip">Slack · SLACK-1003-02</span><span class="evidence-chip">Salesforce · OPP-1003</span></div></div>
+                </div>
+                <div class="brief-card-foot"><span>Run <strong>run-8f31a2</strong> · 3 sources · 8 citations</span><span class="review-tag">⚑ Human review required</span></div>
+              </section>
+
+              <div class="approval-card" id="approvalCard">
+                <div class="approval-title"><span>◉</span> Approval required before sharing this recommendation</div>
+                <div class="approval-copy">Review the actions above. Your decision will be recorded with this run. No customer-facing action will be taken.</div>
+                <div class="approval-actions"><button class="approve" data-decision="approved">✓ Approve</button><button class="reject" data-decision="rejected">✕ Reject</button></div>
+              </div>
+              <div class="message-reactions"><button class="reaction">👍 1</button><button class="reaction">👀 1</button><button class="reaction" aria-label="Add reaction">＋</button></div>
+            </div>
+          </article>
+        </section>
+
+        <form class="composer-wrap" id="composerForm">
+          <div class="composer">
+            <input id="composerInput" class="composer-input" autocomplete="off" placeholder="Message #deal-intel-demo" aria-label="Write a message" />
+            <div class="composer-tools">
+              <div class="tool-group"><button type="button" class="tool" title="Format">B</button><button type="button" class="tool" title="Add link">↗</button><button type="button" class="tool" title="Emoji">☺</button><button type="button" class="tool" title="Attach file">＋</button></div>
+              <div class="send-group"><span>Shift + Enter for new line</span><button class="send-button" type="submit" title="Send">➤</button></div>
+            </div>
+          </div>
+          <div class="composer-hint">Try: “Prepare a brief for OPP-1003” or “Prepare a brief for me”</div>
+        </form>
+      </main>
+
+      <aside class="details" aria-label="Conversation details">
+        <div class="details-head"><span>Details</span><button class="icon-button" aria-label="Close details">×</button></div>
+        <div class="details-body">
+          <div class="profile-card">
+            <div class="profile-top"><div class="profile-avatar">NC</div><div><div class="profile-name">Nora Chen</div><div class="profile-role">Restricted Account Owner · Demo identity</div></div></div>
+            <div class="presence"><span class="online-dot"></span> Active in this local demo</div>
+          </div>
+          <div class="detail-divider"></div>
+          <div class="detail-section-title">Demo identity</div>
+          <select class="context-select" id="identitySelect" aria-label="Select demo identity"><option value="USR-5003" selected>Nora Chen · USR-5003</option><option value="USR-5001">Maya Levin · USR-5001</option><option value="USR-5002">Owen Patel · USR-5002</option><option value="USR-5004">Sam Hale · USR-5004</option><option value="USR-5005">Rina Vale · USR-5005</option><option value="USR-5007">Harper Noor · USR-5007</option></select>
+          <div class="context-note">In a real Slack app this is resolved from the authenticated Slack user. The selector is only for this local demonstration.</div>
+          <div class="detail-divider"></div>
+          <div class="detail-section-title">In this conversation</div>
+          <div class="detail-row"><span class="detail-icon">#</span><span>deal-intel-demo<br /><span style="color:#888">A local Slack-style demo channel</span></span></div>
+          <div class="detail-row"><span class="detail-icon">♙</span><span>3 members<br /><span style="color:#888">Maya, Deal Intel, Nora</span></span></div>
+          <div class="detail-divider"></div>
+          <div class="detail-section-title">Demo safety</div>
+          <div class="safe-note">Synthetic deal data only. Approval records the decision in the demo; it does not send a message or update an external CRM.</div>
+        </div>
+      </aside>
+    </div>
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+    <script>
+      const messages = document.querySelector("#messages");
+      const form = document.querySelector("#composerForm");
+      const input = document.querySelector("#composerInput");
+      const toast = document.querySelector("#toast");
+      const identities = {
+        "USR-5001": { name: "Maya Levin", initials: "ML", role: "Account Owner", accounts: ["ACC-2001"], restricted: false },
+        "USR-5002": { name: "Owen Patel", initials: "OP", role: "Account Owner", accounts: ["ACC-2002"], restricted: false },
+        "USR-5003": { name: "Nora Chen", initials: "NC", role: "Restricted Account Owner", accounts: ["ACC-2003"], restricted: true },
+        "USR-5004": { name: "Sam Hale", initials: "SH", role: "Sales Leader", accounts: ["ACC-2001", "ACC-2002"], restricted: false },
+        "USR-5005": { name: "Rina Vale", initials: "RV", role: "Deal Desk Approver", accounts: ["ACC-2001", "ACC-2002", "ACC-2003"], restricted: true },
+        "USR-5007": { name: "Harper Noor", initials: "HN", role: "Unauthorized Requester", accounts: ["ACC-2001"], restricted: false },
+      };
+      let currentIdentity = "USR-5003";
+      let toastTimer;
+
+      function showToast(text) {
+        toast.textContent = text;
+        toast.classList.add("show");
+        window.clearTimeout(toastTimer);
+        toastTimer = window.setTimeout(() => toast.classList.remove("show"), 2600);
+      }
+
+      function scrollToBottom() {
+        messages.scrollTop = messages.scrollHeight;
+      }
+
+      function addMessage({ sender, initials, text, bot = false, system = false }) {
+        const article = document.createElement("article");
+        article.className = "message";
+        const avatar = document.createElement("div");
+        avatar.className = `avatar${bot ? " bot" : ""}${system ? " system" : ""}`;
+        avatar.textContent = bot ? "✦" : initials;
+        const content = document.createElement("div");
+        const top = document.createElement("div");
+        top.className = "message-top";
+        const name = document.createElement("span");
+        name.className = "sender";
+        name.textContent = sender;
+        top.append(name);
+        if (bot) {
+          const label = document.createElement("span");
+          label.className = "bot-label";
+          label.textContent = "APP";
+          top.append(label);
+        }
+        const time = document.createElement("time");
+        time.className = "timestamp";
+        time.textContent = new Intl.DateTimeFormat("en-US", { hour: "numeric", minute: "2-digit" }).format(new Date());
+        top.append(time);
+        const body = document.createElement("div");
+        body.className = "message-text";
+        const paragraph = document.createElement("p");
+        paragraph.textContent = text;
+        body.append(paragraph);
+        content.append(top, body);
+        article.append(avatar, content);
+        messages.append(article);
+        scrollToBottom();
+        return content;
+      }
+
+      function addTyping() {
+        const row = document.createElement("div");
+        row.className = "typing";
+        row.innerHTML = '<span class="typing-dots"><i></i><i></i><i></i></span><span>Deal Intel is typing…</span>';
+        messages.append(row);
+        scrollToBottom();
+        return row;
+      }
+
+      function opportunityFrom(text) {
+        return text.match(/\bOPP-\d{4}\b/i)?.[0].toUpperCase() ?? null;
+      }
+
+      function respondTo(text) {
+        const opportunityId = opportunityFrom(text);
+        const typing = addTyping();
+        window.setTimeout(() => {
+          typing.remove();
+          if (!opportunityId) {
+            addMessage({ sender: "Deal Intel", initials: "DI", bot: true, text: "Sure. Which opportunity should I use? Please send an opportunity ID, for example OPP-1003." });
+            return;
+          }
+
+          addMessage({ sender: "Deal Intel", initials: "DI", bot: true, text: `I’ve got ${opportunityId}. I’m checking access and reviewing the authorized deal evidence now…` });
+          const progress = document.createElement("div");
+          progress.className = "system-event";
+          progress.innerHTML = '<span class="check">✓</span> Request received <span style="color:#999">·</span> <span class="progress-text">Checking permissions…</span>';
+          messages.append(progress);
+          scrollToBottom();
+          window.setTimeout(() => {
+            progress.querySelector(".progress-text").textContent = "Access verified · Retrieving evidence…";
+            window.setTimeout(() => {
+              progress.querySelector(".progress-text").textContent = "Access verified · Evidence retrieved · Preparing brief…";
+              window.setTimeout(() => {
+                typing.remove();
+                const active = identities[currentIdentity];
+                const accountByOpportunity = { "OPP-1001": "ACC-2001", "OPP-1002": "ACC-2002", "OPP-1003": "ACC-2003" };
+                const targetAccount = accountByOpportunity[opportunityId];
+                const allowedForAccount = targetAccount && active.accounts.includes(targetAccount);
+                const allowedForRestriction = opportunityId !== "OPP-1003" || active.restricted;
+                if (!allowedForAccount || !allowedForRestriction) {
+                  addMessage({ sender: "Deal Intel", initials: "DI", bot: true, text: "I’m sorry, but you are not authorized to access this opportunity." });
+                  return;
+                }
+                const account = opportunityId === "OPP-1003" ? "Eclipse Networks" : opportunityId === "OPP-1002" ? "Meridian Manufacturing" : "Northstar Systems";
+                const reply = addMessage({ sender: "Deal Intel", initials: "DI", bot: true, text: `The brief for ${account} (${opportunityId}) is ready for ${active.name}. I’ve included the summary, recommendations, missing information, and source evidence below.` });
+                const referenceCard = document.querySelector(".brief-card").cloneNode(true);
+                const approvalCard = document.querySelector(".approval-card").cloneNode(true);
+                approvalCard.removeAttribute("id");
+                const reactions = document.querySelector(".message-reactions").cloneNode(true);
+                reply.append(referenceCard, approvalCard, reactions);
+                approvalCard.querySelectorAll("[data-decision]").forEach((button) => {
+                  button.addEventListener("click", () => recordDecision(button, approvalCard));
+                });
+                showToast("Mockup interaction only · Not connected to the live workflow");
+              }, 400);
+            }, 550);
+          }, 450);
+        }, 650);
+      }
+
+      form.addEventListener("submit", (event) => {
+        event.preventDefault();
+        const text = input.value.trim();
+        if (!text) return;
+        const identity = identities[currentIdentity];
+        addMessage({ sender: identity.name, initials: identity.initials, text });
+        input.value = "";
+        respondTo(text);
+      });
+
+      document.querySelector("#identitySelect").addEventListener("change", (event) => {
+        currentIdentity = event.target.value;
+        const identity = identities[currentIdentity];
+        document.querySelector(".profile-name").textContent = identity.name;
+        document.querySelector(".profile-role").textContent = `${identity.role} · Demo identity`;
+        document.querySelector(".profile-avatar").textContent = identity.initials;
+        document.querySelector(".user-avatar").textContent = identity.initials;
+        showToast(`Demo identity changed to ${identity.name}`);
+      });
+
+      function recordDecision(button, card) {
+        const decision = button.dataset.decision;
+        card.innerHTML = `<div class="approval-title" style="color:${decision === "approved" ? "#176442" : "#8a3333"}">${decision === "approved" ? "✓ Approved" : "✕ Rejected"}</div><div class="approval-copy">${decision === "approved" ? "Your approval was recorded in this demo." : "Your rejection was recorded in this demo."} No external action was taken.</div>`;
+        addMessage({ sender: "Deal Intel", initials: "DI", bot: true, text: decision === "approved" ? "Thanks — your approval is recorded for this demo run." : "Understood — your rejection is recorded for this demo run." });
+        showToast(`Demo decision recorded: ${decision}`);
+      }
+
+      document.querySelectorAll("[data-decision]").forEach((button) => {
+        button.addEventListener("click", () => recordDecision(button, document.querySelector("#approvalCard")));
+      });
+    </script>
+  </body>
+</html>

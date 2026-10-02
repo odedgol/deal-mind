@@ -1,0 +1,45 @@
+[
+  {
+    "name": "standard authorized renewal",
+    "opportunity_id": "OPP-1001",
+    "user_id": "USR-5001",
+    "expected_status": "brief",
+    "approval_required": false,
+    "required_source_types": ["salesforce", "gong", "slack"],
+    "required_cited_source_types": ["slack"]
+  },
+  {
+    "name": "authorized restricted renewal",
+    "opportunity_id": "OPP-1003",
+    "user_id": "USR-5003",
+    "expected_status": "brief",
+    "approval_required": true,
+    "required_source_types": ["salesforce", "gong", "slack"],
+    "required_cited_source_types": []
+  },
+  {
+    "name": "unauthorized restricted request",
+    "opportunity_id": "OPP-1003",
+    "user_id": "USR-5007",
+    "expected_status": "denied",
+    "approval_required": false,
+    "required_source_types": [],
+    "required_cited_source_types": [],
+    "forbidden_output_facts": [
+      "Eclipse BioMaterials",
+      "Mei Arlen",
+      "temporary access",
+      "12%",
+      "2026-05-14"
+    ]
+  },
+  {
+    "name": "second authorized expansion",
+    "opportunity_id": "OPP-1002",
+    "user_id": "USR-5002",
+    "expected_status": "brief",
+    "approval_required": false,
+    "required_source_types": ["salesforce", "gong", "slack"],
+    "required_cited_source_types": ["slack"]
+  }
+]
