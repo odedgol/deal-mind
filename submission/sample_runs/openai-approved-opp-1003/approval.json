@@ -1,23 +1,9 @@
 [
   {
-    "recommendation": "Route discount, liability language, and restricted data access request for approval",
+    "recommendation": "Route the proposed discount and liability language for approval by the Deal Desk and legal team.",
     "reason": "Sensitive opportunity recommendation requires human review.",
     "decision": "approved",
     "comment": null,
-    "timestamp": "2026-09-28T00:13:13.586655Z"
-  },
-  {
-    "recommendation": "Consult Legal for specific liability language changes requested",
-    "reason": "Sensitive opportunity recommendation requires human review.",
-    "decision": "approved",
-    "comment": null,
-    "timestamp": "2026-09-28T00:13:13.586659Z"
-  },
-  {
-    "recommendation": "Align internal stakeholders on negotiation strategy",
-    "reason": "Sensitive opportunity recommendation requires human review.",
-    "decision": "approved",
-    "comment": null,
-    "timestamp": "2026-09-28T00:13:13.586660Z"
+    "timestamp": "2026-10-02T22:40:21.175123Z"
   }
 ]

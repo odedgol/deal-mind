@@ -106,12 +106,18 @@ class NegotiationStrategyAgent:
         self.policy_tool = policy_tool
         self.approval_tool = approval_tool
 
-    def run(self, context: AgentContext, specialists: list[AgentOutput]) -> StrategyOutput:
+    def run(
+        self,
+        context: AgentContext,
+        *,
+        conversation: AgentOutput,
+        stakeholders: AgentOutput,
+    ) -> StrategyOutput:
         if self.policy_tool is not None:
             policy = self.policy_tool.run()
             if policy is not None:
                 context = AgentContext(context.opportunity, [*context.evidence, policy])
-        output = run_strategy(context, specialists, self.llm)
+        output = run_strategy(context, conversation, stakeholders, self.llm)
         if self.approval_tool is not None:
             actions = self.approval_tool.run(context.opportunity, output.actions)
             output = output.model_copy(update={"actions": actions})
@@ -150,16 +156,31 @@ def run_buyer_goals(context: AgentContext, llm: LLMProvider) -> AgentOutput:
     return _run_specialist("Buyer Goals Agent", context, llm)
 
 
-@observed(agent_name="negotiation_strategy", prompt_version="v1")
+@observed(agent_name="negotiation_strategy", prompt_version="v6")
 def run_strategy(
     context: AgentContext,
-    specialists: list[AgentOutput],
+    conversation: AgentOutput,
+    stakeholders: AgentOutput,
     llm: LLMProvider,
 ) -> StrategyOutput:
     prompt: dict[str, object] = {
         "opportunity": context.opportunity.model_dump(mode="json"),
         "evidence": evidence_payload(context.evidence),
-        "specialists": [output.model_dump(mode="json") for output in specialists],
+        "output_requirements": [
+            "Return concrete, evidence-grounded next actions for unresolved work when present.",
+            (
+                "Because this opportunity requires approval, include at least one internal "
+                "action to route the approval-dependent commercial request for review. Cite "
+                "the evidence that establishes the approval requirement."
+                if context.opportunity.approval_required
+                else "Do not add an approval step unless the evidence or policy requires it."
+            ),
+            "Do not describe an internal approval request as a customer-facing action.",
+        ],
+        "specialist_findings": {
+            "conversation_intelligence": conversation.model_dump(mode="json"),
+            "stakeholder_map": stakeholders.model_dump(mode="json"),
+        },
     }
     return _complete_with_citation_repair(
         role="Negotiation Strategy Agent",
@@ -207,18 +228,28 @@ def _complete_with_citation_repair[OutputT: (AgentOutput, StrategyOutput)](
             if repair_attempt == 1:
                 raise
             validation_error = str(error)
+        if isinstance(output, StrategyOutput):
+            repair_instruction = (
+                "Regenerate the same typed strategy answer and fix the citation validation error. "
+                "Every negotiation-state finding, action, and summary must cite exact allowed "
+                "evidence IDs. Never reuse an invalid ID. Keep a claim only when allowed evidence "
+                "supports it; otherwise remove it. If the current negotiation state is not "
+                "established, return an empty negotiation_state and add a warning explaining "
+                "what information is missing."
+            )
+        else:
+            repair_instruction = (
+                "Regenerate the same typed specialist answer and fix the citation validation "
+                "error. Every finding must cite exact allowed evidence IDs. Never reuse an "
+                "invalid ID. Keep a claim only when allowed evidence supports it; otherwise "
+                "remove it or put the unanswered question in missing_information."
+            )
         repair_prompt = {
             "task": prompt,
             "previous_output": output.model_dump(mode="json"),
             "allowed_evidence_ids": [item.evidence_id for item in context.evidence],
             "validation_error": validation_error,
-            "instruction": (
-                "Regenerate the same typed answer and fix the citation validation error. "
-                "Every finding and action must cite at least one exact allowed evidence ID; "
-                "the strategy summary must also cite supporting IDs. Never reuse an invalid ID. "
-                "Keep a claim only when allowed evidence supports it; otherwise remove it or "
-                "put the unanswered question in missing_information."
-            ),
+            "instruction": repair_instruction,
         }
         output = llm.complete(
             system=(
@@ -239,7 +270,12 @@ def _validate_grounded_output(
     if isinstance(output, AgentOutput):
         uncited_claims = [finding.text for finding in output.findings if not finding.evidence_ids]
     else:
-        uncited_claims = [action.action for action in output.actions if not action.evidence_ids]
+        uncited_claims = [
+            finding.text for finding in output.negotiation_state if not finding.evidence_ids
+        ]
+        uncited_claims.extend(
+            action.action for action in output.actions if not action.evidence_ids
+        )
         if output.summary and not output.summary_evidence_ids:
             uncited_claims.append("strategy summary")
     if uncited_claims:

@@ -1,11 +1,15 @@
 from pathlib import Path
 
+import pytest
+
 from cato_deal_intel.agents.tools import (
     AuthorizedEvidenceSearchTool,
     DealContextTool,
     DealDeskPolicyTool,
     EvidenceSearchRequest,
+    RecommendationValidationTool,
 )
+from cato_deal_intel.models import EvidenceItem, Finding, StrategyOutput
 from cato_deal_intel.orchestration.services import EvidenceService
 from cato_deal_intel.retrieval.evidence_retriever import EvidenceRetriever
 from cato_deal_intel.retrieval.sources.data import SourceData
@@ -51,3 +55,31 @@ def test_policy_tool_explicitly_retrieves_shared_policy() -> None:
     assert result.evidence_id == "policy:deal-desk"
     assert result.source_type == "policies"
     assert result.opportunity_id == "*"
+
+
+def test_recommendation_validation_rejects_unknown_negotiation_state_citation() -> None:
+    evidence = EvidenceItem(
+        evidence_id="gong:CALL-001",
+        opportunity_id="OPP-1001",
+        account_id="ACC-1001",
+        source_type="gong",
+        source_file="gong/calls.tsv",
+        source_id="CALL-001",
+        access_level="standard",
+        text="The buyer requested a discount.",
+    )
+    strategy = StrategyOutput(
+        summary="The discount request is unresolved.",
+        summary_evidence_ids=[evidence.evidence_id],
+        negotiation_state=[
+            Finding(
+                text="The discount is pending approval.",
+                evidence_ids=["invented:E-999"],
+                confidence=0.8,
+            )
+        ],
+        actions=[],
+    )
+
+    with pytest.raises(ValueError, match="invented:E-999"):
+        RecommendationValidationTool().run(strategy, [evidence])

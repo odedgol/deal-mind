@@ -126,7 +126,7 @@ def _to_markdown(brief: Brief) -> str:
             f"{item.evidence_id}: {item.source_file} ({item.source_id})"
             for item in brief.source_evidence
         ],
-        "Confidence and Review Warnings": brief.confidence_and_review_warnings,
+        "Confidence and Review Warnings": brief.confidence_and_review_warnings or ["None."],
     }
     lines = [
         f"# Strategic Deal Intelligence Brief — {brief.opportunity_id}",

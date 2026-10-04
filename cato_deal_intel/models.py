@@ -113,6 +113,7 @@ class RecommendedAction(StrictModel):
 class StrategyOutput(StrictModel):
     summary: str
     summary_evidence_ids: list[str] = Field(default_factory=list)
+    negotiation_state: list[Finding]
     actions: list[RecommendedAction]
     warnings: list[str] = Field(default_factory=list)
 

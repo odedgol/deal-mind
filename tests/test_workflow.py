@@ -41,10 +41,16 @@ def test_fake_workflow_persists_required_brief_artifacts(tmp_path: Path) -> None
 
     assert brief.source_evidence
     assert any(item.source_type == "slack" for item in brief.source_evidence)
+    assert brief.buyer_goals
+    assert brief.negotiation_state
+    assert [item.text for item in brief.negotiation_state] != [
+        item.text for item in brief.buyer_goals
+    ]
     markdown = (run_dir / "brief.md").read_text()
     assert all(
         section in markdown for section in ["Deal Snapshot", "Executive Summary", "Source Evidence"]
     )
+    assert "## Confidence and Review Warnings\n\n- " in markdown
     assert json.loads((run_dir / "brief.json").read_text())["opportunity_id"] == "OPP-1001"
     traces = json.loads((run_dir / "trace.json").read_text())
     agent_traces = [trace for trace in traces if trace["event_type"] == "agent"]
@@ -63,6 +69,7 @@ def test_fake_workflow_persists_required_brief_artifacts(tmp_path: Path) -> None
     }
     assert all(trace["status"] == "completed" for trace in traces)
     assert all(trace["run_id"] == brief.run_id for trace in traces)
+    assert "Open commercial or legal dependencies" in markdown
 
 
 def test_restricted_workflow_routes_approval(tmp_path: Path) -> None:

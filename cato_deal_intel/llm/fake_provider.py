@@ -55,6 +55,20 @@ class FakeLLMProvider:
                     else "There is not enough evidence to prepare a supported deal summary."
                 ),
                 "summary_evidence_ids": evidence_ids,
+                "negotiation_state": [
+                    {
+                        "text": (
+                            "Open commercial or legal dependencies still need resolution."
+                            if evidence_ids
+                            else "The current negotiation state is not established by the evidence."
+                        ),
+                        "evidence_ids": evidence_ids,
+                        "confidence": 0.78,
+                        "uncertainty": (
+                            None if evidence_ids else "No supporting evidence was retrieved."
+                        ),
+                    }
+                ],
                 "actions": [
                     {
                         "action": "Confirm open dependencies and document the negotiation path.",

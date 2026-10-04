@@ -208,7 +208,7 @@ flowchart TD
 | Deal Context Agent | Authorized opportunity and CRM evidence → typed `DealSnapshot` | `get_opportunity_snapshot` | Missing or malformed opportunity data fails the graph before synthesis; model output is not used for canonical CRM fields. |
 | Conversation Intelligence Agent | Authorized Gong and Slack evidence → typed findings and missing information | `search_authorized_evidence` | Provider timeout, schema failure, or citation outside the authorized evidence set fails the node and is traced. |
 | Stakeholder Map Agent | Authorized contacts, calls, and account-team notes → typed stakeholder findings | `search_authorized_evidence` | Provider timeout, schema failure, or citation outside the authorized evidence set fails the node and is traced. |
-| Negotiation Strategy Agent | Deal snapshot, specialist outputs, policy evidence → typed actions and warnings | Deal Desk policy, approval request, recommendation validation | Invalid output or unsupported citations fail validation; sensitive actions are marked for human review. |
+| Negotiation Strategy Agent | Opportunity, merged authorized evidence, specialist outputs, and policy evidence → executive summary, distinct negotiation-state findings, actions, and warnings | Deal Desk policy, approval request, recommendation validation | Invalid output or unsupported citations fail validation; sensitive actions are marked for human review. |
 
 The two LLM specialists run in parallel. If either fails, the MVP fails the overall run rather than
 silently drafting a partial brief; the failure trace and run artifacts are persisted for diagnosis.

@@ -6,7 +6,7 @@
 |---|---|
 | Project | `cato-deal-intel` |
 | Project version | `0.1.0` |
-| Run date | `2026-09-27` |
+| Run date | `2026-10-03` |
 | Evaluation mode | Deterministic fake LLM |
 | Command | `CATO_FAKE_LLM=1 uv run deal-intel evaluate --mode fake` |
 | Test command | `UV_CACHE_DIR=/tmp/cato-uv-cache uv run pytest -q` |
@@ -40,17 +40,19 @@ Slack evidence is cited in the applicable authorized scenarios.
 
 ## Verification status
 
-- Full test suite: **53 passed**
+- Full test suite: **63 passed**
 - Ruff: **clean**
 - Mypy: **clean**
+- Negotiation State: checked for exact duplication against Conversation and Stakeholder findings.
 
 ## Scope note
 
-The submission includes live-provider artifacts in `submission/sample_runs/`:
+The submission includes refreshed live-provider artifacts in `submission/sample_runs/`:
 
-- `openai-slack-opp-1001`: live `gpt-4o-mini` run with generated Slack citation
-  `slack:SLACK-1001-03`.
-- `openai-approved-opp-1003`: live `gpt-4o-mini` restricted-opportunity run with approval.
+- `openai-slack-opp-1001`: live `gpt-4o-mini` run with generated Slack citations, distinct
+  negotiation-state findings, and grounded evidence IDs.
+- `openai-approved-opp-1003`: live `gpt-4o-mini` restricted-opportunity run with approval and
+  distinct negotiation-state findings.
 
 The deterministic evaluation path remains the repeatable regression baseline; live-provider
 artifacts are evidence of real execution and are not used as deterministic test fixtures.

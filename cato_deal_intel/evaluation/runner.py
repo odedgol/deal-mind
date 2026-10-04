@@ -301,6 +301,7 @@ def _evaluate_case(
             "sources": False,
             "citation_ids": False,
             "citation_coverage": False,
+            "negotiation_state_distinct": False,
             "cited_sources": False,
             "unauthorized_leakage": False,
         }
@@ -311,6 +312,7 @@ def _evaluate_case(
         "sources": _sources_match(result, case.required_source_types),
         "citation_ids": _citations_are_grounded(result),
         "citation_coverage": _critical_claims_have_citations(result),
+        "negotiation_state_distinct": _negotiation_state_is_distinct(result),
         "cited_sources": _cited_sources_match(result, case.required_cited_source_types),
         "unauthorized_leakage": _unauthorized_facts_are_absent(result, case),
     }
@@ -373,6 +375,19 @@ def _critical_claims_have_citations(result: Brief | DeniedResult) -> bool:
     return bool(result.executive_summary_evidence_ids) and all(
         finding.evidence_ids for finding in findings
     ) and all(action.evidence_ids for action in result.recommended_next_actions)
+
+
+def _negotiation_state_is_distinct(result: Brief | DeniedResult) -> bool:
+    if not isinstance(result, Brief):
+        return True
+    buyer_goal_texts = {finding.text.strip().casefold() for finding in result.buyer_goals}
+    stakeholder_texts = {
+        finding.text.strip().casefold() for finding in result.stakeholder_map
+    }
+    negotiation_texts = {
+        finding.text.strip().casefold() for finding in result.negotiation_state
+    }
+    return not negotiation_texts.intersection(buyer_goal_texts | stakeholder_texts)
 
 
 def _unauthorized_facts_are_absent(result: Brief | DeniedResult, case: GoldenCase) -> bool:

@@ -78,10 +78,7 @@ class AuthorizedEvidenceSearchTool:
                 limit=request.limit,
             ),
         )
-        known_ids = {item.evidence_id for item in self.retrieved_evidence}
-        self.retrieved_evidence.extend(
-            item for item in results if item.evidence_id not in known_ids
-        )
+        self.retrieved_evidence.extend(results)
         return results
 
 
@@ -201,6 +198,7 @@ class RecommendationValidationTool:
             metadata={
                 "citation_count": str(
                     sum(len(item.evidence_ids) for item in recommendation.actions)
+                    + sum(len(item.evidence_ids) for item in recommendation.negotiation_state)
                 )
             },
         )

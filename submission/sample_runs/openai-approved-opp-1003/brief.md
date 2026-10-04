@@ -17,71 +17,65 @@
 
 ## Executive Summary
 
-- The negotiation for Eclipse BioMaterials Ltd involves conflicting priorities among the internal buyer group, with the Chief Digital Officer advocating for cost relief, while the security head emphasizes the need for control evidence, and legal counsel insists on approved language only. Legal has requested changes to liability language and warned against informal customer-facing concessions, indicating a need for formal reviews. The procurement lead is pushing for aggressive discounts and a shorter renewal term, conflicting with the account plan that assumes a three-year renewal. The opportunity is classified as high risk, with a total contract value of $5,637,000 and an annual contract value of $1,879,000, requiring approval for discount and liability language by May 14, 2026, before the close date of June 5, 2026. [Evidence: gong:summary:CALL-023, gong:summary:CALL-022, salesforce:contacts.tsv:CON-3011, salesforce:contacts.tsv:CON-3014, salesforce:opportunities.tsv:OPP-1003, salesforce:accounts.tsv:ACC-2003, gong:summary:CALL-026, salesforce:contacts.tsv:CON-3013]
+- Eclipse BioMaterials Ltd is negotiating a renewal with conflicting priorities among stakeholders regarding cost reduction, security controls, and legal language. The Chief Digital Officer is under board pressure to reduce costs, while procurement is pushing for a material discount and shorter term. Legal has mandated that any customer-facing concession language must be approved before use. The opportunity has a high risk level and requires formal approval for any proposed discounts or liability language, with a close date set for June 5, 2026. [Evidence: gong:summary:CALL-023, slack:SLACK-1003-02, gong:summary:CALL-022, salesforce:opportunities.tsv:OPP-1003, salesforce:contacts.tsv:CON-3011, salesforce:contacts.tsv:CON-3014, gong:transcript:CALL-019, gong:transcript:CALL-027, salesforce:accounts.tsv:ACC-2003]
 
 ## Buyer Goals and Business Drivers
 
-- Executives aligned on strategic need but disagreed on whether discount or risk mitigation should lead negotiation. The Chief Digital Officer wants cost relief, while the security head wants control evidence, and counsel wants approved language only. There are conflicting priorities within the internal buyer group. [Evidence: gong:summary:CALL-023]
-- Legal requested liability language changes and warned against informal customer-facing concessions. The liability cap language is open, procurement wants a fast answer, and legal requires a formal review. There is a risk that customer-facing language could create an approval violation. [Evidence: gong:summary:CALL-022]
-- Security and legal agreed on evidence requirements before any final commercial position. Security evidence is needed, legal wording is not final, and counsel warned against summarizing restricted notes to a broad audience. There is a risk that unauthorized internal users may request a restricted summary. [Evidence: gong:summary:CALL-026]
-- The Chief Digital Officer, Priya Sato, is pushing for renewal certainty but is under board pressure to reduce run-rate spend. This indicates a mixed sentiment regarding the deal. [Evidence: salesforce:contacts.tsv:CON-3011]
-- Procurement Lead, Darin Holt, is pressing for an aggressive discount and a shorter renewal term, which conflicts with the account plan that assumes a three-year renewal. [Evidence: salesforce:contacts.tsv:CON-3014, slack:SLACK-1003-02]
-- Any discount recommendation must wait for Deal Desk and legal review, reinforcing the need for formal processes before proceeding with negotiations. [Evidence: slack:SLACK-1003-01]
-- The opportunity for Eclipse BioMaterials Ltd has a total contract value (TCV) of $5,637,000 and an annual contract value (ACV) of $1,879,000, with a probability of 49% and a risk level classified as high. [Evidence: salesforce:opportunities.tsv:OPP-1003]
-- The opportunity is in the negotiation stage, with a close date set for June 5, 2026, and requires approval for the discount, liability language, and restricted data access request by May 14, 2026. [Evidence: salesforce:opportunities.tsv:OPP-1003]
+- The executives involved in the negotiation for Eclipse BioMaterials Ltd are aligned on the strategic need for renewal but have conflicting priorities regarding whether to prioritize discounts or risk mitigation. The Chief Digital Officer (Priya Sato) emphasized the need for cost discipline due to board pressure, while the Head of Security (Mateo Ruan) insisted on maintaining controls over restricted workflows. Legal counsel (Leah Tan) warned against informal customer-facing language that could imply liability before formal approval. [Evidence: gong:summary:CALL-023]
+- Procurement is pressing for a material reduction in costs or a shorter commitment term, while the Chief Digital Officer has indicated that the board expects cost discipline and is scrutinizing all proposals. This creates a conflict between the procurement team's desire for a shorter renewal term and the account plan that assumes a three-year renewal. [Evidence: slack:SLACK-1003-02, salesforce:opportunities.tsv:OPP-1003]
+- Legal has requested changes to liability language and has warned against informal customer-facing concessions, indicating that any discount recommendation must wait for Deal Desk and legal review. This reinforces the need for formal approval before any concessions can be made. [Evidence: gong:summary:CALL-022, slack:SLACK-1003-01]
+- The opportunity for Eclipse BioMaterials Ltd has a high risk level and requires approval for the proposed discount and liability language. The close date for this opportunity is set for June 5, 2026, with a next step to route the discount and liability language for approval by May 14, 2026. [Evidence: salesforce:opportunities.tsv:OPP-1003]
+- The Chief Digital Officer, Priya Sato, is pushing for renewal certainty but is under pressure from the board to reduce spending. This indicates a high influence level in the negotiation process, as her decisions will significantly impact the outcome. [Evidence: salesforce:contacts.tsv:CON-3011]
+- Darin Holt, the Procurement Lead, is noted to have a negative sentiment and is pressing for an aggressive discount and shorter renewal term, which adds to the tension in the negotiation. [Evidence: salesforce:contacts.tsv:CON-3014]
+- There is a need for a credible plan before the signature of the renewal, as indicated by Priya Sato, who stated that the board pressure is financial and procurement will ask for a meaningful concession. [Evidence: gong:transcript:CALL-019]
+- The negotiation discussions have highlighted the importance of separating internal options from customer-facing language, with a clear distinction that no customer-facing concession language is approved as of the latest discussions. [Evidence: gong:transcript:CALL-023]
 
 ## Stakeholder Map
 
-- The opportunity with Eclipse BioMaterials Ltd has a total contract value (TCV) of 5,637,000 and an annual contract value (ACV) of 1,879,000. [Evidence: salesforce:opportunities.tsv:OPP-1003]
-- The opportunity is classified as a renewal plus expansion type and is currently in the negotiation stage with a probability of 49%. [Evidence: salesforce:opportunities.tsv:OPP-1003]
-- The close date for the opportunity is set for June 5, 2026, and it requires approval for the discount, liability language, and restricted data access request by May 14, 2026. [Evidence: salesforce:opportunities.tsv:OPP-1003]
-- The account, Eclipse BioMaterials Ltd, is categorized under the specialty materials industry and is located in Singapore. [Evidence: salesforce:accounts.tsv:ACC-2003]
-- The account health is noted as 'At risk' with strategic notes indicating legal constraints and board-level cost pressure. [Evidence: salesforce:accounts.tsv:ACC-2003]
-- The primary competitor for this opportunity is CloudGate One. [Evidence: salesforce:opportunities.tsv:OPP-1003]
-- The internal buyer group has conflicting priorities, with the Chief Digital Officer pushing for renewal certainty while under board pressure to reduce spending. [Evidence: gong:summary:CALL-023, salesforce:contacts.tsv:CON-3011]
-- Legal and security teams have agreed on evidence requirements before finalizing the commercial position, indicating a dependency on legal review for the negotiation process. [Evidence: gong:summary:CALL-026]
-- Procurement is pressing for an aggressive discount and shorter renewal term, which conflicts with the account plan that assumes a three-year renewal. [Evidence: salesforce:contacts.tsv:CON-3014, slack:SLACK-1003-02]
-- The General Counsel has requested changes to liability language and emphasized the need for a formal review before any customer-facing concessions are made. [Evidence: salesforce:contacts.tsv:CON-3013, gong:summary:CALL-022]
+- Eclipse BioMaterials Ltd is facing internal conflicts regarding the negotiation strategy for their renewal, with different stakeholders prioritizing cost reduction, security, and legal language. This is evidenced by the discussions in CALL-023 where Priya Sato, the Chief Digital Officer, noted that "everyone is optimizing a different variable" (evidence_id: gong:summary:CALL-023). [Evidence: gong:summary:CALL-023]
+- The procurement team is pressing for a material concession and a shorter renewal term, as indicated in the evidence from CALL-027 where Darin Holt, the Procurement Lead, stated, "We need a material reduction from the current run rate or a shorter commitment" (evidence_id: gong:transcript:CALL-027). [Evidence: gong:transcript:CALL-027]
+- Legal and security teams have emphasized the need for formal reviews and have warned against informal customer-facing concessions, as highlighted in CALL-022 where legal requested changes to liability language and cautioned against informal promises (evidence_id: gong:summary:CALL-022). [Evidence: gong:summary:CALL-022]
+- The opportunity for Eclipse BioMaterials Ltd has a total contract value (TCV) of $5,637,000 and an annual contract value (ACV) of $1,879,000, with a close date set for June 5, 2026 (evidence_id: salesforce:accounts.tsv:ACC-2003). [Evidence: salesforce:accounts.tsv:ACC-2003]
+- The negotiation is currently at risk due to conflicting priorities among stakeholders, with procurement pushing for aggressive discounts while security insists on maintaining support for restricted workflows (evidence_id: gong:summary:CALL-026). [Evidence: gong:summary:CALL-026]
+- The account is classified as 'at risk' due to sensitive pricing notes, legal constraints, and board-level cost pressure (evidence_id: salesforce:accounts.tsv:ACC-2003). [Evidence: salesforce:accounts.tsv:ACC-2003]
 
 ## Negotiation State
 
-- Executives aligned on strategic need but disagreed on whether discount or risk mitigation should lead negotiation. The Chief Digital Officer wants cost relief, while the security head wants control evidence, and counsel wants approved language only. There are conflicting priorities within the internal buyer group. [Evidence: gong:summary:CALL-023]
-- Legal requested liability language changes and warned against informal customer-facing concessions. The liability cap language is open, procurement wants a fast answer, and legal requires a formal review. There is a risk that customer-facing language could create an approval violation. [Evidence: gong:summary:CALL-022]
-- Security and legal agreed on evidence requirements before any final commercial position. Security evidence is needed, legal wording is not final, and counsel warned against summarizing restricted notes to a broad audience. There is a risk that unauthorized internal users may request a restricted summary. [Evidence: gong:summary:CALL-026]
-- The Chief Digital Officer, Priya Sato, is pushing for renewal certainty but is under board pressure to reduce run-rate spend. This indicates a mixed sentiment regarding the deal. [Evidence: salesforce:contacts.tsv:CON-3011]
-- Procurement Lead, Darin Holt, is pressing for an aggressive discount and a shorter renewal term, which conflicts with the account plan that assumes a three-year renewal. [Evidence: salesforce:contacts.tsv:CON-3014, slack:SLACK-1003-02]
-- Any discount recommendation must wait for Deal Desk and legal review, reinforcing the need for formal processes before proceeding with negotiations. [Evidence: slack:SLACK-1003-01]
-- The opportunity for Eclipse BioMaterials Ltd has a total contract value (TCV) of $5,637,000 and an annual contract value (ACV) of $1,879,000, with a probability of 49% and a risk level classified as high. [Evidence: salesforce:opportunities.tsv:OPP-1003]
-- The opportunity is in the negotiation stage, with a close date set for June 5, 2026, and requires approval for the discount, liability language, and restricted data access request by May 14, 2026. [Evidence: salesforce:opportunities.tsv:OPP-1003]
+- Open prerequisite: formal approval is required for any proposed discount or liability language before customer-facing communication can occur. [Evidence: gong:summary:CALL-022, salesforce:opportunities.tsv:OPP-1003]
+- Blocked: procurement is pressing for a material reduction in costs or a shorter commitment term, conflicting with the account plan that assumes a three-year renewal. [Evidence: slack:SLACK-1003-02, salesforce:opportunities.tsv:OPP-1003]
+- Conflicting: stakeholders have differing priorities, with procurement focused on cost reduction, security emphasizing the need for controls, and legal requiring formal language approval. [Evidence: gong:summary:CALL-023, gong:summary:CALL-026]
+- Conditional: the negotiation is contingent on the approval of the Deal Desk for any discounts exceeding 10 percent and for liability language changes. [Evidence: policy:deal-desk, gong:summary:CALL-022]
 
 ## Recommended Next Actions
 
-- Route discount, liability language, and restricted data access request for approval [Evidence: salesforce:opportunities.tsv:OPP-1003, policy:deal-desk]
-- Consult Legal for specific liability language changes requested [Evidence: gong:summary:CALL-022, salesforce:contacts.tsv:CON-3013]
-- Align internal stakeholders on negotiation strategy [Evidence: gong:summary:CALL-023]
+- Route the proposed discount and liability language for approval by the Deal Desk and legal team. [Evidence: salesforce:opportunities.tsv:OPP-1003, gong:summary:CALL-022]
 
 ## Missing Information
 
-- What specific liability language changes were requested by legal?
-- What are the exact terms of the discount being negotiated?
-- What are the specific evidence requirements agreed upon by security and legal?
+- What specific discount levels are being considered for approval?
+- What is the current status of the approval for the liability language?
+- What specific concessions are approvable by the Deal Desk?
+- What is the current number of temporary access requests by project?
+- What is the approval status of the liability language?
 
 ## Source Evidence
 
 - gong:summary:CALL-023: synthetic_data/gong/gong_call_summaries.tsv (CALL-023)
+- gong:transcript:CALL-027: synthetic_data/gong/transcripts/OPP-1003_CALL-027.md (CALL-027)
 - gong:summary:CALL-022: synthetic_data/gong/gong_call_summaries.tsv (CALL-022)
-- salesforce:contacts.tsv:CON-3013: synthetic_data/salesforce/contacts.tsv (CON-3013)
-- gong:summary:CALL-026: synthetic_data/gong/gong_call_summaries.tsv (CALL-026)
 - salesforce:contacts.tsv:CON-3011: synthetic_data/salesforce/contacts.tsv (CON-3011)
-- salesforce:opportunities.tsv:OPP-1003: synthetic_data/salesforce/opportunities.tsv (OPP-1003)
+- gong:summary:CALL-026: synthetic_data/gong/gong_call_summaries.tsv (CALL-026)
+- gong:transcript:CALL-019: synthetic_data/gong/transcripts/OPP-1003_CALL-019.md (CALL-019)
+- gong:transcript:CALL-023: synthetic_data/gong/transcripts/OPP-1003_CALL-023.md (CALL-023)
 - salesforce:accounts.tsv:ACC-2003: synthetic_data/salesforce/accounts.tsv (ACC-2003)
-- salesforce:contacts.tsv:CON-3014: synthetic_data/salesforce/contacts.tsv (CON-3014)
 - slack:SLACK-1003-02: synthetic_data/slack/account_team_updates.tsv (SLACK-1003-02)
 - slack:SLACK-1003-01: synthetic_data/slack/account_team_updates.tsv (SLACK-1003-01)
+- salesforce:opportunities.tsv:OPP-1003: synthetic_data/salesforce/opportunities.tsv (OPP-1003)
+- salesforce:contacts.tsv:CON-3014: synthetic_data/salesforce/contacts.tsv (CON-3014)
+- pricing:PN-4004: synthetic_data/pricing/pricing_notes.tsv (PN-4004)
 - salesforce:contacts.tsv:CON-3012: synthetic_data/salesforce/contacts.tsv (CON-3012)
-- gong:summary:CALL-020: synthetic_data/gong/gong_call_summaries.tsv (CALL-020)
 - policy:deal-desk: synthetic_data/policies/deal_desk_policy.md (deal-desk-policy)
 
 ## Confidence and Review Warnings
 
-- Procurement's push for a shorter renewal term conflicts with the account plan's assumption of a three-year renewal, which may complicate negotiations.
+- None.

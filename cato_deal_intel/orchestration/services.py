@@ -320,7 +320,7 @@ def build_brief(
         executive_summary_evidence_ids=strategy.summary_evidence_ids,
         buyer_goals=conversation.findings,
         stakeholder_map=stakeholders.findings,
-        negotiation_state=conversation.findings,
+        negotiation_state=strategy.negotiation_state,
         recommended_next_actions=actions,
         missing_information=conversation.missing_information + stakeholders.missing_information,
         source_evidence=evidence,

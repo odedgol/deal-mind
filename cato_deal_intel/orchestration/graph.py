@@ -242,7 +242,9 @@ def strategy_node(state: DealState) -> dict[str, object]:
         agent_name=strategy_agent.name,
         collector=state["trace_collector"],
         operation=lambda: strategy_agent.run(
-            context, [state["conversation"], state["stakeholders"]]
+            context,
+            conversation=state["conversation"],
+            stakeholders=state["stakeholders"],
         ),
     )
     evidence = _merge_evidence(state["evidence"], policy.retrieved_evidence)

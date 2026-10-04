@@ -17,63 +17,58 @@
 
 ## Executive Summary
 
-- The renewal opportunity for Northstar Foods Cooperative is in the 'Order Review' stage, with a close date set for May 17, 2026. The annual contract value (ACV) is 4,217,500, and the total contract value (TCV) is 12,652,500. Key stakeholders include Elena Voss (CISO), Iris Calder (Procurement Director), Amara Quinn (Legal Counsel), and Pavel Stone (Global Network Lead). Risks include the need for a payment schedule, legal language accuracy, and final risk register clarity before signature. There is a conflict regarding the status of the dashboard delivery, with differing updates on its acceptance. [Evidence: salesforce:opportunities.tsv:OPP-1001, salesforce:contacts.tsv:CON-3001, salesforce:contacts.tsv:CON-3003, salesforce:contacts.tsv:CON-3005, salesforce:contacts.tsv:CON-3004, gong:summary:CALL-008, gong:summary:CALL-009, gong:summary:CALL-005, gong:summary:CALL-004, gong:summary:CALL-007, slack:SLACK-1001-03, slack:SLACK-1001-01]
+- The renewal for Northstar Foods Cooperative is supported by key stakeholders, including the CISO and Procurement Director, but is contingent on several conditions such as a written payment schedule and final legal language. The deal is currently in the order review stage with a close date set for May 17, 2026, and a probability of 78% for closing. Risks include potential delays due to legal language and payment terms, as well as the need for a migration success plan and dashboard delivery before signature. [Evidence: gong:summary:CALL-008, gong:summary:CALL-009, gong:summary:CALL-005, gong:summary:CALL-004, gong:summary:CALL-003, salesforce:opportunities.tsv:OPP-1001]
 
 ## Buyer Goals and Business Drivers
 
-- The renewal opportunity for Northstar Foods Cooperative is currently in the 'Order Review' stage, with a close date set for May 17, 2026. The opportunity has an annual contract value (ACV) of 4,217,500 and a total contract value (TCV) of 12,652,500. [Evidence: salesforce:opportunities.tsv:OPP-1001]
-- The primary competitor for this renewal is LegacyNet Shield. [Evidence: salesforce:opportunities.tsv:OPP-1001]
-- The next step in the renewal process is to send a revised order form and migration success plan by April 28, 2026. [Evidence: salesforce:opportunities.tsv:OPP-1001]
-- The Chief Information Security Officer (CISO), Elena Voss, supports the renewal but will not support expansion unless regional exception handling is reduced. [Evidence: salesforce:contacts.tsv:CON-3001]
-- Procurement Director Iris Calder is focused on the renewal uplift, payment schedule, and keeping the final order form simple. [Evidence: salesforce:contacts.tsv:CON-3003]
-- Legal Counsel Amara Quinn is reviewing liability language and the data processing addendum as part of the renewal process. [Evidence: salesforce:contacts.tsv:CON-3005]
-- There is a possible conflict regarding the status of the dashboard delivery; one team note states it is accepted, while the latest call indicates it is still open. [Evidence: slack:SLACK-1001-03, slack:SLACK-1001-01]
-- The customer operations lead prefers a single escalation owner for the first two plant cutovers, which adds context to the renewal discussions. [Evidence: slack:SLACK-1001-02]
-- Risks identified in the renewal process include the need for a final risk register, accurate policy citation, and clarification on data retention language, which could delay the order review. [Evidence: gong:summary:CALL-005, gong:summary:CALL-004, gong:summary:CALL-007]
+- The renewal path is supported by the CISO, but procurement requires a written payment schedule and the technical owner wants migration success metrics included. Risks include the potential for a missing payment schedule to become a last-minute blocker. [Evidence: gong:summary:CALL-008]
+- The final document review found no new commercial objections, but legal requested confirmation that the retention language matches policy. There is a risk that an inaccurate policy citation could lead to legal reopening redlines. [Evidence: gong:summary:CALL-009]
+- The executive buyer confirmed the business case but requested a final risk register before signature. There is a risk that a vague final risk register may not receive executive approval if it omits legal dependencies. [Evidence: gong:summary:CALL-005]
+- Procurement challenged the uplift and legal requested narrower liability wording. A payment schedule was requested, and there is a risk that legal language and payment terms may delay the order review. [Evidence: gong:summary:CALL-004]
+- The buyer linked the renewal to measurable reductions in unmanaged access and cloud policy drift, with the CISO wanting quarterly success metrics. There is a risk that price pressure could increase if outcomes are not quantified. [Evidence: gong:summary:CALL-003]
+- There is a possible conflict regarding the status of the dashboard delivery; one team note states it is accepted, while a recent call indicates it is still open. [Evidence: slack:SLACK-1001-03]
+- The customer operations lead prefers a single escalation owner for the first two plant cutovers, which adds context to the negotiation. [Evidence: slack:SLACK-1001-02]
+- Northstar accepted the renewal business case, but the weekly migration dashboard is still expected before signature, indicating a dependency on this deliverable. [Evidence: slack:SLACK-1001-01]
 
 ## Stakeholder Map
 
-- The opportunity is a renewal for Northstar Foods Cooperative with an annual contract value (ACV) of 4,217,500 and a total contract value (TCV) of 12,652,500. [Evidence: gong:summary:CALL-008, gong:summary:CALL-009, gong:summary:CALL-005, gong:summary:CALL-004, gong:summary:CALL-007, salesforce:contacts.tsv:CON-3001, salesforce:contacts.tsv:CON-3005, salesforce:contacts.tsv:CON-3003, salesforce:contacts.tsv:CON-3004]
-- The renewal is expected to close on May 17, 2026, with a probability of 78%. [Evidence: gong:summary:CALL-008, gong:summary:CALL-009, gong:summary:CALL-005, gong:summary:CALL-004, gong:summary:CALL-007]
-- Key stakeholders include Elena Voss (CISO), Iris Calder (Procurement Director), Amara Quinn (Legal Counsel), and Pavel Stone (Global Network Lead). [Evidence: salesforce:contacts.tsv:CON-3001, salesforce:contacts.tsv:CON-3003, salesforce:contacts.tsv:CON-3005, salesforce:contacts.tsv:CON-3004]
-- Risks identified include the need for a payment schedule, legal language accuracy, and final risk register clarity before signature. [Evidence: gong:summary:CALL-008, gong:summary:CALL-009, gong:summary:CALL-005, gong:summary:CALL-004, gong:summary:CALL-007]
-- There is a conflict regarding the status of the dashboard delivery; one team note states it is accepted, while a call indicates it is still open. [Evidence: slack:SLACK-1001-03, slack:SLACK-1001-01]
+- The renewal opportunity for Northstar Foods Cooperative is valued at an annual contract value (ACV) of 4,217,500 and a total contract value (TCV) of 12,652,500, with a renewal term of 36 months. [Evidence: gong:summary:CALL-003, gong:summary:CALL-004]
+- The close date for the renewal is set for May 17, 2026, with a probability of 78% for closing. [Evidence: gong:summary:CALL-004]
+- The primary competitor for this renewal is LegacyNet Shield. [Evidence: gong:summary:CALL-003]
+- Key stakeholders include Elena Voss (CISO), who is the economic buyer, and Iris Calder (Procurement Director), who is the commercial approver. [Evidence: salesforce:contacts.tsv:CON-3001, salesforce:contacts.tsv:CON-3003]
+- The negotiation process has identified several risks, including the need for a payment schedule in writing and accurate legal language to avoid reopening negotiations. [Evidence: gong:summary:CALL-008, gong:summary:CALL-004]
+- There is a conflict regarding the status of the dashboard delivery; one team note indicates it is accepted, while a call summary lists it as still open. [Evidence: slack:SLACK-1001-03, slack:SLACK-1001-01]
+- The CISO has requested quarterly success metrics and a clear escalation path for the migration process. [Evidence: gong:summary:CALL-003, slack:SLACK-1001-02]
 
 ## Negotiation State
 
-- The renewal opportunity for Northstar Foods Cooperative is currently in the 'Order Review' stage, with a close date set for May 17, 2026. The opportunity has an annual contract value (ACV) of 4,217,500 and a total contract value (TCV) of 12,652,500. [Evidence: salesforce:opportunities.tsv:OPP-1001]
-- The primary competitor for this renewal is LegacyNet Shield. [Evidence: salesforce:opportunities.tsv:OPP-1001]
-- The next step in the renewal process is to send a revised order form and migration success plan by April 28, 2026. [Evidence: salesforce:opportunities.tsv:OPP-1001]
-- The Chief Information Security Officer (CISO), Elena Voss, supports the renewal but will not support expansion unless regional exception handling is reduced. [Evidence: salesforce:contacts.tsv:CON-3001]
-- Procurement Director Iris Calder is focused on the renewal uplift, payment schedule, and keeping the final order form simple. [Evidence: salesforce:contacts.tsv:CON-3003]
-- Legal Counsel Amara Quinn is reviewing liability language and the data processing addendum as part of the renewal process. [Evidence: salesforce:contacts.tsv:CON-3005]
-- There is a possible conflict regarding the status of the dashboard delivery; one team note states it is accepted, while the latest call indicates it is still open. [Evidence: slack:SLACK-1001-03, slack:SLACK-1001-01]
-- The customer operations lead prefers a single escalation owner for the first two plant cutovers, which adds context to the renewal discussions. [Evidence: slack:SLACK-1001-02]
-- Risks identified in the renewal process include the need for a final risk register, accurate policy citation, and clarification on data retention language, which could delay the order review. [Evidence: gong:summary:CALL-005, gong:summary:CALL-004, gong:summary:CALL-007]
+- Open prerequisite: a written payment schedule is needed before the renewal can proceed. [Evidence: gong:summary:CALL-008]
+- Open prerequisite: final legal language must match policy to avoid reopening negotiations. [Evidence: gong:summary:CALL-009]
+- Conditional: the executive buyer requires a final risk register before signature, which must include legal dependencies. [Evidence: gong:summary:CALL-005]
+- Blocked: procurement has challenged the uplift and requires a clear explanation of changes before proceeding. [Evidence: gong:summary:CALL-004]
+- Conflicting: there is uncertainty regarding the status of the dashboard delivery; one note states it is accepted, while a recent call indicates it is still open. [Evidence: slack:SLACK-1001-03, slack:SLACK-1001-01]
+- Open prerequisite: the CISO has requested quarterly success metrics to measure the renewal's effectiveness. [Evidence: gong:summary:CALL-003]
 
 ## Recommended Next Actions
 
-- Send revised order form and migration success plan by April 28, 2026. [Evidence: salesforce:opportunities.tsv:OPP-1001]
-- Clarify the status of the dashboard delivery to resolve the conflict noted in team communications. [Evidence: slack:SLACK-1001-03, slack:SLACK-1001-01]
 
 ## Missing Information
 
-- What specific terms are still under negotiation in the order form?
-- What are the exact metrics for migration success that need to be included?
-- What specific terms are still under negotiation?
-- What are the exact details of the payment schedule requested?
-- What is the final risk register's content?
+- What is the final status of the dashboard delivery?
+- What specific legal language is still under review?
+- What specific metrics are being used to measure success in the renewal process?
+- What are the final legal terms that need to be agreed upon before closing the deal?
 
 ## Source Evidence
 
 - gong:summary:CALL-008: synthetic_data/gong/gong_call_summaries.tsv (CALL-008)
 - gong:summary:CALL-009: synthetic_data/gong/gong_call_summaries.tsv (CALL-009)
 - gong:summary:CALL-005: synthetic_data/gong/gong_call_summaries.tsv (CALL-005)
+- gong:transcript:CALL-008: synthetic_data/gong/transcripts/OPP-1001_CALL-008.md (CALL-008)
 - gong:summary:CALL-004: synthetic_data/gong/gong_call_summaries.tsv (CALL-004)
-- gong:summary:CALL-007: synthetic_data/gong/gong_call_summaries.tsv (CALL-007)
-- salesforce:contacts.tsv:CON-3001: synthetic_data/salesforce/contacts.tsv (CON-3001)
+- gong:transcript:CALL-004: synthetic_data/gong/transcripts/OPP-1001_CALL-004.md (CALL-004)
 - gong:summary:CALL-003: synthetic_data/gong/gong_call_summaries.tsv (CALL-003)
-- salesforce:contacts.tsv:CON-3005: synthetic_data/salesforce/contacts.tsv (CON-3005)
+- salesforce:contacts.tsv:CON-3001: synthetic_data/salesforce/contacts.tsv (CON-3001)
 - slack:SLACK-1001-03: synthetic_data/slack/account_team_updates.tsv (SLACK-1001-03)
 - slack:SLACK-1001-02: synthetic_data/slack/account_team_updates.tsv (SLACK-1001-02)
 - slack:SLACK-1001-01: synthetic_data/slack/account_team_updates.tsv (SLACK-1001-01)
@@ -84,3 +79,4 @@
 
 ## Confidence and Review Warnings
 
+- There is conflicting information regarding the status of the dashboard delivery, which may impact the negotiation process.

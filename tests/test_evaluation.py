@@ -43,6 +43,7 @@ def test_golden_evaluation_passes_synthetic_cases(tmp_path: Path) -> None:
     assert report.pass_rate == 1.0
     assert all(result.checks["citation_ids"] for result in report.results)
     assert all(result.checks["citation_coverage"] for result in report.results)
+    assert all(result.checks["negotiation_state_distinct"] for result in report.results)
     assert all(result.checks["unauthorized_leakage"] for result in report.results)
 
 

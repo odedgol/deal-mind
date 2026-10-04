@@ -5,8 +5,8 @@
         "text": "The retrieved evidence shows an active negotiation dependency.",
         "evidence_ids": [
           "slack:SLACK-1001-03",
-          "gong:summary:CALL-008",
-          "gong:summary:CALL-009"
+          "gong:summary:CALL-009",
+          "gong:transcript:CALL-008"
         ],
         "confidence": 0.82,
         "uncertainty": null
@@ -21,9 +21,9 @@
       {
         "text": "The retrieved evidence shows an active negotiation dependency.",
         "evidence_ids": [
-          "gong:summary:CALL-008",
           "gong:summary:CALL-009",
-          "gong:summary:CALL-005"
+          "gong:transcript:CALL-008",
+          "gong:summary:CALL-007"
         ],
         "confidence": 0.82,
         "uncertainty": null
@@ -36,9 +36,21 @@
   "strategy": {
     "summary": "The deal is actionable but requires owners for open buyer and approval dependencies.",
     "summary_evidence_ids": [
-      "gong:summary:CALL-008",
       "gong:summary:CALL-009",
-      "gong:summary:CALL-005"
+      "gong:transcript:CALL-008",
+      "gong:summary:CALL-007"
+    ],
+    "negotiation_state": [
+      {
+        "text": "Open commercial or legal dependencies still need resolution.",
+        "evidence_ids": [
+          "gong:summary:CALL-009",
+          "gong:transcript:CALL-008",
+          "gong:summary:CALL-007"
+        ],
+        "confidence": 0.78,
+        "uncertainty": null
+      }
     ],
     "actions": [
       {
@@ -46,9 +58,9 @@
         "owner": "Account owner",
         "rationale": "Open dependencies are the main remaining execution risk.",
         "evidence_ids": [
-          "gong:summary:CALL-008",
           "gong:summary:CALL-009",
-          "gong:summary:CALL-005"
+          "gong:transcript:CALL-008",
+          "gong:summary:CALL-007"
         ],
         "requires_approval": false
       }

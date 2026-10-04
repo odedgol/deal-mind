@@ -30,4 +30,4 @@ def _items_with_evidence(
 ) -> Sequence[Finding | RecommendedAction]:
     if isinstance(output, AgentOutput):
         return output.findings
-    return output.actions
+    return [*output.negotiation_state, *output.actions]

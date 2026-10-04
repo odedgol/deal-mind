@@ -1,5 +1,5 @@
 {
-  "run_id": "c3082e6a6c17464daf9f962e0a3f39df",
+  "run_id": "6a1b03ed8b6d49679344256897831af9",
   "opportunity_id": "OPP-1003",
   "run_status": "completed",
   "deal_snapshot": {
@@ -12,20 +12,21 @@
     "risk_level": "high",
     "evidence_ids": []
   },
-  "executive_summary": "The negotiation for Eclipse BioMaterials Ltd involves conflicting priorities among the internal buyer group, with the Chief Digital Officer advocating for cost relief, while the security head emphasizes the need for control evidence, and legal counsel insists on approved language only. Legal has requested changes to liability language and warned against informal customer-facing concessions, indicating a need for formal reviews. The procurement lead is pushing for aggressive discounts and a shorter renewal term, conflicting with the account plan that assumes a three-year renewal. The opportunity is classified as high risk, with a total contract value of $5,637,000 and an annual contract value of $1,879,000, requiring approval for discount and liability language by May 14, 2026, before the close date of June 5, 2026.",
+  "executive_summary": "Eclipse BioMaterials Ltd is negotiating a renewal with conflicting priorities among stakeholders regarding cost reduction, security controls, and legal language. The Chief Digital Officer is under board pressure to reduce costs, while procurement is pushing for a material discount and shorter term. Legal has mandated that any customer-facing concession language must be approved before use. The opportunity has a high risk level and requires formal approval for any proposed discounts or liability language, with a close date set for June 5, 2026.",
   "executive_summary_evidence_ids": [
     "gong:summary:CALL-023",
+    "slack:SLACK-1003-02",
     "gong:summary:CALL-022",
+    "salesforce:opportunities.tsv:OPP-1003",
     "salesforce:contacts.tsv:CON-3011",
     "salesforce:contacts.tsv:CON-3014",
-    "salesforce:opportunities.tsv:OPP-1003",
-    "salesforce:accounts.tsv:ACC-2003",
-    "gong:summary:CALL-026",
-    "salesforce:contacts.tsv:CON-3013"
+    "gong:transcript:CALL-019",
+    "gong:transcript:CALL-027",
+    "salesforce:accounts.tsv:ACC-2003"
   ],
   "buyer_goals": [
     {
-      "text": "Executives aligned on strategic need but disagreed on whether discount or risk mitigation should lead negotiation. The Chief Digital Officer wants cost relief, while the security head wants control evidence, and counsel wants approved language only. There are conflicting priorities within the internal buyer group.",
+      "text": "The executives involved in the negotiation for Eclipse BioMaterials Ltd are aligned on the strategic need for renewal but have conflicting priorities regarding whether to prioritize discounts or risk mitigation. The Chief Digital Officer (Priya Sato) emphasized the need for cost discipline due to board pressure, while the Head of Security (Mateo Ruan) insisted on maintaining controls over restricted workflows. Legal counsel (Leah Tan) warned against informal customer-facing language that could imply liability before formal approval.",
       "evidence_ids": [
         "gong:summary:CALL-023"
       ],
@@ -33,58 +34,59 @@
       "uncertainty": null
     },
     {
-      "text": "Legal requested liability language changes and warned against informal customer-facing concessions. The liability cap language is open, procurement wants a fast answer, and legal requires a formal review. There is a risk that customer-facing language could create an approval violation.",
+      "text": "Procurement is pressing for a material reduction in costs or a shorter commitment term, while the Chief Digital Officer has indicated that the board expects cost discipline and is scrutinizing all proposals. This creates a conflict between the procurement team's desire for a shorter renewal term and the account plan that assumes a three-year renewal.",
       "evidence_ids": [
-        "gong:summary:CALL-022"
+        "slack:SLACK-1003-02",
+        "salesforce:opportunities.tsv:OPP-1003"
+      ],
+      "confidence": 0.8,
+      "uncertainty": null
+    },
+    {
+      "text": "Legal has requested changes to liability language and has warned against informal customer-facing concessions, indicating that any discount recommendation must wait for Deal Desk and legal review. This reinforces the need for formal approval before any concessions can be made.",
+      "evidence_ids": [
+        "gong:summary:CALL-022",
+        "slack:SLACK-1003-01"
+      ],
+      "confidence": 0.85,
+      "uncertainty": null
+    },
+    {
+      "text": "The opportunity for Eclipse BioMaterials Ltd has a high risk level and requires approval for the proposed discount and liability language. The close date for this opportunity is set for June 5, 2026, with a next step to route the discount and liability language for approval by May 14, 2026.",
+      "evidence_ids": [
+        "salesforce:opportunities.tsv:OPP-1003"
       ],
       "confidence": 0.9,
       "uncertainty": null
     },
     {
-      "text": "Security and legal agreed on evidence requirements before any final commercial position. Security evidence is needed, legal wording is not final, and counsel warned against summarizing restricted notes to a broad audience. There is a risk that unauthorized internal users may request a restricted summary.",
-      "evidence_ids": [
-        "gong:summary:CALL-026"
-      ],
-      "confidence": 0.9,
-      "uncertainty": null
-    },
-    {
-      "text": "The Chief Digital Officer, Priya Sato, is pushing for renewal certainty but is under board pressure to reduce run-rate spend. This indicates a mixed sentiment regarding the deal.",
+      "text": "The Chief Digital Officer, Priya Sato, is pushing for renewal certainty but is under pressure from the board to reduce spending. This indicates a high influence level in the negotiation process, as her decisions will significantly impact the outcome.",
       "evidence_ids": [
         "salesforce:contacts.tsv:CON-3011"
       ],
-      "confidence": 0.8,
-      "uncertainty": null
-    },
-    {
-      "text": "Procurement Lead, Darin Holt, is pressing for an aggressive discount and a shorter renewal term, which conflicts with the account plan that assumes a three-year renewal.",
-      "evidence_ids": [
-        "salesforce:contacts.tsv:CON-3014",
-        "slack:SLACK-1003-02"
-      ],
-      "confidence": 0.8,
-      "uncertainty": "There is a conflict between procurement's preference for a shorter term and the account plan's assumption of a three-year renewal."
-    },
-    {
-      "text": "Any discount recommendation must wait for Deal Desk and legal review, reinforcing the need for formal processes before proceeding with negotiations.",
-      "evidence_ids": [
-        "slack:SLACK-1003-01"
-      ],
       "confidence": 0.9,
       "uncertainty": null
     },
     {
-      "text": "The opportunity for Eclipse BioMaterials Ltd has a total contract value (TCV) of $5,637,000 and an annual contract value (ACV) of $1,879,000, with a probability of 49% and a risk level classified as high.",
+      "text": "Darin Holt, the Procurement Lead, is noted to have a negative sentiment and is pressing for an aggressive discount and shorter renewal term, which adds to the tension in the negotiation.",
       "evidence_ids": [
-        "salesforce:opportunities.tsv:OPP-1003"
+        "salesforce:contacts.tsv:CON-3014"
       ],
-      "confidence": 0.9,
+      "confidence": 0.8,
       "uncertainty": null
     },
     {
-      "text": "The opportunity is in the negotiation stage, with a close date set for June 5, 2026, and requires approval for the discount, liability language, and restricted data access request by May 14, 2026.",
+      "text": "There is a need for a credible plan before the signature of the renewal, as indicated by Priya Sato, who stated that the board pressure is financial and procurement will ask for a meaningful concession.",
       "evidence_ids": [
-        "salesforce:opportunities.tsv:OPP-1003"
+        "gong:transcript:CALL-019"
+      ],
+      "confidence": 0.85,
+      "uncertainty": null
+    },
+    {
+      "text": "The negotiation discussions have highlighted the importance of separating internal options from customer-facing language, with a clear distinction that no customer-facing concession language is approved as of the latest discussions.",
+      "evidence_ids": [
+        "gong:transcript:CALL-023"
       ],
       "confidence": 0.9,
       "uncertainty": null
@@ -92,191 +94,110 @@
   ],
   "stakeholder_map": [
     {
-      "text": "The opportunity with Eclipse BioMaterials Ltd has a total contract value (TCV) of 5,637,000 and an annual contract value (ACV) of 1,879,000.",
+      "text": "Eclipse BioMaterials Ltd is facing internal conflicts regarding the negotiation strategy for their renewal, with different stakeholders prioritizing cost reduction, security, and legal language. This is evidenced by the discussions in CALL-023 where Priya Sato, the Chief Digital Officer, noted that \"everyone is optimizing a different variable\" (evidence_id: gong:summary:CALL-023).",
       "evidence_ids": [
-        "salesforce:opportunities.tsv:OPP-1003"
+        "gong:summary:CALL-023"
       ],
-      "confidence": 1.0,
+      "confidence": 0.9,
       "uncertainty": null
     },
     {
-      "text": "The opportunity is classified as a renewal plus expansion type and is currently in the negotiation stage with a probability of 49%.",
+      "text": "The procurement team is pressing for a material concession and a shorter renewal term, as indicated in the evidence from CALL-027 where Darin Holt, the Procurement Lead, stated, \"We need a material reduction from the current run rate or a shorter commitment\" (evidence_id: gong:transcript:CALL-027).",
       "evidence_ids": [
-        "salesforce:opportunities.tsv:OPP-1003"
+        "gong:transcript:CALL-027"
       ],
-      "confidence": 1.0,
+      "confidence": 0.9,
       "uncertainty": null
     },
     {
-      "text": "The close date for the opportunity is set for June 5, 2026, and it requires approval for the discount, liability language, and restricted data access request by May 14, 2026.",
+      "text": "Legal and security teams have emphasized the need for formal reviews and have warned against informal customer-facing concessions, as highlighted in CALL-022 where legal requested changes to liability language and cautioned against informal promises (evidence_id: gong:summary:CALL-022).",
       "evidence_ids": [
-        "salesforce:opportunities.tsv:OPP-1003"
+        "gong:summary:CALL-022"
       ],
-      "confidence": 1.0,
+      "confidence": 0.9,
       "uncertainty": null
     },
     {
-      "text": "The account, Eclipse BioMaterials Ltd, is categorized under the specialty materials industry and is located in Singapore.",
-      "evidence_ids": [
-        "salesforce:accounts.tsv:ACC-2003"
-      ],
-      "confidence": 1.0,
-      "uncertainty": null
-    },
-    {
-      "text": "The account health is noted as 'At risk' with strategic notes indicating legal constraints and board-level cost pressure.",
+      "text": "The opportunity for Eclipse BioMaterials Ltd has a total contract value (TCV) of $5,637,000 and an annual contract value (ACV) of $1,879,000, with a close date set for June 5, 2026 (evidence_id: salesforce:accounts.tsv:ACC-2003).",
       "evidence_ids": [
         "salesforce:accounts.tsv:ACC-2003"
       ],
-      "confidence": 1.0,
+      "confidence": 0.9,
       "uncertainty": null
     },
     {
-      "text": "The primary competitor for this opportunity is CloudGate One.",
-      "evidence_ids": [
-        "salesforce:opportunities.tsv:OPP-1003"
-      ],
-      "confidence": 1.0,
-      "uncertainty": null
-    },
-    {
-      "text": "The internal buyer group has conflicting priorities, with the Chief Digital Officer pushing for renewal certainty while under board pressure to reduce spending.",
-      "evidence_ids": [
-        "gong:summary:CALL-023",
-        "salesforce:contacts.tsv:CON-3011"
-      ],
-      "confidence": 1.0,
-      "uncertainty": null
-    },
-    {
-      "text": "Legal and security teams have agreed on evidence requirements before finalizing the commercial position, indicating a dependency on legal review for the negotiation process.",
+      "text": "The negotiation is currently at risk due to conflicting priorities among stakeholders, with procurement pushing for aggressive discounts while security insists on maintaining support for restricted workflows (evidence_id: gong:summary:CALL-026).",
       "evidence_ids": [
         "gong:summary:CALL-026"
       ],
-      "confidence": 1.0,
+      "confidence": 0.8,
       "uncertainty": null
     },
     {
-      "text": "Procurement is pressing for an aggressive discount and shorter renewal term, which conflicts with the account plan that assumes a three-year renewal.",
+      "text": "The account is classified as 'at risk' due to sensitive pricing notes, legal constraints, and board-level cost pressure (evidence_id: salesforce:accounts.tsv:ACC-2003).",
       "evidence_ids": [
-        "salesforce:contacts.tsv:CON-3014",
-        "slack:SLACK-1003-02"
+        "salesforce:accounts.tsv:ACC-2003"
       ],
-      "confidence": 1.0,
-      "uncertainty": null
-    },
-    {
-      "text": "The General Counsel has requested changes to liability language and emphasized the need for a formal review before any customer-facing concessions are made.",
-      "evidence_ids": [
-        "salesforce:contacts.tsv:CON-3013",
-        "gong:summary:CALL-022"
-      ],
-      "confidence": 1.0,
+      "confidence": 0.9,
       "uncertainty": null
     }
   ],
   "negotiation_state": [
     {
-      "text": "Executives aligned on strategic need but disagreed on whether discount or risk mitigation should lead negotiation. The Chief Digital Officer wants cost relief, while the security head wants control evidence, and counsel wants approved language only. There are conflicting priorities within the internal buyer group.",
+      "text": "Open prerequisite: formal approval is required for any proposed discount or liability language before customer-facing communication can occur.",
       "evidence_ids": [
-        "gong:summary:CALL-023"
+        "gong:summary:CALL-022",
+        "salesforce:opportunities.tsv:OPP-1003"
       ],
       "confidence": 0.9,
       "uncertainty": null
     },
     {
-      "text": "Legal requested liability language changes and warned against informal customer-facing concessions. The liability cap language is open, procurement wants a fast answer, and legal requires a formal review. There is a risk that customer-facing language could create an approval violation.",
+      "text": "Blocked: procurement is pressing for a material reduction in costs or a shorter commitment term, conflicting with the account plan that assumes a three-year renewal.",
       "evidence_ids": [
-        "gong:summary:CALL-022"
+        "slack:SLACK-1003-02",
+        "salesforce:opportunities.tsv:OPP-1003"
       ],
-      "confidence": 0.9,
+      "confidence": 0.8,
       "uncertainty": null
     },
     {
-      "text": "Security and legal agreed on evidence requirements before any final commercial position. Security evidence is needed, legal wording is not final, and counsel warned against summarizing restricted notes to a broad audience. There is a risk that unauthorized internal users may request a restricted summary.",
+      "text": "Conflicting: stakeholders have differing priorities, with procurement focused on cost reduction, security emphasizing the need for controls, and legal requiring formal language approval.",
       "evidence_ids": [
+        "gong:summary:CALL-023",
         "gong:summary:CALL-026"
       ],
       "confidence": 0.9,
       "uncertainty": null
     },
     {
-      "text": "The Chief Digital Officer, Priya Sato, is pushing for renewal certainty but is under board pressure to reduce run-rate spend. This indicates a mixed sentiment regarding the deal.",
+      "text": "Conditional: the negotiation is contingent on the approval of the Deal Desk for any discounts exceeding 10 percent and for liability language changes.",
       "evidence_ids": [
-        "salesforce:contacts.tsv:CON-3011"
+        "policy:deal-desk",
+        "gong:summary:CALL-022"
       ],
-      "confidence": 0.8,
-      "uncertainty": null
-    },
-    {
-      "text": "Procurement Lead, Darin Holt, is pressing for an aggressive discount and a shorter renewal term, which conflicts with the account plan that assumes a three-year renewal.",
-      "evidence_ids": [
-        "salesforce:contacts.tsv:CON-3014",
-        "slack:SLACK-1003-02"
-      ],
-      "confidence": 0.8,
-      "uncertainty": "There is a conflict between procurement's preference for a shorter term and the account plan's assumption of a three-year renewal."
-    },
-    {
-      "text": "Any discount recommendation must wait for Deal Desk and legal review, reinforcing the need for formal processes before proceeding with negotiations.",
-      "evidence_ids": [
-        "slack:SLACK-1003-01"
-      ],
-      "confidence": 0.9,
-      "uncertainty": null
-    },
-    {
-      "text": "The opportunity for Eclipse BioMaterials Ltd has a total contract value (TCV) of $5,637,000 and an annual contract value (ACV) of $1,879,000, with a probability of 49% and a risk level classified as high.",
-      "evidence_ids": [
-        "salesforce:opportunities.tsv:OPP-1003"
-      ],
-      "confidence": 0.9,
-      "uncertainty": null
-    },
-    {
-      "text": "The opportunity is in the negotiation stage, with a close date set for June 5, 2026, and requires approval for the discount, liability language, and restricted data access request by May 14, 2026.",
-      "evidence_ids": [
-        "salesforce:opportunities.tsv:OPP-1003"
-      ],
-      "confidence": 0.9,
+      "confidence": 0.85,
       "uncertainty": null
     }
   ],
   "recommended_next_actions": [
     {
-      "action": "Route discount, liability language, and restricted data access request for approval",
+      "action": "Route the proposed discount and liability language for approval by the Deal Desk and legal team.",
       "owner": "Nora Chen",
-      "rationale": "Approval is required for any discount recommendations and changes to liability language before proceeding with negotiations.",
+      "rationale": "The opportunity requires formal approval for any proposed discounts or liability language before proceeding with customer-facing communications.",
       "evidence_ids": [
         "salesforce:opportunities.tsv:OPP-1003",
-        "policy:deal-desk"
-      ],
-      "requires_approval": true
-    },
-    {
-      "action": "Consult Legal for specific liability language changes requested",
-      "owner": "Nora Chen",
-      "rationale": "Legal has emphasized the need for a formal review of liability language before any customer-facing concessions are made.",
-      "evidence_ids": [
-        "gong:summary:CALL-022",
-        "salesforce:contacts.tsv:CON-3013"
-      ],
-      "requires_approval": true
-    },
-    {
-      "action": "Align internal stakeholders on negotiation strategy",
-      "owner": "Nora Chen",
-      "rationale": "There are conflicting priorities among the internal buyer group that need to be addressed to create a unified negotiation approach.",
-      "evidence_ids": [
-        "gong:summary:CALL-023"
+        "gong:summary:CALL-022"
       ],
       "requires_approval": true
     }
   ],
   "missing_information": [
-    "What specific liability language changes were requested by legal?",
-    "What are the exact terms of the discount being negotiated?",
-    "What are the specific evidence requirements agreed upon by security and legal?"
+    "What specific discount levels are being considered for approval?",
+    "What is the current status of the approval for the liability language?",
+    "What specific concessions are approvable by the Deal Desk?",
+    "What is the current number of temporary access requests by project?",
+    "What is the approval status of the liability language?"
   ],
   "source_evidence": [
     {
@@ -295,6 +216,18 @@
       }
     },
     {
+      "evidence_id": "gong:transcript:CALL-027",
+      "opportunity_id": "OPP-1003",
+      "account_id": "ACC-2003",
+      "source_type": "gong",
+      "source_file": "synthetic_data/gong/transcripts/OPP-1003_CALL-027.md",
+      "source_id": "CALL-027",
+      "access_level": "standard",
+      "event_date": null,
+      "text": "# Transcript: CALL-027 - Approval path and negotiation prep\n\n**Opportunity:** OPP-1003  \n**Account:** ACC-2003  \n**Date:** 2026-04-27  \n**Source access level:** sensitive_pricing\n\nVendor AE: This is the final negotiation-prep call before we decide what can be recommended and what must go through approval.\n\nPriya Sato, Chief Digital Officer: The renewal is still viable, but the board expects cost discipline. If the proposal looks tone-deaf, procurement will push it back.\n\nDarin Holt, Procurement Lead: I will be direct. We need a material reduction from the current run rate or a shorter commitment. Otherwise I cannot recommend approval.\n\nMateo Ruan, Head of Security: I will be equally direct. A reduction that removes restricted workflow support is not acceptable. We cannot trade research controls for budget optics.\n\nLeah Tan, General Counsel: And no one should send customer-facing concession language until legal and Deal Desk approve it. We have had too many situations where informal language becomes evidence in negotiation.\n\nVendor AE: Understood. We have two internal options prepared. Option one keeps the core renewal intact and offers payment flexibility. Option two adjusts packaging but preserves restricted workflow support. A larger discount is not approved.\n\nDarin Holt: Procurement will ask why the larger discount is not on the table.\n\nVendor AE: Because it exceeds approval thresholds and may conflict with the support model needed for restricted workflows. We can submit it for approval, but we cannot recommend it as available.\n\nPriya Sato: That distinction matters. I do not want the board thinking a discount exists if it has not been approved.\n\nMateo Ruan: Include in the brief that restricted workflow evidence supports keeping the support package. There is a security reason not to strip it out.\n\nLeah Tan: Include that restricted evidence only for the approved audience. A broad sales summary should say \"security dependencies remain under review\" without exposing details.\n\nVendor Solutions Lead: The audit export sample is now complete. The exception workflow still needs expiration-owner confirmation from research IT.\n\nMateo Ruan: I can get that confirmation, but not by tomorrow. Mark it as missing information.\n\nDarin Holt: From procurement, payment flexibility is useful but may not be enough. I want a written package comparison.\n\nLeah Tan: Written for internal review first. Not customer-facing.\n\nVendor AE: So next action is internal package comparison with approval flags, not an external proposal.\n\nPriya Sato: Correct. If the internal package is clear, I can decide what to take to the board sponsor.\n\nDarin Holt: I still want the aggressive option modeled. I understand it is not approved, but show the trade-offs.\n\nVendor AE: We can model it as an unapproved scenario with Deal Desk required, security risk, and legal review required.\n\nLeah Tan: That is acceptable if the label is impossible to miss.\n\nMateo Ruan: Also add that stripping support increases operational risk. It is not just a commercial choice.\n\nVendor AE: Final action items: prepare internal-only comparison, mark aggressive discount as unapproved, route liability language to legal, route discount to Deal Desk, confirm research exception owner, and enforce restricted-source permissions in any generated brief.\n\nPriya Sato: That is the right path. The brief should help us make a controlled decision, not create a new negotiation problem.\n\nDarin Holt: I want the comparison to include what we can say externally now. Procurement gets pressure when we have nothing to send.\n\nLeah Tan: You can send process language after approval, not concession language. For example, \"we are reviewing package options\" is different from \"we can offer a reduction.\"\n\nVendor AE: We will mark external-safe language separately from internal-only analysis.\n\nMateo Ruan: And the external-safe language should not reveal research workflow details.\n\nPriya Sato: The board sponsor will ask whether we have a credible path this quarter. My answer is yes, if approval gates are respected. If someone jumps ahead, the answer becomes no.\n\nVendor AE: For confidence: high confidence in renewal need, medium confidence in package path, low confidence in aggressive discount approval. Does that reflect the room?\n\nLeah Tan: Yes.\n\nDarin Holt: I would say medium-low on aggressive discount, but I understand why the policy label is low.\n\nMateo Ruan: Low is correct until Deal Desk approves it. Desire is not approval.\n\nVendor Solutions Lead: Technical missing item remains the exception owner confirmation. The audit export is complete, but the expiration owner is not confirmed.\n\nPriya Sato: Add that as a missing information item, not a blocker to all negotiation planning.\n\nVendor AE: Understood. The generated brief should recommend internal approval routing first, not customer proposal generation.\n\nLeah Tan: That is the safe recommendation.\n",
+      "metadata": {}
+    },
+    {
       "evidence_id": "gong:summary:CALL-022",
       "opportunity_id": "OPP-1003",
       "account_id": "ACC-2003",
@@ -310,15 +243,15 @@
       }
     },
     {
-      "evidence_id": "salesforce:contacts.tsv:CON-3013",
+      "evidence_id": "salesforce:contacts.tsv:CON-3011",
       "opportunity_id": "OPP-1003",
       "account_id": "ACC-2003",
       "source_type": "salesforce",
       "source_file": "synthetic_data/salesforce/contacts.tsv",
-      "source_id": "CON-3013",
+      "source_id": "CON-3011",
       "access_level": "standard",
-      "event_date": "2026-04-24",
-      "text": "contact_id=CON-3013; account_id=ACC-2003; full_name=Leah Tan; title=General Counsel; role_in_deal=Legal approver; email=leah.tan@eclipse-biomaterials.example; phone=+000-0100-3013; location=Singapore; influence_level=high; sentiment=cautious; last_interaction_date=2026-04-24; notes=Requests liability language changes and strict review before customer-facing concessions.",
+      "event_date": "2026-04-26",
+      "text": "contact_id=CON-3011; account_id=ACC-2003; full_name=Priya Sato; title=Chief Digital Officer; role_in_deal=Economic buyer; email=priya.sato@eclipse-biomaterials.example; phone=+000-0100-3011; location=Singapore; influence_level=high; sentiment=mixed; last_interaction_date=2026-04-26; notes=Pushing for renewal certainty but under board pressure to reduce run-rate spend.",
       "metadata": {}
     },
     {
@@ -337,27 +270,27 @@
       }
     },
     {
-      "evidence_id": "salesforce:contacts.tsv:CON-3011",
+      "evidence_id": "gong:transcript:CALL-019",
       "opportunity_id": "OPP-1003",
       "account_id": "ACC-2003",
-      "source_type": "salesforce",
-      "source_file": "synthetic_data/salesforce/contacts.tsv",
-      "source_id": "CON-3011",
+      "source_type": "gong",
+      "source_file": "synthetic_data/gong/transcripts/OPP-1003_CALL-019.md",
+      "source_id": "CALL-019",
       "access_level": "standard",
-      "event_date": "2026-04-26",
-      "text": "contact_id=CON-3011; account_id=ACC-2003; full_name=Priya Sato; title=Chief Digital Officer; role_in_deal=Economic buyer; email=priya.sato@eclipse-biomaterials.example; phone=+000-0100-3011; location=Singapore; influence_level=high; sentiment=mixed; last_interaction_date=2026-04-26; notes=Pushing for renewal certainty but under board pressure to reduce run-rate spend.",
+      "event_date": null,
+      "text": "# Transcript: CALL-019 - Restricted renewal discovery\n\n**Opportunity:** OPP-1003  \n**Account:** ACC-2003  \n**Date:** 2026-03-19  \n**Source access level:** restricted\n\nVendor AE: Before we start, I want to confirm this discussion is restricted to the account team and approved reviewers because it may include sensitive research workflow details.\n\nPriya Sato, Chief Digital Officer: Correct. The renewal is important, but the board is scrutinizing every platform. We need continuity and cost reduction at the same time.\n\nMateo Ruan, Head of Security: For security, continuity is the wrong word by itself. We need proof that research teams stay segmented. The pilot helped, but we still have exception workflows that are too manual.\n\nMei Arlen, Research IT Manager: The manual exceptions are not just annoying. They create questions from principal investigators. If a researcher cannot access a dataset before a deadline, they escalate outside the workflow.\n\nVendor Solutions Lead: The current design separates teams by project group and applies additional controls for restricted data sets. Where is the workflow breaking?\n\nMei Arlen: Temporary access. A researcher moves between project teams for two weeks, and the request sits between security, research IT, and the project owner. People start asking for broad access because the narrow path is slow.\n\nMateo Ruan: Broad access is not acceptable. I would rather lose convenience than weaken segmentation.\n\nPriya Sato: And I would rather avoid making the renewal sound like it creates more internal friction. We need a practical answer.\n\nVendor AE: Understood. The commercial renewal and the restricted workflow proof are connected but not identical. Are you expecting both to be resolved before signature?\n\nPriya Sato: I need a credible plan before signature, not a perfect workflow. The board pressure is financial. Procurement will ask for a meaningful concession.\n\nMateo Ruan: I will not support a concession if it removes controls or support. The platform is part of our research governance story.\n\nMei Arlen: I need audit exports that I can hand to the research compliance lead. Screenshots are not enough.\n\nVendor Solutions Lead: We can provide an audit export sample and an exception workflow diagram. The workflow can show requestor, project owner, security approval, expiration date, and review trail.\n\nMateo Ruan: Include expiration by default. Temporary access must expire unless reapproved.\n\nPriya Sato: Good. On commercial pressure, Darin from procurement will push hard. Do not take his first ask as the only possible path. He is doing his job.\n\nVendor AE: We will not make unapproved concession commitments. If discount or liability terms come up, we will route them internally before recommending language.\n\nPriya Sato: That is wise. Legal is sensitive right now. They do not want informal promises.\n\nMei Arlen: Also, do not summarize restricted research examples broadly. Some internal stakeholders do not need the details.\n\nVendor AE: Action items: vendor prepares restricted-access evidence pack, audit export sample, exception workflow diagram, and commercial boundary options. Eclipse confirms who may review restricted evidence.\n\nMateo Ruan: Correct. If the system you are building later cannot enforce that boundary, it should refuse the request.\n\nPriya Sato: Also, be careful how you summarize board pressure. It is real, but it is not permission to recommend the cheapest path.\n\nVendor AE: We will distinguish financial pressure from approved negotiation posture.\n\nMei Arlen: For the workflow diagram, include what happens when temporary access expires. People always remember approval and forget expiration.\n\nVendor Solutions Lead: We can include automatic expiration, reapproval path, and audit trail owner.\n\nMateo Ruan: Add that broad access is a rejected option. I do not want someone later saying it was merely unpreferred.\n\nPriya Sato: That is fair. The business can accept a slower workflow if it is defensible. It cannot accept a breach of research boundaries.\n\nVendor AE: What should be marked as missing information?\n\nMei Arlen: The current number of temporary access requests by project. I can get it, but not today.\n\nMateo Ruan: And the approval list for restricted evidence reviewers. Until that list exists, access should be narrow.\n\nPriya Sato: Commercially, the missing information is what concession level is actually approvable. Procurement will ask, but that does not mean it is approved.\n\nVendor AE: So the brief should say: strong strategic need, high approval sensitivity, missing restricted-reviewer list, missing temporary access counts, and no approved discount position yet.\n\nMateo Ruan: Exactly. That is a useful internal brief.\n\nVendor AE: Should the assistant ever generate a customer-facing recommendation from this call?\n\nPriya Sato: Not directly. It can say internally that approval is required. It should not quote restricted workflow concerns in an external message.\n\nPriya Sato: And it should not imply that board pressure overrides security. That would misrepresent the discussion.\n\nMateo Ruan: The safe output is an internal brief with permission checks and review warnings.\n",
       "metadata": {}
     },
     {
-      "evidence_id": "salesforce:opportunities.tsv:OPP-1003",
+      "evidence_id": "gong:transcript:CALL-023",
       "opportunity_id": "OPP-1003",
       "account_id": "ACC-2003",
-      "source_type": "salesforce",
-      "source_file": "synthetic_data/salesforce/opportunities.tsv",
-      "source_id": "OPP-1003",
+      "source_type": "gong",
+      "source_file": "synthetic_data/gong/transcripts/OPP-1003_CALL-023.md",
+      "source_id": "CALL-023",
       "access_level": "standard",
-      "event_date": "2026-06-05",
-      "text": "opportunity_id=OPP-1003; opportunity_name=Eclipse BioMaterials Ltd - Restricted Renewal and Data Protection; account_id=ACC-2003; account_name=Eclipse BioMaterials Ltd; stage=5.0 Negotiate; type=Renewal plus expansion; region=APAC; country=Singapore; industry=Specialty materials; owner=Nora Chen; close_date=2026-06-05; acv=1879000; tcv=5637000; renewal_term_months=36; probability=49; forecast_category=Pipeline; next_step=Route discount, liability language, and restricted data access request for approval by 2026-05-14; primary_competitor=CloudGate One; risk_level=high; approval_required=true; restricted_access=true",
+      "event_date": null,
+      "text": "# Transcript: CALL-023 - Executive risk alignment\n\n**Opportunity:** OPP-1003  \n**Account:** ACC-2003  \n**Date:** 2026-04-13  \n**Source access level:** restricted\n\nVendor AE: The agenda is to align on negotiation posture before commercial and legal discussions converge. We will keep this as internal-prep context for approved reviewers.\n\nPriya Sato, Chief Digital Officer: My concern is that everyone is optimizing a different variable. Procurement wants cost reduction, security wants stronger evidence, and legal wants cleaner language. All are valid, but the renewal cannot carry three unresolved debates.\n\nMateo Ruan, Head of Security: Security is not trying to expand scope. We are trying to avoid weakening controls during a cost conversation. If the concession removes support for restricted workflows, I will object.\n\nLeah Tan, General Counsel: My concern is customer-facing language. I do not want anyone implying we accepted a liability position or data handling promise before legal approves it.\n\nVendor AE: That suggests the assistant brief should separate internal options from approved customer language. Is that right?\n\nLeah Tan: Exactly. Internal options are fine if labeled as requiring approval. Customer-facing language is different.\n\nPriya Sato: I need options. If the only option is \"hold price and wait,\" procurement will escalate. But I also do not want a discount that signals panic.\n\nMateo Ruan: Could packaging change without weakening controls? For example, defer a noncritical add-on but keep restricted workflow support.\n\nVendor Solutions Lead: That is possible. We can model a package that preserves core controls and moves one analytics add-on to a later phase.\n\nPriya Sato: That might be more defensible than a blunt discount.\n\nLeah Tan: Any package change still needs precise terms. If an add-on is deferred, the order form must say what is included now and what is not.\n\nVendor AE: There is conflicting evidence in the recent calls. Procurement framed the issue as budget-driven, while research IT framed it as workflow-driven. The recommendation should probably not overstate one as the only driver.\n\nMateo Ruan: Good. The business driver is both cost pressure and research governance. If you summarize only cost pressure, you will recommend the wrong move.\n\nPriya Sato: And if you summarize only governance, you will ignore my board problem.\n\nLeah Tan: The missing information is approval status. I have not approved liability language. Deal Desk has not approved a large concession. That should be explicit.\n\nVendor AE: For the internal brief, would two scenarios help? Scenario A: preserve price with stronger governance evidence and payment flexibility. Scenario B: moderate package adjustment with approval requirements.\n\nPriya Sato: Yes, but do not include a third scenario with a large discount unless it is clearly marked as not approved.\n\nMateo Ruan: And include the risk that a large discount could reduce confidence in the platform's strategic value.\n\nLeah Tan: Include the risk that unapproved language creates legal exposure.\n\nVendor AE: Action items: prepare internal-only scenarios, mark approval gates, separate customer-ready language from internal analysis, and cite restricted evidence only for authorized reviewers.\n\nPriya Sato: That is the brief I need.\n\nDarin Holt, Procurement Lead: I was not on the first half, but I want to be clear that procurement will still ask for the aggressive option. If the answer is no, make it a documented no, not a vague no.\n\nLeah Tan: A documented no is fine if it says \"not approved\" and does not imply legal agreement.\n\nMateo Ruan: Add security consequence. If a package removes restricted workflow support, the consequence is not inconvenience. It is governance risk.\n\nVendor AE: We can show trade-offs for each scenario: commercial impact, security impact, legal approval required, and customer-facing readiness.\n\nPriya Sato: That is better than ranking by discount alone.\n\nDarin Holt: I can work with that. Procurement needs leverage, but I do not want to sell an option internally that legal or security will reject immediately.\n\nLeah Tan: The brief should state that no customer-facing concession language is approved as of this call.\n\nVendor AE: Noted. Would it be useful to include confidence levels?\n\nMateo Ruan: Yes. High confidence that restricted workflow support matters. Medium confidence on exact packaging path. Low confidence on approval of aggressive discount.\n\nPriya Sato: And medium confidence on close timing. We can still make it, but only if the approval sequence is controlled.\n\nVendor AE: That gives the system a good test: it should not flatten all signals into a single happy summary.\n\nLeah Tan: Exactly. A good summary preserves constraints.\n",
       "metadata": {}
     },
     {
@@ -370,18 +303,6 @@
       "access_level": "standard",
       "event_date": null,
       "text": "account_id=ACC-2003; account_name=Eclipse BioMaterials Ltd; industry=Specialty materials; region=APAC; country=Singapore; employee_band=5000-9000; current_products=Private access, secure web gateway, data protection pilot; account_health=At risk; strategic_notes=Restricted account with sensitive pricing notes, legal constraints, and board-level cost pressure.; access_level=restricted",
-      "metadata": {}
-    },
-    {
-      "evidence_id": "salesforce:contacts.tsv:CON-3014",
-      "opportunity_id": "OPP-1003",
-      "account_id": "ACC-2003",
-      "source_type": "salesforce",
-      "source_file": "synthetic_data/salesforce/contacts.tsv",
-      "source_id": "CON-3014",
-      "access_level": "standard",
-      "event_date": "2026-04-26",
-      "text": "contact_id=CON-3014; account_id=ACC-2003; full_name=Darin Holt; title=Procurement Lead; role_in_deal=Commercial negotiator; email=darin.holt@eclipse-biomaterials.example; phone=+000-0100-3014; location=Singapore; influence_level=medium; sentiment=negative; last_interaction_date=2026-04-26; notes=Pressing for aggressive discount and shorter renewal term.",
       "metadata": {}
     },
     {
@@ -415,6 +336,44 @@
       }
     },
     {
+      "evidence_id": "salesforce:opportunities.tsv:OPP-1003",
+      "opportunity_id": "OPP-1003",
+      "account_id": "ACC-2003",
+      "source_type": "salesforce",
+      "source_file": "synthetic_data/salesforce/opportunities.tsv",
+      "source_id": "OPP-1003",
+      "access_level": "standard",
+      "event_date": "2026-06-05",
+      "text": "opportunity_id=OPP-1003; opportunity_name=Eclipse BioMaterials Ltd - Restricted Renewal and Data Protection; account_id=ACC-2003; account_name=Eclipse BioMaterials Ltd; stage=5.0 Negotiate; type=Renewal plus expansion; region=APAC; country=Singapore; industry=Specialty materials; owner=Nora Chen; close_date=2026-06-05; acv=1879000; tcv=5637000; renewal_term_months=36; probability=49; forecast_category=Pipeline; next_step=Route discount, liability language, and restricted data access request for approval by 2026-05-14; primary_competitor=CloudGate One; risk_level=high; approval_required=true; restricted_access=true",
+      "metadata": {}
+    },
+    {
+      "evidence_id": "salesforce:contacts.tsv:CON-3014",
+      "opportunity_id": "OPP-1003",
+      "account_id": "ACC-2003",
+      "source_type": "salesforce",
+      "source_file": "synthetic_data/salesforce/contacts.tsv",
+      "source_id": "CON-3014",
+      "access_level": "standard",
+      "event_date": "2026-04-26",
+      "text": "contact_id=CON-3014; account_id=ACC-2003; full_name=Darin Holt; title=Procurement Lead; role_in_deal=Commercial negotiator; email=darin.holt@eclipse-biomaterials.example; phone=+000-0100-3014; location=Singapore; influence_level=medium; sentiment=negative; last_interaction_date=2026-04-26; notes=Pressing for aggressive discount and shorter renewal term.",
+      "metadata": {}
+    },
+    {
+      "evidence_id": "pricing:PN-4004",
+      "opportunity_id": "OPP-1003",
+      "account_id": "ACC-2003",
+      "source_type": "pricing",
+      "source_file": "synthetic_data/pricing/pricing_notes.tsv",
+      "source_id": "PN-4004",
+      "access_level": "sensitive",
+      "event_date": null,
+      "text": "Procurement requested a material concession and shorter term, approval required before recommending this position.",
+      "metadata": {
+        "approval_status": "pending_deal_desk"
+      }
+    },
+    {
       "evidence_id": "salesforce:contacts.tsv:CON-3012",
       "opportunity_id": "OPP-1003",
       "account_id": "ACC-2003",
@@ -425,21 +384,6 @@
       "event_date": "2026-04-25",
       "text": "contact_id=CON-3012; account_id=ACC-2003; full_name=Mateo Ruan; title=Head of Security; role_in_deal=Champion; email=mateo.ruan@eclipse-biomaterials.example; phone=+000-0100-3012; location=Singapore; influence_level=high; sentiment=positive; last_interaction_date=2026-04-25; notes=Values the platform but flagged sensitive research access controls as non-negotiable.",
       "metadata": {}
-    },
-    {
-      "evidence_id": "gong:summary:CALL-020",
-      "opportunity_id": "OPP-1003",
-      "account_id": "ACC-2003",
-      "source_type": "gong",
-      "source_file": "synthetic_data/gong/gong_call_summaries.tsv",
-      "source_id": "CALL-020",
-      "access_level": "restricted",
-      "event_date": "2026-03-27",
-      "text": "Data protection pilot showed useful control points but research team raised concerns about exception handling. Champion sees value, research IT wants audit exports, exception workflow unclear. Risks: Exception handling could become security blocker.",
-      "metadata": {
-        "title": "Data protection pilot review",
-        "participants": "CON-3012, CON-3015"
-      }
     },
     {
       "evidence_id": "policy:deal-desk",
@@ -454,25 +398,23 @@
       "metadata": {}
     }
   ],
-  "confidence_and_review_warnings": [
-    "Procurement's push for a shorter renewal term conflicts with the account plan's assumption of a three-year renewal, which may complicate negotiations."
-  ],
+  "confidence_and_review_warnings": [],
   "retrieval_debug": [
     {
       "query": "buyer goals objections urgency stakeholders negotiation risks pricing legal",
       "opportunity_id": "OPP-1003",
-      "authorized_candidates": 15,
-      "dense_candidates": 15,
+      "authorized_candidates": 20,
+      "dense_candidates": 20,
       "final_results": 8,
       "final_evidence_ids": [
         "gong:summary:CALL-023",
+        "gong:transcript:CALL-027",
         "gong:summary:CALL-022",
-        "salesforce:contacts.tsv:CON-3013",
-        "gong:summary:CALL-026",
         "salesforce:contacts.tsv:CON-3011",
-        "salesforce:opportunities.tsv:OPP-1003",
-        "salesforce:accounts.tsv:ACC-2003",
-        "salesforce:contacts.tsv:CON-3014"
+        "gong:summary:CALL-026",
+        "gong:transcript:CALL-019",
+        "gong:transcript:CALL-023",
+        "salesforce:accounts.tsv:ACC-2003"
       ],
       "allowed_source_types": [
         "gong",
@@ -485,9 +427,9 @@
     {
       "query": "synthetic account team dashboard escalation conflict",
       "opportunity_id": "OPP-1003",
-      "authorized_candidates": 15,
-      "dense_candidates": 15,
-      "final_results": 15,
+      "authorized_candidates": 20,
+      "dense_candidates": 20,
+      "final_results": 20,
       "final_evidence_ids": [
         "salesforce:contacts.tsv:CON-3015",
         "gong:summary:CALL-024",
@@ -497,12 +439,17 @@
         "salesforce:contacts.tsv:CON-3013",
         "salesforce:contacts.tsv:CON-3011",
         "gong:summary:CALL-019",
-        "salesforce:contacts.tsv:CON-3014",
         "slack:SLACK-1003-02",
+        "salesforce:contacts.tsv:CON-3014",
+        "gong:transcript:CALL-019",
         "gong:summary:CALL-020",
+        "gong:transcript:CALL-027",
         "gong:summary:CALL-023",
+        "gong:transcript:CALL-023",
         "gong:summary:CALL-026",
         "gong:summary:CALL-022",
+        "pricing:PN-4004",
+        "pricing:PN-4005",
         "slack:SLACK-1003-01"
       ],
       "allowed_source_types": [
@@ -516,18 +463,18 @@
     {
       "query": "buyer objections urgency competitor action items",
       "opportunity_id": "OPP-1003",
-      "authorized_candidates": 15,
-      "dense_candidates": 15,
+      "authorized_candidates": 20,
+      "dense_candidates": 20,
       "final_results": 8,
       "final_evidence_ids": [
         "salesforce:opportunities.tsv:OPP-1003",
-        "salesforce:contacts.tsv:CON-3014",
         "gong:summary:CALL-023",
+        "gong:transcript:CALL-027",
+        "salesforce:contacts.tsv:CON-3014",
+        "gong:transcript:CALL-023",
         "salesforce:contacts.tsv:CON-3011",
-        "salesforce:contacts.tsv:CON-3013",
-        "gong:summary:CALL-022",
-        "gong:summary:CALL-026",
-        "salesforce:contacts.tsv:CON-3012"
+        "gong:transcript:CALL-019",
+        "gong:summary:CALL-022"
       ],
       "allowed_source_types": [
         "gong",
@@ -540,18 +487,18 @@
     {
       "query": "economic buyer champion procurement legal blocker stakeholder",
       "opportunity_id": "OPP-1003",
-      "authorized_candidates": 15,
-      "dense_candidates": 15,
+      "authorized_candidates": 20,
+      "dense_candidates": 20,
       "final_results": 8,
       "final_evidence_ids": [
-        "salesforce:contacts.tsv:CON-3014",
-        "salesforce:contacts.tsv:CON-3011",
         "gong:summary:CALL-023",
-        "gong:summary:CALL-022",
+        "salesforce:contacts.tsv:CON-3011",
+        "gong:transcript:CALL-027",
+        "gong:transcript:CALL-023",
+        "pricing:PN-4004",
         "salesforce:contacts.tsv:CON-3012",
-        "gong:summary:CALL-026",
-        "gong:summary:CALL-020",
-        "salesforce:contacts.tsv:CON-3013"
+        "salesforce:contacts.tsv:CON-3014",
+        "gong:summary:CALL-022"
       ],
       "allowed_source_types": [
         "gong",
@@ -580,16 +527,16 @@
     }
   ],
   "cost_summary": {
-    "budget_usd": 2.0,
-    "spent_usd": 0.005124,
-    "run_spent_usd": 0.002561,
-    "remaining_usd": 1.994876,
-    "prompt_tokens": 10167,
-    "completion_tokens": 1726,
+    "budget_usd": 1.0,
+    "spent_usd": 0.060143,
+    "run_spent_usd": 0.004098,
+    "remaining_usd": 0.939857,
+    "prompt_tokens": 20059,
+    "completion_tokens": 1816,
     "call_count": 3,
     "models": [
       "gpt-4o-mini"
     ],
-    "period_key": "2026-09"
+    "period_key": "2026-10"
   }
 }

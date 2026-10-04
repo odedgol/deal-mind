@@ -1,10 +1,14 @@
+from datetime import date
+
 from cato_deal_intel.agents.core import (
+    AgentContext,
     ConversationIntelligenceAgent,
     DealContextAgent,
     NegotiationStrategyAgent,
     StakeholderMapAgent,
 )
 from cato_deal_intel.llm.fake_provider import FakeLLMProvider
+from cato_deal_intel.models import Opportunity
 
 
 def test_each_agent_exposes_only_its_declared_tools() -> None:
@@ -25,3 +29,31 @@ def test_each_agent_exposes_only_its_declared_tools() -> None:
         "validate_recommendation",
         "request_approval",
     ]
+
+    snapshot = deal_context.run(AgentContext(sample_opportunity(), []))
+    assert snapshot.opportunity_id == "OPP-TEST"
+
+def sample_opportunity() -> Opportunity:
+    return Opportunity(
+        opportunity_id="OPP-TEST",
+        opportunity_name="Test opportunity",
+        account_id="ACC-TEST",
+        account_name="Test account",
+        stage="Negotiation",
+        type="New Business",
+        region="EMEA",
+        country="Israel",
+        industry="Technology",
+        owner="Test Owner",
+        close_date=date(2026, 12, 31),
+        acv=100_000,
+        tcv=300_000,
+        renewal_term_months=36,
+        probability=60,
+        forecast_category="Best Case",
+        next_step="Confirm requirements",
+        primary_competitor="Competitor",
+        risk_level="Medium",
+        approval_required=False,
+        restricted_access=False,
+    )

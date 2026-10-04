@@ -56,6 +56,23 @@ def test_complete_authorization_and_approval_journey(e2e_client: TestClient) -> 
     assert generated.status_code == 200
     pending_brief = generated.json()
     assert pending_brief["run_status"] == "awaiting_approval"
+    buyer_and_stakeholder_findings = {
+        finding["text"].strip().casefold()
+        for finding in [*pending_brief["buyer_goals"], *pending_brief["stakeholder_map"]]
+    }
+    negotiation_state = pending_brief["negotiation_state"]
+    assert negotiation_state
+    assert not buyer_and_stakeholder_findings.intersection(
+        finding["text"].strip().casefold() for finding in negotiation_state
+    )
+    allowed_evidence_ids = {
+        item["evidence_id"] for item in pending_brief["source_evidence"]
+    }
+    assert all(
+        evidence_id in allowed_evidence_ids
+        for finding in negotiation_state
+        for evidence_id in finding["evidence_ids"]
+    )
     run_id = pending_brief["run_id"]
 
     requester_inbox = e2e_client.get(
